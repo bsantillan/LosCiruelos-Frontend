@@ -1,0 +1,113 @@
+.boton {
+    height: 56px;
+    font-family: var(--fuente-titulo);
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: var(--radio-md);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow var(--transicion), transform var(--transicion);
+}
+
+.boton--completo {
+    width: 100%;
+}
+
+.boton--auto {
+    width: auto;
+    padding: 0 28px;
+}
+
+/* Variante primario */
+.boton--primario {
+    background: linear-gradient(100deg, var(--verde-oscuro) 0%, var(--verde-lima) 100%);
+    color: #fff;
+}
+
+.boton--primario::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, var(--verde-lima) 0%, var(--verde-oscuro) 100%);
+    opacity: 0;
+    transition: opacity var(--transicion);
+}
+
+.boton--primario span,
+.boton--primario svg {
+    position: relative;
+    z-index: 1;
+}
+
+.boton--primario:not(:disabled):hover {
+    box-shadow: var(--sombra-verde);
+    transform: translateY(-1px);
+}
+
+.boton--primario:not(:disabled):hover::before {
+    opacity: 1;
+}
+
+/* Variante secundario */
+
+.boton--secundario {
+    background: var(--superficie-2);
+    border: 1.5px solid var(--borde);
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-style: normal;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.boton--secundario:not(:disabled):hover {
+    border-color: rgba(240, 244, 240, 0.2);
+    background: var(--superficie-3);
+}
+
+/* Variante fantasma */
+.boton--fantasma {
+    background: transparent;
+    border: 1.5px solid var(--verde-borde);
+    color: var(--verde-lima);
+    font-family: var(--fuente-cuerpo);
+    font-style: normal;
+    font-size: 0.9375rem;
+    letter-spacing: 0;
+}
+
+.boton--fantasma:not(:disabled):hover {
+    background: var(--verde-fondo);
+}
+
+/* Estados compartidos */
+.boton:not(:disabled):active {
+    transform: scale(0.98);
+    box-shadow: none;
+}
+
+.boton:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Spinner */
+.boton__spinner {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: girar 0.7s linear infinite;
+}
