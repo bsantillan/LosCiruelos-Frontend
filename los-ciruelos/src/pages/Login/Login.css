@@ -220,48 +220,6 @@
     margin-bottom: 28px;
 }
 
-.recordar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    color: var(--texto-suave);
-    user-select: none;
-}
-
-.recordar__check {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 1.5px solid var(--borde-activo);
-    border-radius: 5px;
-    background: var(--superficie-2);
-    cursor: pointer;
-    position: relative;
-    flex-shrink: 0;
-    transition: background var(--transicion), border-color var(--transicion);
-}
-
-.recordar__check:checked {
-    background: var(--verde);
-    border-color: var(--verde);
-}
-
-.recordar__check:checked::after {
-    content: '';
-    position: absolute;
-    left: 5px;
-    top: 1px;
-    width: 6px;
-    height: 12px;
-    border: 2px solid var(--negro);
-    border-top: none;
-    border-left: none;
-    transform: rotate(45deg);
-}
-
 .olvide {
     font-size: 0.875rem;
     color: var(--texto-suave);

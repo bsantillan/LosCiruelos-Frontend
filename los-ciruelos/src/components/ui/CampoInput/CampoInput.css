@@ -76,3 +76,71 @@
 .campo__toggle:hover {
     color: var(--texto);
 }
+
+/* Modificadores de padding según íconos */
+.campo__input--con-izq {
+    padding-left: 44px;
+}
+
+.campo__input--con-der {
+    padding-right: 44px;
+}
+
+/* Sin modificadores — padding simétrico base */
+.campo__input:not(.campo__input--con-izq) {
+    padding-left: 16px;
+}
+
+/* Prefijo y sufijo */
+.campo__prefijo,
+.campo__sufijo {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--texto-suave);
+    pointer-events: none;
+    user-select: none;
+}
+
+.campo__prefijo {
+    left: 15px;
+}
+
+.campo__sufijo {
+    right: 15px;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+}
+
+/* Estado error en el contenedor */
+.campo__contenedor--error .campo__input {
+    border-color: var(--error);
+    box-shadow: 0 0 0 4px var(--error-fondo);
+}
+
+.campo__contenedor--error .campo__icono {
+    color: var(--error);
+}
+
+/* Mensaje de error */
+.campo__error {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: var(--error);
+    margin-top: 2px;
+}
+
+/* Quitar flechas en inputs numéricos */
+.campo__input[type="number"]::-webkit-inner-spin-button,
+.campo__input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.campo__input[type="number"] {
+    -moz-appearance: textfield;
+}

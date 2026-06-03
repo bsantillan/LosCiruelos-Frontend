@@ -1,0 +1,136 @@
+.campo__select-trigger {
+    width: 100%;
+    height: 52px;
+    background: var(--superficie-2);
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-md);
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.9375rem;
+    padding: 0 44px 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: border-color var(--transicion), background var(--transicion), box-shadow var(--transicion);
+}
+
+.campo__select-trigger:focus {
+    outline: none;
+    border-color: var(--verde-lima);
+    background: var(--superficie-3);
+    box-shadow: 0 0 0 4px rgba(143, 212, 0, 0.08);
+}
+
+.campo__select-trigger--abierto {
+    border-color: var(--verde-lima);
+    background: var(--superficie-3);
+    box-shadow: 0 0 0 4px rgba(143, 212, 0, 0.08);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.campo__select-trigger--error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 4px var(--error-fondo);
+}
+
+.campo__select-trigger--deshabilitado {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.campo__select-valor {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.campo__select-valor--placeholder {
+    color: var(--texto-tenue);
+}
+
+.campo__select-chevron {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--texto-tenue);
+    display: flex;
+    align-items: center;
+    transition: transform var(--transicion), color var(--transicion);
+}
+
+.campo__select-chevron--rotado {
+    transform: translateY(-50%) rotate(180deg);
+    color: var(--verde-lima);
+}
+
+/* Lista desplegable */
+.campo__select-lista {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--superficie-3);
+    border: 1.5px solid var(--verde-lima);
+    border-top: none;
+    border-bottom-left-radius: var(--radio-md);
+    border-bottom-right-radius: var(--radio-md);
+    list-style: none;
+    z-index: 100;
+    max-height: 220px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Para que la lista se posicione bien, el padre necesita position relative */
+.campo {
+    position: relative;
+}
+
+.campo__select-opcion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    font-size: 0.9375rem;
+    color: var(--texto);
+    cursor: pointer;
+    transition: background var(--transicion);
+}
+
+.campo__select-opcion:hover {
+    background: var(--superficie-2);
+}
+
+.campo__select-opcion--seleccionada {
+    color: var(--verde-lima);
+    background: var(--verde-fondo);
+}
+
+.campo__select-opcion + .campo__select-opcion {
+    border-top: 1px solid var(--borde);
+}
+
+/* Scrollbar de la lista */
+.campo__select-lista::-webkit-scrollbar {
+    width: 4px;
+}
+
+.campo__select-lista::-webkit-scrollbar-track {
+    background: var(--superficie-3);
+}
+
+.campo__select-lista::-webkit-scrollbar-thumb {
+    background: var(--superficie-2);
+    border-radius: 2px;
+}
+
+.campo__requerido {
+    color: var(--error);
+    margin-left: 3px;
+}
