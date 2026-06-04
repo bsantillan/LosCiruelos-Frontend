@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, AlertCircle, Check } from "lucide-react";
 import "./CampoSelect.css";
 
@@ -25,20 +26,48 @@ export default function CampoSelect({
     opciones, placeholder, error, required, disabled
 }: CampoSelectProps) {
     const [abierto, setAbierto] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
+    const [posicion, setPosicion] = useState({ top: 0, left: 0, width: 0 });
+    const triggerRef = useRef<HTMLDivElement>(null);
+    const listaRef = useRef<HTMLUListElement>(null);
 
     const etiquetaSeleccionada = opciones.find(o => o.valor === value)?.etiqueta;
 
+    // Calcular posición del dropdown basado en el trigger
+    useLayoutEffect(() => {
+        if (abierto && triggerRef.current) {
+            const rect = triggerRef.current.getBoundingClientRect();
+            setPosicion({
+                top: rect.bottom + window.scrollY + 4,
+                left: rect.left + window.scrollX,
+                width: rect.width,
+            });
+        }
+    }, [abierto]);
+
     // Cerrar al hacer click afuera
     useEffect(() => {
+        if (!abierto) return;
         const handler = (e: MouseEvent) => {
-            if (ref.current && !ref.current.contains(e.target as Node)) {
+            if (
+                triggerRef.current && !triggerRef.current.contains(e.target as Node) &&
+                listaRef.current && !listaRef.current.contains(e.target as Node)
+            ) {
                 setAbierto(false);
             }
         };
         document.addEventListener("mousedown", handler);
         return () => document.removeEventListener("mousedown", handler);
-    }, []);
+    }, [abierto]);
+
+    // Cerrar con Escape
+    useEffect(() => {
+        if (!abierto) return;
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setAbierto(false);
+        };
+        document.addEventListener("keydown", handler);
+        return () => document.removeEventListener("keydown", handler);
+    }, [abierto]);
 
     const seleccionar = (valor: string | number) => {
         onChange({ target: { name, value: valor } });
@@ -46,19 +75,19 @@ export default function CampoSelect({
     };
 
     return (
-        <div className="campo" ref={ref}>
+        <div className="campo">
             <label className="campo__etiqueta" htmlFor={id}>
                 {label}{required && <span className="campo__requerido">*</span>}
             </label>
 
             <div
+                ref={triggerRef}
                 className={`campo__select-trigger${abierto ? " campo__select-trigger--abierto" : ""}${error ? " campo__select-trigger--error" : ""}${disabled ? " campo__select-trigger--deshabilitado" : ""}`}
                 onClick={() => !disabled && setAbierto(v => !v)}
                 role="combobox"
                 aria-expanded={abierto}
                 aria-haspopup="listbox"
                 aria-controls={`${id}-lista`}
-                aria-labelledby={id}
                 tabIndex={disabled ? -1 : 0}
                 onKeyDown={e => {
                     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setAbierto(v => !v); }
@@ -73,12 +102,20 @@ export default function CampoSelect({
                 </span>
             </div>
 
-            {abierto && (
+            {/* Portal — se renderiza directo en el body, fuera de cualquier contenedor */}
+            {abierto && createPortal(
                 <ul
+                    ref={listaRef}
                     className="campo__select-lista"
                     id={`${id}-lista`}
                     role="listbox"
                     aria-label={label}
+                    style={{
+                        position: "absolute",
+                        top: posicion.top,
+                        left: posicion.left,
+                        width: posicion.width,
+                    }}
                 >
                     {opciones.map(op => {
                         const seleccionada = op.valor === value;
@@ -97,7 +134,8 @@ export default function CampoSelect({
                             </li>
                         );
                     })}
-                </ul>
+                </ul>,
+                document.body
             )}
 
             {error && (
