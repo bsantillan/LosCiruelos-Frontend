@@ -8,31 +8,9 @@ import CampoSelect from "../../components/ui/CampoSelect/CampoSelect";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";
 import Boton from "../../components/ui/Boton/Boton";
 import "./Register.css";
-
-/* ─── TIPOS ──────────────────────────────────────── */
-interface DatosRegistro {
-    nombre: string;
-    apellido: string;
-    email: string;
-    password: string;
-    confirmarPassword: string;
-    telefono: string;
-    categoria: string;
-    posicion: string;
-    terminos: boolean;
-}
-
-interface Errores {
-    nombre?: string;
-    apellido?: string;
-    email?: string;
-    password?: string;
-    confirmarPassword?: string;
-    telefono?: string;
-    categoria?: string;
-    posicion?: string;
-    terminos?: string;
-}
+import { ErroresRegister, useRegister } from "../../hooks/useRegister";
+import { RegisterRequest } from "../../types/register.types";
+import { useNavigate } from "react-router-dom";
 
 /* ─── OPCIONES ───────────────────────────────────── */
 const CATEGORIAS = [
@@ -86,77 +64,127 @@ function TerminosContenido() {
 
 /* ─── COMPONENTE PRINCIPAL ───────────────────────── */
 export default function Register() {
+    const navigate = useNavigate();
     const [paso, setPaso] = useState(1);
-    const [cargando, setCargando] = useState(false);
-    const [datos, setDatos] = useState<DatosRegistro>({
-        nombre: "", apellido: "", email: "",
-        password: "", confirmarPassword: "",
-        telefono: "", categoria: "", posicion: "",
-        terminos: false,
+    const [datos, setDatos] = useState<RegisterRequest>({
+        nombre: "",
+        apellido: "",
+        email: "",
+        password: "",
+        telefono: "",
+        categoria: "",
+        posicion: "",
+        termsAccepted: false,
     });
-    const [errores, setErrores] = useState<Errores>({});
+    const [confirmarPassword, setConfirmarPassword] = useState("");
+    const [errores, setErrores] = useState<ErroresRegister>({});
+    const { register, cargando, erroresApi } = useRegister();
 
     const cambiarInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setDatos(p => ({ ...p, [name]: value }));
-        if (errores[name as keyof Errores])
-            setErrores(p => ({ ...p, [name]: undefined }));
+
+        setDatos(prev => ({
+            ...prev,
+            [name]: value,
+        }));
+
+        name === "confirmarPassword" ? setConfirmarPassword(value) : null;
+
+        setErrores({});
     };
 
-    const cambiarSelect = (name: string) => (e: { target: { value: string | number } }) => {
-        setDatos(p => ({ ...p, [name]: e.target.value }));
-        if (errores[name as keyof Errores])
-            setErrores(p => ({ ...p, [name]: undefined }));
+    const cambiarSelect = (name: keyof RegisterRequest) => (e: { target: { value: string | number } }) => {
+
+        setDatos(prev => ({
+            ...prev,
+            [name]: e.target.value,
+        }));
+
+        setErrores({});
     };
 
     /* ── Validaciones ── */
     const validarPaso1 = (): boolean => {
-        const e: Errores = {};
-        if (!datos.nombre) e.nombre = "El nombre es obligatorio.";
-        else if (datos.nombre.length < 2) e.nombre = "Mínimo 2 caracteres.";
-        else if (datos.nombre.length > 50) e.nombre = "Máximo 50 caracteres.";
+        const nuevosErrores: ErroresRegister = {};
 
-        if (!datos.apellido) e.apellido = "El apellido es obligatorio.";
-        else if (datos.apellido.length < 2) e.apellido = "Mínimo 2 caracteres.";
-        else if (datos.apellido.length > 50) e.apellido = "Máximo 50 caracteres.";
+        if (!datos.nombre)
+            nuevosErrores.nombre = "El nombre es obligatorio.";
+        else if (datos.nombre.length < 2)
+            nuevosErrores.nombre = "Mínimo 2 caracteres.";
+        else if (datos.nombre.length > 50)
+            nuevosErrores.nombre = "Máximo 50 caracteres.";
 
-        if (!datos.email) e.email = "El correo es obligatorio.";
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) e.email = "El correo no es válido.";
+        if (!datos.apellido)
+            nuevosErrores.apellido = "El apellido es obligatorio.";
+        else if (datos.apellido.length < 2)
+            nuevosErrores.apellido = "Mínimo 2 caracteres.";
+        else if (datos.apellido.length > 50)
+            nuevosErrores.apellido = "Máximo 50 caracteres.";
 
-        if (!datos.telefono) e.telefono = "El teléfono es obligatorio.";
-        else if (!/^\+?[0-9]{8,15}$/.test(datos.telefono)) e.telefono = "Formato inválido. Ej: +5491123456789";
+        if (!datos.email)
+            nuevosErrores.email = "El correo es obligatorio.";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email))
+            nuevosErrores.email = "El correo no es válido.";
 
-        if (!datos.password) e.password = "La contraseña es obligatoria.";
-        else if (datos.password.length < 8) e.password = "Mínimo 8 caracteres.";
-        else if (datos.password.length > 30) e.password = "Máximo 30 caracteres.";
+        if (!datos.telefono)
+            nuevosErrores.telefono = "El teléfono es obligatorio.";
+        else if (!/^\+?[0-9]{8,15}$/.test(datos.telefono))
+            nuevosErrores.telefono = "Formato inválido. Ej: +5491123456789";
 
-        if (!datos.confirmarPassword) e.confirmarPassword = "Confirmá tu contraseña.";
-        else if (datos.password !== datos.confirmarPassword) e.confirmarPassword = "Las contraseñas no coinciden.";
+        if (!datos.password)
+            nuevosErrores.password = "La contraseña es obligatoria.";
+        else if (datos.password.length < 8)
+            nuevosErrores.password = "Mínimo 8 caracteres.";
+        else if (datos.password.length > 30)
+            nuevosErrores.password = "Máximo 30 caracteres.";
 
-        setErrores(e);
-        return Object.keys(e).length === 0;
+        if (!confirmarPassword)
+            nuevosErrores.confirmarPassword = "Confirmá tu contraseña.";
+        else if (datos.password !== confirmarPassword)
+            nuevosErrores.confirmarPassword = "Las contraseñas no coinciden.";
+
+        setErrores(nuevosErrores);
+
+        return Object.keys(nuevosErrores).length === 0;
     };
 
     const validarPaso2 = (): boolean => {
-        const e: Errores = {};
-        if (!datos.categoria) e.categoria = "La categoría es obligatoria.";
-        if (!datos.posicion) e.posicion = "La posición es obligatoria.";
-        setErrores(e);
-        return Object.keys(e).length === 0;
+        const nuevosErrores: ErroresRegister = {};
+
+        if (!datos.categoria)
+            nuevosErrores.categoria = "La categoría es obligatoria.";
+
+        if (!datos.posicion)
+            nuevosErrores.posicion = "La posición es obligatoria.";
+
+        setErrores(nuevosErrores);
+
+        return Object.keys(nuevosErrores).length === 0;
     };
 
     const validarPaso3 = (): boolean => {
-        const e: Errores = {};
-        if (!datos.terminos) e.terminos = "Debés aceptar los términos para continuar.";
-        setErrores(e);
-        return Object.keys(e).length === 0;
+        const nuevosErrores: ErroresRegister = {};
+
+        if (!datos.termsAccepted)
+            nuevosErrores.termsAccepted =
+                "Debés aceptar los términos para continuar.";
+
+        setErrores(nuevosErrores);
+
+        return Object.keys(nuevosErrores).length === 0;
     };
 
     const siguientePaso = () => {
-        if (paso === 1 && !validarPaso1()) return;
-        if (paso === 2 && !validarPaso2()) return;
-        setErrores({});
-        setPaso(p => p + 1);
+        const esValido =
+            paso === 1
+                ? validarPaso1()
+                : paso === 2
+                    ? validarPaso2()
+                    : true;
+
+        if (!esValido) return;
+
+        setPaso(prev => prev + 1);
     };
 
     const irAPaso = (numero: number) => {
@@ -166,14 +194,16 @@ export default function Register() {
         }
     };
 
-    const enviar = (e: React.FormEvent) => {
+    const enviar = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!validarPaso3()) return;
-        setCargando(true);
-        setTimeout(() => {
-            setCargando(false);
-            console.log("Registro:", datos);
-        }, 1800);
+
+        const ok = await register(datos);
+
+        if (ok) {
+            navigate("/login");
+        }
     };
 
     const porcentajeProgreso = ((paso - 1) / (PASOS.length - 1)) * 100;
@@ -287,7 +317,7 @@ export default function Register() {
                                 <CampoInput
                                     id="confirmarPassword" name="confirmarPassword"
                                     label="Confirmá tu contraseña"
-                                    type="password" value={datos.confirmarPassword}
+                                    type="password" value={confirmarPassword}
                                     onChange={cambiarInput}
                                     placeholder="Repetí tu contraseña" icono={<Lock size={16} />}
                                     autoComplete="new-password" required
@@ -333,13 +363,13 @@ export default function Register() {
                                     id="terminos" name="terminos"
                                     label="Acepto los términos y condiciones"
                                     descripcion="Leí y acepto los términos de uso del club."
-                                    checked={datos.terminos}
+                                    checked={datos.termsAccepted}
                                     onChange={e => {
-                                        setDatos(p => ({ ...p, terminos: e.target.checked }));
-                                        if (errores.terminos)
-                                            setErrores(p => ({ ...p, terminos: undefined }));
+                                        setDatos(p => ({ ...p, termsAccepted: e.target.checked }));
+                                        if (errores.termsAccepted)
+                                            setErrores(p => ({ ...p, termsAccepted: undefined }));
                                     }}
-                                    error={errores.terminos}
+                                    error={errores.termsAccepted}
                                 />
                             </div>
                         )}

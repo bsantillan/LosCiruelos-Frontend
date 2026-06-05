@@ -6,22 +6,24 @@ import Login from './pages/Login/Login';
 import './globals.css'
 import AuthLayout from './layouts/AuthLayout';
 import Register from './pages/Register/Register';
+import { AuthProvider } from './context/AuthContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-        </Route>
+          </Route>
 
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Login />} />
+          <Route element={<MainLayout />}>
 
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>,
 )
