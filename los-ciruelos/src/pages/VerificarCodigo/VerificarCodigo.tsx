@@ -6,7 +6,6 @@ import padelBg from "../../assets/padel-bg.png";
 import Boton from "../../components/ui/Boton/Boton";
 import { ErroresVerificacion, useVerificacion } from "../../hooks/useVerificacion";
 import "../Login/Login.css";
-import { VerificarEmailRequest } from "../../types/auth.types";
 
 const LARGO_CODIGO = 6;
 const SEGUNDOS_REENVIO = 60;
@@ -126,7 +125,7 @@ export default function VerificarCodigo() {
         const nuevosErrores: ErroresVerificacion = {};
         const codigoStr = codigo.join("");
 
-        if (codigo.length > 0) { nuevosErrores.codigo = "El código es obligatorio." }
+        if (codigoStr.length === 0) { nuevosErrores.codigo = "El código es obligatorio." }
         else {
             if (codigoStr.length < LARGO_CODIGO) nuevosErrores.codigo = "El código debe tener 6 digitos.";
         }

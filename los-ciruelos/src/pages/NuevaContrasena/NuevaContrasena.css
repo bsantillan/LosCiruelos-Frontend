@@ -1,0 +1,11 @@
+.nueva-contrasena__boton {
+    margin-top: 40px;
+}
+
+.nueva-contrasena__error-general {
+    font-size: 0.875rem;
+    color: var(--error);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

@@ -8,6 +8,8 @@ import AuthLayout from './layouts/AuthLayout';
 import Register from './pages/Register/Register';
 import { AuthProvider } from './context/AuthContext';
 import VerificarCodigo from './pages/VerificarCodigo/VerificarCodigo';
+import OlvideContrasena from './pages/OlvideContrasena/OlvideContrasena';
+import NuevaContrasena from './pages/NuevaContrasena/NuevaContrasena';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -18,6 +20,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verificar-codigo" element={<VerificarCodigo />} />
+            <Route path="/olvide-contrasena" element={<OlvideContrasena />} />
+            <Route path="/nueva-contrasena" element={<NuevaContrasena />} />
 
           </Route>
 

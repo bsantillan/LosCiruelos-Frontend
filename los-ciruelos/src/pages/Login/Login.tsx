@@ -72,12 +72,12 @@ export default function Login() {
         try {
             await login(datos);
             navigate("/");
-        } catch(error) {
+        } catch (error) {
             if (error instanceof EmailNoVerificadoError) {
-            navigate("/verificar-codigo", {
-                state: { email: datos.email, tipo: "VERIFY_EMAIL" }
-            });
-        }
+                navigate("/verificar-codigo", {
+                    state: { email: datos.email, tipo: "VERIFY_EMAIL" }
+                });
+            }
         }
     };
 
@@ -140,8 +140,7 @@ export default function Login() {
                                     checked={recordar}
                                     onChange={e => setRecordar(e.target.checked)}
                                 />
-                                <a href="#" className="olvide">¿Olvidaste tu contraseña?</a>
-                            </div>
+                                <a href="/olvide-contrasena" className="olvide">¿Olvidaste tu contraseña?</a>                            </div>
                             <Boton type="submit" variante="primario" cargando={cargando}>
                                 <span>Ingresar al club</span>
                                 <ArrowRight size={17} />

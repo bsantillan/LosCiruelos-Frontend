@@ -42,8 +42,8 @@ export const authService = {
     },
 
     // PUT /auth/password-reset/confirm
-    confirmarResetPassword: async (datos: ResetPasswordRequest): Promise<void> => {
-        await api.put("/auth/password-reset/confirm", datos);
+    confirmarResetPassword: async (email: string, nuevaPassword: string): Promise<void> => {
+        await api.put("/auth/password-reset/confirm", {email, nuevaPassword});
     },
 
     // POST /auth/google

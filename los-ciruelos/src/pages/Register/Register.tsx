@@ -131,12 +131,18 @@ export default function Register() {
         else if (!/^\+?[0-9]{8,15}$/.test(datos.telefono))
             nuevosErrores.telefono = "Formato inválido. Ej: +5491123456789";
 
-        if (!datos.password)
+        if (!datos.password) {
             nuevosErrores.password = "La contraseña es obligatoria.";
-        else if (datos.password.length < 8)
-            nuevosErrores.password = "Mínimo 8 caracteres.";
-        else if (datos.password.length > 30)
-            nuevosErrores.password = "Máximo 30 caracteres.";
+        } else if (
+            datos.password.length < 8 ||
+            datos.password.length > 30 ||
+            !/[A-Z]/.test(datos.password) ||
+            !/[a-z]/.test(datos.password) ||
+            !/[0-9]/.test(datos.password) ||
+            !/[^A-Za-z0-9]/.test(datos.password)
+        ) {
+            nuevosErrores.password = "Debe tener entre 8 y 30 caracteres, una mayúscula, una minúscula, un número y un símbolo.";
+        }
 
         if (!confirmarPassword)
             nuevosErrores.confirmarPassword = "Confirmá tu contraseña.";
