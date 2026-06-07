@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 import type { LoginRequest } from "../types/auth.types";
 
+export class EmailNoVerificadoError extends Error {
+    constructor() { super("email_no_verificado"); }
+}
+
 export interface ErroresLogin {
     email?: string;
     password?: string;
-    codigo?: string;
-    email_verificado?: string;
     general?: string;
 }
 
@@ -26,19 +27,17 @@ export function useLogin() {
         } catch (error: any) {
             const data = error.response?.data;
 
-            if (data?.errors) {
-                setErroresApi(data.errors as ErroresLogin);
-            } else {
-                setErroresApi(
-                    data?.error ??
-                    { general: data?.error ?? "Ocurrió un error inesperado." }
-                );
+            if (data?.errors?.email_verificado) {
+                throw new EmailNoVerificadoError();
             }
 
-            setErroresApi(
-                data?.errors ??
-                { general: data?.error ?? "Ocurrió un error inesperado." }
-            );
+            if (data?.errors && typeof data.errors === "object") {
+                setErroresApi(data.errors as ErroresLogin);
+            } else if (typeof data?.error === "string") {
+                setErroresApi({ general: data.error });
+            } else {
+                setErroresApi({ general: "Ocurrió un error inesperado, intentá de nuevo." });
+            }
 
             throw error;
 

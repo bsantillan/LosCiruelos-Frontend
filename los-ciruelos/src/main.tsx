@@ -7,6 +7,7 @@ import './globals.css'
 import AuthLayout from './layouts/AuthLayout';
 import Register from './pages/Register/Register';
 import { AuthProvider } from './context/AuthContext';
+import VerificarCodigo from './pages/VerificarCodigo/VerificarCodigo';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')!).render(
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verificar-codigo" element={<VerificarCodigo />} />
 
           </Route>
 
