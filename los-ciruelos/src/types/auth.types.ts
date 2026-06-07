@@ -13,11 +13,6 @@ export interface VerificarEmailRequest {
     tipo_codigo: "VERIFY_EMAIL" | "PASSWORD_RESET";
 }
 
-export interface ResetPasswordRequest {
-    email: string;
-    nuevaPassword: string;
-}
-
 // ── Responses ─────────────────────────────────────
 export type Rol = "ADMIN" | "SOCIO";
 

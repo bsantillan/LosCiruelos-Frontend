@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
 import type { RegisterRequest } from "../types/register.types";
+
+export class EmailError extends Error {
+    constructor() { super("email"); }
+}
 
 export interface ErroresRegister {
     nombre?: string;
@@ -25,14 +28,29 @@ export function useRegister() {
         setErroresApi({});
         try {
             await authService.register(datos);
-            return true;
         } catch (error: any) {
-            const status = error.response?.status;
+            const data = error.response?.data;
+
+            let errores: ErroresRegister = {};
+
+            if (data?.errors && typeof data.errors === "object") {
+                errores = data.errors;
+            } else if (typeof data?.error === "string") {
+                errores = { general: data.error };
+            } else {
+                errores = {
+                    general: "Ocurrió un error inesperado."
+                };
+            }
+
+            setErroresApi(errores);
+
+            throw errores;
 
         } finally {
             setCargando(false);
         }
     };
 
-    return { register, cargando, erroresApi };
+    return { register, cargando, erroresApi, setErroresApi };
 }

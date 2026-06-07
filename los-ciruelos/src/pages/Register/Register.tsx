@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Mail, Lock, Phone, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { User, Mail, Lock, Phone, ArrowRight, ArrowLeft, Check, AlertCircle } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import logoLosCiruelos from "../../assets/LogoSinFondo.png";
 import padelBg from "../../assets/padel-bg.png";
@@ -8,7 +8,7 @@ import CampoSelect from "../../components/ui/CampoSelect/CampoSelect";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";
 import Boton from "../../components/ui/Boton/Boton";
 import "./Register.css";
-import { ErroresRegister, useRegister } from "../../hooks/useRegister";
+import { EmailError, ErroresRegister, useRegister } from "../../hooks/useRegister";
 import { RegisterRequest } from "../../types/register.types";
 import { useNavigate } from "react-router-dom";
 
@@ -78,7 +78,7 @@ export default function Register() {
     });
     const [confirmarPassword, setConfirmarPassword] = useState("");
     const [errores, setErrores] = useState<ErroresRegister>({});
-    const { register, cargando, erroresApi } = useRegister();
+    const { register, cargando, erroresApi, setErroresApi } = useRegister();
 
     const cambiarInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -91,6 +91,7 @@ export default function Register() {
         name === "confirmarPassword" ? setConfirmarPassword(value) : null;
 
         setErrores({});
+        setErroresApi({});
     };
 
     const cambiarSelect = (name: keyof RegisterRequest) => (e: { target: { value: string | number } }) => {
@@ -101,7 +102,14 @@ export default function Register() {
         }));
 
         setErrores({});
+        setErroresApi({});
     };
+
+    const cambiarToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDatos(p => ({ ...p, termsAccepted: e.target.checked }));
+        setErrores({});
+        setErroresApi({});
+    }
 
     /* ── Validaciones ── */
     const validarPaso1 = (): boolean => {
@@ -205,10 +213,23 @@ export default function Register() {
 
         if (!validarPaso3()) return;
 
-        const ok = await register(datos);
+        try {
+            await register(datos);
+            navigate("/login")
+        } catch (error: any) {
+            console.log(error);
 
-        if (ok) {
-            navigate("/login");
+            if (error.nombre || error.apellido || error.email || error.telefono || error.password) {
+                setPaso(1);
+            }
+
+            if (error.categoria || error.posicion) {
+                setPaso(2);
+            }
+
+            if (error.termsAccepted) {
+                setPaso(3);
+            }
         }
     };
 
@@ -290,43 +311,77 @@ export default function Register() {
                             <div className="campos animar-subir demora-1">
                                 <div className="campos-fila">
                                     <CampoInput
-                                        id="nombre" name="nombre" label="Nombre"
-                                        value={datos.nombre} onChange={cambiarInput}
-                                        placeholder="Juan" icono={<User size={16} />}
-                                        required error={errores.nombre}
+                                        id="nombre"
+                                        name="nombre"
+                                        label="Nombre"
+                                        value={datos.nombre}
+                                        onChange={cambiarInput}
+                                        placeholder="Juan"
+                                        icono={<User size={16} />}
+                                        required
+                                        error={errores.nombre || erroresApi.nombre}
                                     />
                                     <CampoInput
-                                        id="apellido" name="apellido" label="Apellido"
-                                        value={datos.apellido} onChange={cambiarInput}
-                                        placeholder="Pérez" icono={<User size={16} />}
-                                        required error={errores.apellido}
+                                        id="apellido"
+                                        name="apellido"
+                                        label="Apellido"
+                                        value={datos.apellido}
+                                        onChange={cambiarInput}
+                                        placeholder="Pérez"
+                                        icono={<User size={16} />}
+                                        required
+                                        error={errores.apellido || erroresApi.apellido}
                                     />
                                 </div>
                                 <CampoInput
-                                    id="email" name="email" label="Correo electrónico"
-                                    type="email" value={datos.email} onChange={cambiarInput}
-                                    placeholder="vos@email.com" icono={<Mail size={16} />}
-                                    autoComplete="email" required error={errores.email}
-                                />
-                                <CampoInput
-                                    id="telefono" name="telefono" label="Teléfono"
-                                    type="tel" value={datos.telefono} onChange={cambiarInput}
-                                    placeholder="+5491123456789" icono={<Phone size={16} />}
-                                    required error={errores.telefono}
-                                />
-                                <CampoInput
-                                    id="password" name="password" label="Contraseña"
-                                    type="password" value={datos.password} onChange={cambiarInput}
-                                    placeholder="Mínimo 8 caracteres" icono={<Lock size={16} />}
-                                    autoComplete="new-password" required error={errores.password}
-                                />
-                                <CampoInput
-                                    id="confirmarPassword" name="confirmarPassword"
-                                    label="Confirmá tu contraseña"
-                                    type="password" value={confirmarPassword}
+                                    id="email"
+                                    name="email"
+                                    label="Correo electrónico"
+                                    type="email"
+                                    value={datos.email}
                                     onChange={cambiarInput}
-                                    placeholder="Repetí tu contraseña" icono={<Lock size={16} />}
-                                    autoComplete="new-password" required
+                                    placeholder="vos@email.com"
+                                    icono={<Mail size={16} />}
+                                    autoComplete="email"
+                                    required
+                                    error={errores.email || erroresApi.email}
+                                />
+                                <CampoInput
+                                    id="telefono"
+                                    name="telefono"
+                                    label="Teléfono"
+                                    type="tel"
+                                    value={datos.telefono}
+                                    onChange={cambiarInput}
+                                    placeholder="+5491123456789"
+                                    icono={<Phone size={16} />}
+                                    required
+                                    error={errores.telefono || erroresApi.telefono}
+                                />
+                                <CampoInput
+                                    id="password"
+                                    name="password"
+                                    label="Contraseña"
+                                    type="password"
+                                    value={datos.password}
+                                    onChange={cambiarInput}
+                                    placeholder="Mínimo 8 caracteres"
+                                    icono={<Lock size={16} />}
+                                    autoComplete="new-password"
+                                    required
+                                    error={errores.password || erroresApi.password}
+                                />
+                                <CampoInput
+                                    id="confirmarPassword"
+                                    name="confirmarPassword"
+                                    label="Confirmá tu contraseña"
+                                    type="password"
+                                    value={confirmarPassword}
+                                    onChange={cambiarInput}
+                                    placeholder="Repetí tu contraseña"
+                                    icono={<Lock size={16} />}
+                                    autoComplete="new-password"
+                                    required
                                     error={errores.confirmarPassword}
                                 />
                             </div>
@@ -336,20 +391,25 @@ export default function Register() {
                         {paso === 2 && (
                             <div className="campos animar-subir demora-1">
                                 <CampoSelect
-                                    id="categoria" name="categoria" label="Categoría"
+                                    id="categoria" name="categoria"
+                                    label="Categoría"
                                     value={datos.categoria}
                                     onChange={cambiarSelect("categoria")}
                                     placeholder="Seleccioná tu categoría"
                                     opciones={CATEGORIAS}
-                                    required error={errores.categoria}
+                                    required
+                                    error={errores.categoria || erroresApi.categoria}
                                 />
                                 <CampoSelect
-                                    id="posicion" name="posicion" label="Posición en cancha"
+                                    id="posicion"
+                                    name="posicion"
+                                    label="Posición en cancha"
                                     value={datos.posicion}
                                     onChange={cambiarSelect("posicion")}
                                     placeholder="Seleccioná tu posición"
                                     opciones={POSICIONES}
-                                    required error={errores.posicion}
+                                    required
+                                    error={errores.posicion || erroresApi.categoria}
                                 />
                                 <div className="info-nivel">
                                     <p className="info-nivel__texto">
@@ -358,6 +418,12 @@ export default function Register() {
                                 </div>
                             </div>
                         )}
+
+                        {/* Error general */}
+                        <div className={`alerta-error${erroresApi.general ? " alerta-error--visible" : ""}`} role="alert">
+                            <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+                            {erroresApi.general}
+                        </div>
 
                         {/* Paso 3 */}
                         {paso === 3 && (
@@ -370,12 +436,8 @@ export default function Register() {
                                     label="Acepto los términos y condiciones"
                                     descripcion="Leí y acepto los términos de uso del club."
                                     checked={datos.termsAccepted}
-                                    onChange={e => {
-                                        setDatos(p => ({ ...p, termsAccepted: e.target.checked }));
-                                        if (errores.termsAccepted)
-                                            setErrores(p => ({ ...p, termsAccepted: undefined }));
-                                    }}
-                                    error={errores.termsAccepted}
+                                    onChange={cambiarToggle}
+                                    error={errores.termsAccepted || erroresApi.termsAccepted}
                                 />
                             </div>
                         )}

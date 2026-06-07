@@ -6,6 +6,7 @@ import padelBg from "../../assets/padel-bg.png";
 import Boton from "../../components/ui/Boton/Boton";
 import { ErroresVerificacion, useVerificacion } from "../../hooks/useVerificacion";
 import "../Login/Login.css";
+import { useLogin } from "../../hooks/useLogin";
 
 const LARGO_CODIGO = 6;
 const SEGUNDOS_REENVIO = 60;
@@ -80,7 +81,9 @@ export default function VerificarCodigo() {
     }, []);
 
     const config = CONFIG[tipo ?? "VERIFY_EMAIL"];
-    const { verificarCodigo, reenviarCodigo, cargando, reenviando, erroresApi } = useVerificacion();
+    const { verificarCodigo, reenviarCodigo, cargando, reenviando, erroresApi, setErroresApi } = useVerificacion();
+    const { login } = useLogin();
+
 
     const [codigo, setCodigo] = useState<string[]>(Array(LARGO_CODIGO).fill(""));
     const [reenvioContador, setReenvioContador] = useState(0);
@@ -94,6 +97,7 @@ export default function VerificarCodigo() {
 
     const handleCambio = (index: number, valor: string) => {
         setErrores({});
+        setErroresApi({});
         const limpio = valor.replace(/\D/g, "").slice(-1);
         const nuevo = [...codigo];
         nuevo[index] = limpio;
@@ -206,7 +210,7 @@ export default function VerificarCodigo() {
                                     <input
                                         key={i}
                                         ref={el => { inputsRef.current[i] = el; }}
-                                        className={`codigo-campo${erroresApi.codigo ? " codigo-campo--error" : ""}`}
+                                        className={`codigo-campo${erroresApi.codigo || errores.codigo ? " codigo-campo--error" : ""}`}
                                         type="text"
                                         inputMode="numeric"
                                         maxLength={1}
