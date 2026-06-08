@@ -144,3 +144,12 @@
 .campo__input[type="number"] {
     -moz-appearance: textfield;
 }
+
+.campo__input:-webkit-autofill,
+.campo__input:-webkit-autofill:hover,
+.campo__input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--superficie-2) inset;
+    -webkit-text-fill-color: var(--texto);
+    border-color: var(--verde-lima);
+    transition: background-color 5000s ease-in-out 0s;
+}

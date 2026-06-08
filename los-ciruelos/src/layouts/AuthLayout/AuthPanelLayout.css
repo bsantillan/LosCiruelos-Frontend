@@ -108,16 +108,15 @@
     text-shadow: 0 2px 40px rgba(0, 0, 0, 0.4);
 }
 
+
 .titular em {
     font-style: italic;
-    background: linear-gradient(90deg, var(--verde-oscuro), var(--verde-lima));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--verde);
+    position: relative;
 }
 
 /* ── Panel formulario ── */
-.panel-formulario {
+.panel-formulario { 
     display: flex;
     align-items: flex-start;
     justify-content: center;

@@ -1,79 +1,4 @@
-/* ── Layout base ── */
-.pagina-register {
-    min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 24px;
-    position: relative;
-    overflow: hidden;
-    background: var(--negro);
-}
-
-/* ── Fondo ── */
-.register-fondo {
-    position: fixed;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.18;
-    z-index: 0;
-}
-
-.register-fondo__overlay {
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(ellipse at 20% 50%, rgba(46, 158, 46, 0.12) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(143, 212, 0, 0.08) 0%, transparent 50%),
-        linear-gradient(160deg, rgba(5, 13, 5, 0.95) 0%, rgba(8, 12, 8, 0.90) 100%);
-    z-index: 1;
-}
-
-/* ── Card flotante ── */
-.register-card {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 520px;
-    background: var(--superficie);
-    border: 1px solid var(--borde);
-    border-radius: var(--radio-xl);
-    box-shadow:
-        0 0 0 1px rgba(143, 212, 0, 0.06),
-        0 24px 80px rgba(0, 0, 0, 0.6),
-        0 0 60px rgba(143, 212, 0, 0.04);
-}
-
-/* ── Header de la card ── */
-.register-card__header {
-    padding: 28px 32px 0;
-}
-
-.register-card__marca {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 28px;
-}
-
-.register-card__marca .logo-mobile__imagen {
-    height: 32px;
-    width: auto;
-    object-fit: contain;
-}
-
-.register-card__marca .logo-mobile__texto {
-    font-family: var(--fuente-titulo);
-    font-size: 0.9rem;
-    font-weight: 700;
-    font-style: italic;
-    letter-spacing: 0.18em;
-    color: var(--texto);
-}
-
-/* ── Tabs de pasos ── */
+/* Tabs de pasos */
 .register-tabs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -81,7 +6,6 @@
     background: var(--superficie-2);
     border-radius: var(--radio-md);
     padding: 5px;
-    margin-bottom: 32px;
 }
 
 .register-tab {
@@ -89,17 +13,19 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    padding: 9px 12px;
+    padding: 9px 8px;
     border-radius: var(--radio-sm);
     border: none;
     background: transparent;
     cursor: default;
     transition: background var(--transicion), color var(--transicion);
     font-family: var(--fuente-cuerpo);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 500;
     color: var(--texto-tenue);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .register-tab--completado {
@@ -114,7 +40,6 @@
 .register-tab--activo {
     background: var(--superficie-3);
     color: var(--texto);
-    cursor: default;
 }
 
 .register-tab__numero {
@@ -142,11 +67,11 @@
     color: var(--verde-lima);
 }
 
-/* ── Barra de progreso bajo los tabs ── */
+/* Barra de progreso */
 .register-progreso {
     height: 2px;
     background: var(--borde);
-    margin: 0 32px;
+    margin-top: 16px;
     border-radius: var(--radio-pill);
     overflow: hidden;
 }
@@ -158,44 +83,14 @@
     transition: width var(--transicion-lenta);
 }
 
-/* ── Cuerpo del formulario ── */
-.register-card__cuerpo {
-    padding: 28px 32px 32px;
-}
-
-.register-card__subtitulo {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--verde);
-    margin-bottom: 6px;
-}
-
-.register-card__titulo {
-    font-family: var(--fuente-titulo);
-    font-size: clamp(1.8rem, 3vw, 2.4rem);
-    font-weight: 800;
-    font-style: italic;
-    line-height: 1;
-    color: var(--texto);
-    margin-bottom: 24px;
-}
-
-/* ── Campos ── */
-.campos {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.campos-fila {
+/* Campos en fila */
+.register-campos-fila {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
 
-/* ── Navegación entre pasos ── */
+/* Navegación entre pasos */
 .navegacion-pasos {
     display: flex;
     justify-content: flex-end;
@@ -206,7 +101,7 @@
     justify-content: space-between;
 }
 
-/* ── Info nivel ── */
+/* Info nivel */
 .info-nivel {
     background: var(--verde-fondo);
     border: 1px solid var(--verde-borde);
@@ -220,7 +115,7 @@
     line-height: 1.5;
 }
 
-/* ── Términos ── */
+/* Términos */
 .terminos-box {
     background: var(--superficie-2);
     border: 1.5px solid var(--borde);
@@ -257,73 +152,18 @@
     font-weight: 600;
 }
 
-.terminos-box::-webkit-scrollbar {
-    width: 4px;
-}
+.terminos-box::-webkit-scrollbar { width: 4px; }
+.terminos-box::-webkit-scrollbar-track { background: var(--superficie-2); }
+.terminos-box::-webkit-scrollbar-thumb { background: var(--superficie-3); border-radius: 2px; }
 
-.terminos-box::-webkit-scrollbar-track {
-    background: var(--superficie-2);
-}
-
-.terminos-box::-webkit-scrollbar-thumb {
-    background: var(--superficie-3);
-    border-radius: 2px;
-}
-
-/* ── Footer de la card ── */
-.register-card__footer {
-    padding: 0 32px 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    border-radius: 0 0 var(--radio-xl) var(--radio-xl);
-}
-
-.register-card__footer .separador {
-    margin: 0;
-}
-
-.register-card__footer .pie {
-    margin: 0;
-}
-
-/* ── Responsive ── */
-@media (max-width: 580px) {
-    .pagina-register {
-        padding: 0;
-        align-items: flex-start;
-    }
-
-    .register-card {
-        border-radius: 0;
-        min-height: 100dvh;
-        border: none;
-        box-shadow: none;
-    }
-
-    .register-card__header {
-        padding: 32px 20px 0;
-        border-radius: var(--radio-xl) var(--radio-xl) 0 0;
-    }
-
-    .register-card__cuerpo {
-        padding: 24px 20px 28px;
-    }
-
-    .register-card__footer {
-        padding: 0 20px 32px;
-    }
-
-    .register-progreso {
-        margin: 0 20px;
-    }
-
-    .campos-fila {
+/* Responsive */
+@media (max-width: 860px) {
+    .register-campos-fila {
         grid-template-columns: 1fr;
     }
 
     .register-tab {
-        font-size: 0.75rem;
-        padding: 8px 6px;
+        font-size: 0.6875rem;
+        padding: 8px 4px;
     }
 }
