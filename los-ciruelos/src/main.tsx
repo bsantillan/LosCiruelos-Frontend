@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Login from './pages/Login/Login';
 import './globals.css'
-import AuthLayout from './layouts/AuthLayout';
+import AuthLayout from './layouts/AuthLayout/AuthLayout';
 import Register from './pages/Register/Register';
 import { AuthProvider } from './context/AuthContext';
 import VerificarCodigo from './pages/VerificarCodigo/VerificarCodigo';
