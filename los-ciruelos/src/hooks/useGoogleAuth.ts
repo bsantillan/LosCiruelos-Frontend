@@ -26,10 +26,13 @@ export function useGoogleAuth() {
             const data = error.response?.data;
             if (data?.errors && typeof data.errors === "object") {
                 setErroresApi({ general: Object.values(data.errors)[0] as string });
+                console.log(error);
             } else if (typeof data?.error === "string") {
                 setErroresApi({ general: data.error });
+                console.log(error);
             } else {
                 setErroresApi({ general: "Ocurrió un error inesperado, intentá de nuevo." });
+                console.log(error); 
             }
             throw error;
         } finally {

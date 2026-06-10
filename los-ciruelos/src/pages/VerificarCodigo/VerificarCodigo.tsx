@@ -49,8 +49,6 @@ export default function VerificarCodigo() {
 
     const config = CONFIG[tipo ?? "VERIFY_EMAIL"];
     const { verificarCodigo, reenviarCodigo, cargando, reenviando, erroresApi, setErroresApi } = useVerificacion();
-    const { login } = useLogin();
-
 
     const [codigo, setCodigo] = useState<string[]>(Array(LARGO_CODIGO).fill(""));
     const [reenvioContador, setReenvioContador] = useState(0);

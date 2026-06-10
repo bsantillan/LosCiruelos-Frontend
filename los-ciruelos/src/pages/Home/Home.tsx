@@ -4,7 +4,6 @@ import { useAuth } from "../../context/AuthContext";
 export default function Home() {
     const { usuario } = useAuth();
 
-
     useEffect(() => {
         if (!usuario?.perfilCompleto) {
             console.log("Perfil Incompleto: " + usuario?.perfilCompleto)

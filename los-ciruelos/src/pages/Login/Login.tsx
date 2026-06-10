@@ -78,7 +78,7 @@ export default function Login() {
                 <form onSubmit={enviar} noValidate>
                     <div className={`alerta-error${(erroresApi.general || erroresGoogle.general) ? " alerta-error--visible" : ""}`} role="alert">
                         <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
-                        {erroresApi.general}
+                        {erroresApi.general || erroresGoogle.general}
                     </div>
                     <div className="campos">
                         <CampoInput
