@@ -1,0 +1,169 @@
+/* Tabs de pasos */
+.register-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    background: var(--superficie-2);
+    border-radius: var(--radio-md);
+    padding: 5px;
+}
+
+.register-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 8px;
+    border-radius: var(--radio-sm);
+    border: none;
+    background: transparent;
+    cursor: default;
+    transition: background var(--transicion), color var(--transicion);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--texto-tenue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.register-tab--completado {
+    color: var(--verde-lima);
+    cursor: pointer;
+}
+
+.register-tab--completado:hover {
+    background: var(--verde-fondo);
+}
+
+.register-tab--activo {
+    background: var(--superficie-3);
+    color: var(--texto);
+}
+
+.register-tab__numero {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    background: var(--superficie-3);
+    color: var(--texto-tenue);
+    flex-shrink: 0;
+    transition: background var(--transicion), color var(--transicion);
+}
+
+.register-tab--activo .register-tab__numero {
+    background: var(--verde-lima);
+    color: var(--negro);
+}
+
+.register-tab--completado .register-tab__numero {
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+}
+
+/* Barra de progreso */
+.register-progreso {
+    height: 2px;
+    background: var(--borde);
+    margin-top: 16px;
+    border-radius: var(--radio-pill);
+    overflow: hidden;
+}
+
+.register-progreso__barra {
+    height: 100%;
+    background: linear-gradient(90deg, var(--verde-oscuro), var(--verde-lima));
+    border-radius: var(--radio-pill);
+    transition: width var(--transicion-lenta);
+}
+
+/* Campos en fila */
+.register-campos-fila {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Navegación entre pasos */
+.navegacion-pasos {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.navegacion-pasos--doble {
+    justify-content: space-between;
+}
+
+/* Info nivel */
+.info-nivel {
+    background: var(--verde-fondo);
+    border: 1px solid var(--verde-borde);
+    border-radius: var(--radio-md);
+    padding: 12px 16px;
+}
+
+.info-nivel__texto {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+    line-height: 1.5;
+}
+
+/* Términos */
+.terminos-box {
+    background: var(--superficie-2);
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-md);
+    padding: 20px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.terminos-contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.terminos-contenido p {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+    line-height: 1.6;
+}
+
+.terminos-contenido h4 {
+    font-family: var(--fuente-titulo);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--verde-lima);
+    margin-top: 4px;
+}
+
+.terminos-contenido strong {
+    color: var(--texto);
+    font-weight: 600;
+}
+
+.terminos-box::-webkit-scrollbar { width: 4px; }
+.terminos-box::-webkit-scrollbar-track { background: var(--superficie-2); }
+.terminos-box::-webkit-scrollbar-thumb { background: var(--superficie-3); border-radius: 2px; }
+
+/* Responsive */
+@media (max-width: 860px) {
+    .register-campos-fila {
+        grid-template-columns: 1fr;
+    }
+
+    .register-tab {
+        font-size: 0.6875rem;
+        padding: 8px 4px;
+    }
+}
