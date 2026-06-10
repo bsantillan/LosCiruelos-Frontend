@@ -10,9 +10,11 @@ import { AuthProvider } from './context/AuthContext';
 import VerificarCodigo from './pages/VerificarCodigo/VerificarCodigo';
 import OlvideContrasena from './pages/OlvideContrasena/OlvideContrasena';
 import NuevaContrasena from './pages/NuevaContrasena/NuevaContrasena';
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import Home from './pages/Home/Home';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <AuthProvider>
       <BrowserRouter>
         <Routes>
@@ -26,10 +28,11 @@ createRoot(document.getElementById('root')!).render(
           </Route>
 
           <Route element={<MainLayout />}>
+            <Route path="/" element={<Home />} />
 
           </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-  </StrictMode>,
+  </GoogleOAuthProvider>
 )

@@ -8,6 +8,9 @@ import { EmailNoVerificadoError, ErroresLogin, useLogin } from "../../hooks/useL
 import { LoginRequest } from "../../types/auth.types";
 import { useNavigate } from "react-router-dom";
 import { AuthPanelLayout } from "../../layouts/AuthLayout/AuthPanelLayout";
+import { useGoogleAuth } from "../../hooks/useGoogleAuth";
+import BotonGoogle from "../../components/ui/Boton/BotonGoogle";
+import { CredentialResponse } from "@react-oauth/google";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -15,12 +18,22 @@ export default function Login() {
     const [recordar, setRecordar] = useState(false);
     const [errores, setErrores] = useState<ErroresLogin>({});
     const { login, cargando, erroresApi, setErroresApi } = useLogin();
+    const { loginConGoogle, handleGoogleError, cargando: cargandoGoogle, erroresApi: erroresGoogle, setErroresApi: setErroresGoogle } = useGoogleAuth();
+
+    const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+        try {
+            await loginConGoogle(credentialResponse);
+            navigate("/");
+        } catch (error) {
+        }
+    };
 
     const cambiarInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setDatos(prev => ({ ...prev, [name]: value }));
         setErrores({});
         setErroresApi({});
+        setErroresGoogle({});
     };
 
     const validar = (): boolean => {
@@ -63,7 +76,7 @@ export default function Login() {
                 </div>
 
                 <form onSubmit={enviar} noValidate>
-                    <div className={`alerta-error${erroresApi.general ? " alerta-error--visible" : ""}`} role="alert">
+                    <div className={`alerta-error${(erroresApi.general || erroresGoogle.general) ? " alerta-error--visible" : ""}`} role="alert">
                         <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
                         {erroresApi.general}
                     </div>
@@ -98,10 +111,11 @@ export default function Login() {
                 </form>
 
                 <div className="separador"><span>o continuá con</span></div>
-                <Boton variante="secundario" onClick={() => { }}>
-                    <FcGoogle size={18} />
-                    Continuar con Google
-                </Boton>
+                <BotonGoogle
+                    onSuccess={handleGoogleSuccess}
+                    onError={handleGoogleError}
+                    texto="Continuar con Google"
+                />
                 <p className="pie">
                     ¿No tenés cuenta?&nbsp;<a href="/register">Registrate gratis</a>
                 </p>

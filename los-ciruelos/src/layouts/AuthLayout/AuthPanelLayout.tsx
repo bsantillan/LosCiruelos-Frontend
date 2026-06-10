@@ -2,12 +2,16 @@ import logoLosCiruelos from "../../assets/LogoSinFondo.png";
 import padelBg from "../../assets/padel-bg.png";
 import "./AuthPanelLayout.css";
 
+interface LogoProps {
+    nombre?: string;
+}
+
 /* ─── LOGO ───────────────────────────────────────── */
-export function Logo() {
+export function Logo({ nombre = "LOS CIRUELOS" }: LogoProps) {
     return (
         <div className="logo">
             <img src={logoLosCiruelos} alt="Los Ciruelos Pádel" className="logo__imagen" />
-            <span className="logo-texto">LOS CIRUELOS</span>
+            <span className="logo-texto">{nombre}</span>
         </div>
     );
 }
