@@ -60,7 +60,7 @@ export default function Navbar() {
                 {/* Logo */}
                 <div
                     className="navbar__logo-contenedor"
-                    onClick={() => navigate("/home")}
+                    onClick={() => navigate("/")}
                     style={{ cursor: "pointer" }}
                 >
                     <Logo nombre="" />
