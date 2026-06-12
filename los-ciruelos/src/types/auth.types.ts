@@ -14,7 +14,7 @@ export interface VerificarEmailRequest {
 }
 
 // ── Responses ─────────────────────────────────────
-export type Rol = "ADMIN" | "SOCIO";
+export type Rol = "ADMIN" | "CLIENTE" | "INVITADO" | "PROFESOR";
 
 export interface LoginResponse {
     accessToken: string;

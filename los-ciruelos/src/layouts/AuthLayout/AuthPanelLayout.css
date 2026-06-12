@@ -110,13 +110,21 @@
 
 
 .titular em {
-    font-style: italic;
-    color: var(--verde);
-    position: relative;
+    font-style: inherit;
+    font-weight: inherit;
+    background: linear-gradient(90deg,
+            var(--verde-oscuro),
+            var(--verde-lima));
+    padding: 0.1em 0.15em;
+
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
 }
 
 /* ── Panel formulario ── */
-.panel-formulario { 
+.panel-formulario {
     display: flex;
     align-items: flex-start;
     justify-content: center;

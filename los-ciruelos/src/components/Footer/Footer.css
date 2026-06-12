@@ -1,0 +1,102 @@
+/* ── Footer ── */
+.home-footer {
+    background: var(--negro);
+    border-top: 1px solid var(--borde);
+    padding: 64px 0 32px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+
+.footer-nombre {
+    display: block;
+    font-family: var(--fuente-titulo);
+    font-size: 1.2rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    background: linear-gradient(90deg, var(--verde-oscuro), var(--verde-lima));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+}
+
+.footer-descripcion {
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.footer-instagram {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+    text-decoration: none;
+    transition: color var(--transicion);
+}
+
+.footer-instagram:hover {
+    color: var(--verde-lima);
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-links__titulo {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+    margin-bottom: 4px;
+}
+
+.footer-links a,
+.footer-links span {
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+    text-decoration: none;
+    transition: color var(--transicion);
+}
+
+.footer-links a:hover {
+    color: var(--verde-lima);
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--borde);
+    padding-top: 24px;
+    font-size: 0.8125rem;
+    color: var(--texto-tenue);
+    text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+    }
+}
+
+@media (max-width: 860px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .home-footer {
+        padding: 48px 0 24px;
+    }
+}

@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LogOut, Home, Menu, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { Logo } from "../../layouts/AuthLayout/AuthPanelLayout";
 import "./Navbar.css";
+import { NAVBAR_BY_ROLE } from "../../config/sections";
 
 /* ─── AVATAR ─────────────────────────────────────── */
 function Avatar({ nombre, apellido }: { nombre: string; apellido: string }) {
@@ -13,14 +14,22 @@ function Avatar({ nombre, apellido }: { nombre: string; apellido: string }) {
 
 /* ─── NAVBAR ─────────────────────────────────────── */
 export default function Navbar() {
-    const { usuario, cerrarSesion } = useAuth();
+    const { usuario,cerrarSesion } = useAuth();
+    const items = NAVBAR_BY_ROLE[usuario ? usuario.rol : "INVITADO"];
     const navigate = useNavigate();
     const location = useLocation();
     const [menuAbierto, setMenuAbierto] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
-    const esActivo = (path: string) => location.pathname === path;
+    const esActivo = (to: string) => {
+        const hash = to.split("#")[1];
 
+        if (!hash) {
+            return location.pathname === to;
+        }
+
+        return location.hash === `#${hash}`;
+    };
     // Cerrar menú al hacer click afuera
     useEffect(() => {
         if (!menuAbierto) return;
@@ -60,7 +69,7 @@ export default function Navbar() {
                 {/* Logo */}
                 <div
                     className="navbar__logo-contenedor"
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/#inicio")}
                     style={{ cursor: "pointer" }}
                 >
                     <Logo nombre="" />
@@ -70,13 +79,16 @@ export default function Navbar() {
 
                 {/* Links desktop */}
                 <nav className="navbar__links">
-                    <a
-                        href="/"
-                        className={`navbar__link${esActivo("/") ? " navbar__link--activo" : ""}`}
-                    >
-                        <Home size={14} />
-                        Inicio
-                    </a>
+                    {items.map(({ id, label, icon: Icon, to }) => (
+                        <a
+                            key={id}
+                            href={to}
+                            className={`navbar__link${esActivo(to) ? " navbar__link--activo" : ""}`}
+                        >
+                            <Icon size={14} />
+                            {label}
+                        </a>
+                    ))}
                 </nav>
 
                 {/* Acciones desktop */}
@@ -137,13 +149,16 @@ export default function Navbar() {
                 <div className="navbar__menu-mobile__separador" />
 
                 <nav className="navbar__menu-mobile__links">
-                    <a
-                        href="/home"
-                        className={`navbar__menu-mobile__link${esActivo("/home") ? " navbar__menu-mobile__link--activo" : ""}`}
-                    >
-                        <Home size={16} />
-                        Inicio
-                    </a>
+                    {items.map(({ id, label, icon: Icon, to }) => (
+                        <a
+                            key={id}
+                            href={to}
+                            className={`navbar__link${esActivo(to) ? " navbar__link--activo" : ""}`}
+                        >
+                            <Icon size={14} />
+                            {label}
+                        </a>
+                    ))}
 
                     {usuario ? (
                         <button
