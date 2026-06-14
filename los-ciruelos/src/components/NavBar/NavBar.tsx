@@ -12,24 +12,68 @@ function Avatar({ nombre, apellido }: { nombre: string; apellido: string }) {
     return <div className="navbar-avatar">{iniciales}</div>;
 }
 
+/* ─── HOOK SECCIÓN ACTIVA ────────────────────────── */
+function useSeccionActiva(ids: string[]) {
+    const [activa, setActiva] = useState<string>("");
+
+    useEffect(() => {
+        if (ids.length === 0) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setActiva(entry.target.id);
+                    }
+                });
+            },
+            {
+                rootMargin: "-10% 0px -50% 0px",
+                threshold: 0,
+            }
+        );
+
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, [ids.join(",")]);
+
+    return activa;
+}
+
 /* ─── NAVBAR ─────────────────────────────────────── */
 export default function Navbar() {
-    const { usuario,cerrarSesion } = useAuth();
+    const { usuario, cerrarSesion } = useAuth();
     const items = NAVBAR_BY_ROLE[usuario ? usuario.rol : "INVITADO"];
     const navigate = useNavigate();
     const location = useLocation();
     const [menuAbierto, setMenuAbierto] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
-    const esActivo = (to: string) => {
-        const hash = to.split("#")[1];
+    // Extraemos los ids de las secciones del home (los que tienen #)
+    const idsHome = items
+        .filter(item => item.to.includes("#"))
+        .map(item => item.to.split("#")[1]);
 
-        if (!hash) {
-            return location.pathname === to;
+    const seccionActiva = useSeccionActiva(
+        location.pathname === "/" ? idsHome : []
+    );
+
+    const esActivo = (to: string) => {
+        const [path, hash] = to.split("#");
+
+        // Si tiene hash y estamos en home
+        if (hash && location.pathname === "/") {
+            return seccionActiva === hash;
         }
 
-        return location.hash === `#${hash}`;
+        // Si es una ruta normal
+        return location.pathname === path && !hash;
     };
+
     // Cerrar menú al hacer click afuera
     useEffect(() => {
         if (!menuAbierto) return;
@@ -42,12 +86,10 @@ export default function Navbar() {
         return () => document.removeEventListener("mousedown", handler);
     }, [menuAbierto]);
 
-    // Cerrar menú al cambiar de ruta
     useEffect(() => {
         setMenuAbierto(false);
     }, [location.pathname]);
 
-    // Cerrar con Escape
     useEffect(() => {
         if (!menuAbierto) return;
         const handler = (e: KeyboardEvent) => {
@@ -62,6 +104,18 @@ export default function Navbar() {
         navigate("/login");
     };
 
+    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, to: string) => {
+        const [path, hash] = to.split("#");
+
+        // Si tiene hash y estamos en la misma página
+        if (hash) {
+            if (location.pathname === path || (path === "/" && location.pathname === "/")) {
+                e.preventDefault();
+                document.getElementById(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }
+    };
+
     return (
         <header className="navbar" ref={menuRef}>
             <div className="navbar__contenido">
@@ -69,7 +123,7 @@ export default function Navbar() {
                 {/* Logo */}
                 <div
                     className="navbar__logo-contenedor"
-                    onClick={() => navigate("/#inicio")}
+                    onClick={() => navigate("/")}
                     style={{ cursor: "pointer" }}
                 >
                     <Logo nombre="" />
@@ -84,6 +138,7 @@ export default function Navbar() {
                             key={id}
                             href={to}
                             className={`navbar__link${esActivo(to) ? " navbar__link--activo" : ""}`}
+                            onClick={e => handleNavClick(e, to)}
                         >
                             <Icon size={14} />
                             {label}
@@ -132,7 +187,7 @@ export default function Navbar() {
                 </button>
             </div>
 
-            {/* Menú mobile desplegable */}
+            {/* Menú mobile */}
             <div className={`navbar__menu-mobile${menuAbierto ? " navbar__menu-mobile--abierto" : ""}`}>
                 {usuario && (
                     <div className="navbar__menu-mobile__usuario">
@@ -153,9 +208,10 @@ export default function Navbar() {
                         <a
                             key={id}
                             href={to}
-                            className={`navbar__link${esActivo(to) ? " navbar__link--activo" : ""}`}
+                            className={`navbar__menu-mobile__link${esActivo(to) ? " navbar__menu-mobile__link--activo" : ""}`}
+                            onClick={e => { handleNavClick(e, to); setMenuAbierto(false); }}
                         >
-                            <Icon size={14} />
+                            <Icon size={16} />
                             {label}
                         </a>
                     ))}

@@ -1,4 +1,6 @@
+import { SECTIONS_FOOTER } from "../../config/sections";
 import "./Footer.css";
+import { FaInstagram } from "react-icons/fa";
 
 export function Footer() {
     return (
@@ -16,15 +18,19 @@ export function Footer() {
                             rel="noopener noreferrer"
                             className="footer-instagram"
                         >
-                            @losciruelospadel
+                            <FaInstagram size={16} />@losciruelospadel
                         </a>
                     </div>
                     <div className="footer-links">
                         <span className="footer-links__titulo">Club</span>
-                        <a href="#sobre">Sobre nosotros</a>
-                        <a href="#canchas">Nuestras canchas</a>
-                        <a href="#torneos">Torneos</a>
-                        <a href="#noticias">Noticias</a>
+                        {SECTIONS_FOOTER.map(({ id, label, to }) => (
+                            <a
+                                key={id}
+                                href={to}
+                            >
+                                {label}
+                            </a>
+                        ))}
                     </div>
                     <div className="footer-links">
                         <span className="footer-links__titulo">Plataforma</span>

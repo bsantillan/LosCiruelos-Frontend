@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import Boton from "../../components/ui/Boton/Boton";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";

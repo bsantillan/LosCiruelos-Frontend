@@ -6,7 +6,7 @@
 .home-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 32px;
+    padding: 80px 32px;
 }
 
 /* ── Hero ── */
@@ -792,7 +792,7 @@
     }
 
     .home-container {
-        padding: 0 20px;
+        padding: 80px 32px;
     }
 
     .home-seccion {

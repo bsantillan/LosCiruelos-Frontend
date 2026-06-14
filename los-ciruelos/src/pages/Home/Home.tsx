@@ -61,30 +61,9 @@ const TESTIMONIOS = [
     { id: 3, nombre: "Diego M.", texto: "Un lugar donde el pádel y la buena onda van de la mano. Me siento parte de una comunidad real.", categoria: "Socio desde 2019" },
 ];
 
-/* ─── BARRA DE PROGRESO ──────────────────────────── */
-function BarraProgreso() {
-    const { scrollYProgress } = useScroll();
-    const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-    return (
-        <motion.div
-            style={{
-                scaleX,
-                position: "fixed",
-                top: 60,
-                left: 0,
-                right: 0,
-                height: "2px",
-                background: "linear-gradient(90deg, var(--verde-oscuro), var(--verde-lima))",
-                transformOrigin: "0%",
-                zIndex: 49,
-            }}
-        />
-    );
-}
-
 /* ─── HERO ───────────────────────────────────────── */
-function Hero() {
-    const { usuario } = useAuth();
+function Hero(props: { isLooged: boolean }) {
+    const isLogged = props.isLooged;
     const navigate = useNavigate();
 
     return (
@@ -129,7 +108,7 @@ function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
                 >
-                    {usuario ? (
+                    { isLogged ? (
                         <button className="home-hero__cta" onClick={() => navigate("/reservas")}>
                             <span>Reservar cancha</span>
                             <CalendarDays size={17} />
@@ -535,7 +514,7 @@ function Ubicacion() {
                     >
                         <iframe
                             title="Ubicación Los Ciruelos Pádel"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.5!2d-57.9533!3d-34.9205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDU1JzEzLjgiUyA1N8KwNTcnMTEuOSJX!5e0!3m2!1ses!2sar!4v1234567890"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d104679.9604013804!2d-57.97699498988854!3d-34.9252976092477!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95a2e7eab549ef49%3A0x8c4de69e1a196193!2sLos%20Ciruelos!5e0!3m2!1ses-419!2sar!4v1781472236989!5m2!1ses-419!2sar"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}
@@ -551,13 +530,13 @@ function Ubicacion() {
 
 /* ─── COMPONENTE PRINCIPAL ───────────────────────── */
 export default function Home() {
+    const { usuario } = useAuth();
     return (
         <div className="pagina-home">
-            <BarraProgreso />
-            <Hero />
+            <Hero isLooged={usuario ? true : false}></Hero>
             <Estadisticas />
             <SobreElClub />
-            <ComoFunciona />
+            { !usuario ? <ComoFunciona /> : null}
             <Canchas />
             <Torneos />
             <Noticias />
