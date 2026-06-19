@@ -57,6 +57,7 @@ export default function Perfil() {
                 categoria: perfil.categoria ?? "",
             });
         }
+        console.log(perfil);
     }, [perfil]);
 
     const puedeEditarCategoria = (): boolean => {
@@ -285,8 +286,34 @@ export default function Perfil() {
 
                         <div className="perfil-cuenta-info">
                             <div className="perfil-cuenta-item">
-                                <span className="perfil-cuenta-item__label">Rol</span>
-                                <span className="perfil-cuenta-item__valor">{usuario?.rol}</span>
+                                <span className="perfil-cuenta-item__label">Tipo de cuenta</span>
+                                <span className="perfil-cuenta-item__valor">
+                                    {usuario?.rol}
+                                </span>
+                            </div>
+                            <div className="perfil-cuenta-item">
+                                <span className="perfil-cuenta-item__label">Miembro hace</span>
+                                <span className="perfil-cuenta-item__valor">
+                                    {perfil?.cantDiasMiembro} Días
+                                </span>
+                            </div>
+                            <div className="perfil-cuenta-item">
+                                <span className="perfil-cuenta-item__label">Partidos jugados</span>
+                                <span className="perfil-cuenta-item__valor">
+                                    {perfil?.cantPartidos}
+                                </span>
+                            </div>
+                            <div className="perfil-cuenta-item">
+                                <span className="perfil-cuenta-item__label">Último partido</span>
+                                <span className="perfil-cuenta-item__valor">
+                                    Hace {perfil?.diasDesdeUltimoPartido} días
+                                </span>
+                            </div>
+                            <div className="perfil-cuenta-item">
+                                <span className="perfil-cuenta-item__label">Partidos este mes</span>
+                                <span className="perfil-cuenta-item__valor">
+                                    {perfil?.cantPartidosEsteMes}
+                                </span>
                             </div>
                         </div>
 

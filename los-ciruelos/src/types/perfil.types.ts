@@ -5,6 +5,10 @@ export interface PerfilResponse {
     telefono: string;
     categoria: string | null;
     posicion: string | null;
+    cantDiasMiembro: number;
+    cantPartidos: number;
+    diasDesdeUltimoPartido: number;
+    cantPartidosEsteMes: number;
     categoriaActualizadaAt: string | null;
 }
 
