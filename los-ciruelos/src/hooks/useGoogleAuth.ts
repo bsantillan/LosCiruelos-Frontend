@@ -24,6 +24,8 @@ export function useGoogleAuth() {
             iniciarSesion(respuesta);
         } catch (error: any) {
             const data = error.response?.data;
+                        console.log(data)
+
             if (data?.errors && typeof data.errors === "object") {
                 setErroresApi({ general: Object.values(data.errors)[0] as string });
                 console.log(error);

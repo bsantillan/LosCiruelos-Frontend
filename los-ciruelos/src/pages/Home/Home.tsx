@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import padelBg from "../../assets/padel-bg.png";
 import "./Home.css";
+import Boton from "../../components/ui/Boton/Boton";
 
 /* ─── ANIMACIONES ────────────────────────────────── */
 const variantes = {
@@ -108,20 +109,20 @@ function Hero(props: { isLooged: boolean }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
                 >
-                    { isLogged ? (
-                        <button className="home-hero__cta" onClick={() => navigate("/reservas")}>
+                    {isLogged ? (
+                        <Boton variante="primario" ancho="auto" onClick={() => navigate("/reservas")}>
                             <span>Reservar cancha</span>
                             <CalendarDays size={17} />
-                        </button>
+                        </Boton>
                     ) : (
                         <>
-                            <button className="home-hero__cta" onClick={() => navigate("/register")}>
+                            <Boton variante="primario" ancho="auto" onClick={() => navigate("/register")}>
                                 <span>Sumate al club</span>
                                 <ArrowRight size={17} />
-                            </button>
-                            <button className="home-hero__cta home-hero__cta--secundario" onClick={() => navigate("/login")}>
+                            </Boton>
+                            <Boton variante="secundario" ancho="auto" onClick={() => navigate("/login")}>
                                 Iniciar sesión
-                            </button>
+                            </Boton>
                         </>
                     )}
                 </motion.div>
@@ -536,7 +537,7 @@ export default function Home() {
             <Hero isLooged={usuario ? true : false}></Hero>
             <Estadisticas />
             <SobreElClub />
-            { !usuario ? <ComoFunciona /> : null}
+            {!usuario ? <ComoFunciona /> : null}
             <Canchas />
             <Torneos />
             <Noticias />

@@ -233,7 +233,7 @@
 }
 
 .navbar__menu-mobile--abierto {
-    max-height: 400px;
+    max-height: fit-content;
 }
 
 .navbar__menu-mobile__usuario {

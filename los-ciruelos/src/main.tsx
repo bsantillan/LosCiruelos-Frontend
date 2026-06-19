@@ -14,6 +14,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import Home from './pages/Home/Home';
 import PublicRoute from './routes/PublicRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
+import Perfil from './pages/Perfil/Perfil';
 
 createRoot(document.getElementById('root')!).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -38,10 +39,10 @@ createRoot(document.getElementById('root')!).render(
 
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
-
+              <Route path="/perfil" element={<Perfil />} />
             </Route>
           </Route>
-          
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
