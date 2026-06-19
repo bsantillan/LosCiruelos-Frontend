@@ -144,7 +144,7 @@
 /* ── Categoría readonly ── */
 .perfil-categoria__nota {
     font-size: 0.8125rem;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     font-style: italic;
     margin-top: -8px;
 }
@@ -154,7 +154,7 @@
     align-items: center;
     gap: 7px;
     font-size: 0.8125rem;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     font-style: italic;
     margin-top: -8px;
 }
@@ -188,7 +188,7 @@
 
 .perfil-cuenta-item__label {
     font-size: 0.8125rem;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 600;
@@ -218,7 +218,7 @@
 
 .perfil-zona-peligro__descripcion {
     font-size: 0.8125rem;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     line-height: 1.5;
     margin-bottom: 4px;
 }
