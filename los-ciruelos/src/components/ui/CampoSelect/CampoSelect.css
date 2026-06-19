@@ -58,7 +58,7 @@
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     display: flex;
     align-items: center;
     transition: transform var(--transicion), color var(--transicion);

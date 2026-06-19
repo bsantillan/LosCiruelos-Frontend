@@ -1,5 +1,5 @@
 import api from "../api/axiosInstance";
-import type { LoginRequest, LoginResponse, VerificarEmailRequest, ResetPasswordRequest } from "../types/auth.types";
+import type { LoginRequest, LoginResponse, VerificarEmailRequest } from "../types/auth.types";
 import type { RegisterRequest } from "../types/register.types";
 
 export const authService = {

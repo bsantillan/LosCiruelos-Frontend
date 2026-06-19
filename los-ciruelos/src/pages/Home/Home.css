@@ -213,7 +213,7 @@
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
 }
 
 /* ── Badge de sección ── */
@@ -422,7 +422,7 @@
     font-size: 1.1rem;
     font-style: italic;
     font-weight: 700;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
 }
 
 .cancha-item__info {
@@ -476,7 +476,7 @@
     align-items: center;
     gap: 4px;
     font-size: 0.6875rem;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     margin-top: 4px;
 }
 
@@ -539,7 +539,7 @@
 
 .torneo-card__aviso {
     font-size: 0.75rem;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     font-style: italic;
     border-top: 1px solid var(--borde);
     padding-top: 12px;
@@ -606,7 +606,7 @@
 
 .noticia-card__fecha {
     font-size: 0.75rem;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
 }
 
 .noticia-card__titulo {
@@ -685,7 +685,7 @@
 .testimonio-card__categoria {
     display: block;
     font-size: 0.75rem;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
 }
 
 /* ── Ubicación ── */
@@ -725,12 +725,12 @@
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
 }
 
 .ubicacion-detalle__valor {
     font-size: 0.9375rem;
-    color: var(--texto-suave);
+    color: var(--texto);
 }
 
 .ubicacion-detalle__link {

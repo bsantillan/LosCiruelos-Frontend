@@ -22,7 +22,7 @@
     font-family: var(--fuente-cuerpo);
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -52,7 +52,7 @@
     font-size: 0.6875rem;
     font-weight: 700;
     background: var(--superficie-3);
-    color: var(--texto-tenue);
+    color: var(--texto-suave);
     flex-shrink: 0;
     transition: background var(--transicion), color var(--transicion);
 }

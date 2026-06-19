@@ -1,0 +1,63 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: aparecer 0.2s both;
+}
+
+.modal {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-xl);
+    padding: 32px;
+    max-width: 420px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: subirAparecer 0.25s both;
+}
+
+.modal__icono {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+    border: 1px solid var(--verde-borde);
+}
+
+.modal__icono--danger {
+    background: var(--error-fondo);
+    color: var(--error);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.modal__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.3rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+}
+
+.modal__descripcion {
+    font-size: 0.9375rem;
+    color: var(--texto-suave);
+    line-height: 1.6;
+}
+
+.modal__acciones {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}

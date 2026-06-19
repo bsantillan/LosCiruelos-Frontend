@@ -191,7 +191,12 @@ export default function Navbar() {
             <div className={`navbar__menu-mobile${menuAbierto ? " navbar__menu-mobile--abierto" : ""}`}>
                 {usuario && (
                     <div className="navbar__menu-mobile__usuario">
-                        <Avatar nombre={usuario.nombre} apellido={usuario.apellido} />
+                        <button
+                            className="navbar__usuario"
+                            onClick={() => navigate("/perfil")}
+                        >
+                            <Avatar nombre={usuario.nombre} apellido={usuario.apellido} />
+                        </button>
                         <div>
                             <span className="navbar__menu-mobile__nombre">
                                 {usuario.nombre} {usuario.apellido}
