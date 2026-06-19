@@ -46,6 +46,10 @@ export default function Perfil() {
     const [modalDesactivar, setModalDesactivar] = useState(false);
     const [desactivando, setDesactivando] = useState(false);
 
+    const mesActual = new Date().toLocaleDateString("es-AR", {
+        month: "long",
+    });
+
     // Cargar datos del perfil cuando llegan
     useEffect(() => {
         if (perfil) {
@@ -310,7 +314,7 @@ export default function Perfil() {
                                 </span>
                             </div>
                             <div className="perfil-cuenta-item">
-                                <span className="perfil-cuenta-item__label">Partidos este mes</span>
+                                <span className="perfil-cuenta-item__label">Partidos en {mesActual}</span>
                                 <span className="perfil-cuenta-item__valor">
                                     {perfil?.cantPartidosEsteMes}
                                 </span>
