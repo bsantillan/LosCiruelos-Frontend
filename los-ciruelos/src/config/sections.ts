@@ -1,63 +1,58 @@
+import type { ComponentType } from "react";
 import {
     Home,
     Users,
     CalendarDays,
-    Trophy,
-    Settings,
-    BookOpen,
-    ClipboardList,
     MapPin,
     Newspaper,
+    ListChecks,
+    LayoutDashboard,
+    MessageSquareQuote,
 } from "lucide-react";
 import { GiTennisBall } from "react-icons/gi";
-import { LuMessageSquareQuote } from "react-icons/lu";
+import type { Rol } from "../types/auth.types";
 
-export const NAVBAR_BY_ROLE = {
-    INVITADO: [
-        { id: "inicio", label: "Inicio", icon: Home, to: "/#inicio" },
-        { id: "club", label: "Sobre Nosotros", icon: Users, to: "/#historia" },
-        { id: "canchas", label: "Canchas", icon: GiTennisBall, to: "/#canchas" },
-        { id: "torneos", label: "Torneos", icon: Trophy, to: "/#torneos" },
-        { id: "noticias", label: "Noticias", icon: Newspaper, to: "/#noticias" },
-        { id: "testimonios", label: "Testimonios", icon: LuMessageSquareQuote, to: "/#testimonios" },
-        { id: "contacto", label: "Contacto", icon: MapPin, to: "/#contacto" },
-    ],
+export interface ItemNavbar {
+    id: string;
+    label: string;
+    icon: ComponentType<{ size?: number }>;
+    to: string;
+}
 
+const SECCIONES_HOME: ItemNavbar[] = [
+    { id: "inicio", label: "Inicio", icon: Home, to: "/#inicio" },
+    { id: "club", label: "Sobre Nosotros", icon: Users, to: "/#historia" },
+    { id: "canchas", label: "Canchas", icon: GiTennisBall, to: "/#canchas" },
+    { id: "testimonios", label: "Testimonios", icon: MessageSquareQuote, to: "/#testimonios" },
+    { id: "noticias", label: "Noticias", icon: Newspaper, to: "/#noticias" },
+    { id: "contacto", label: "Contacto", icon: MapPin, to: "/#contacto" },
+];
+
+// El personal del club trabaja en su panel (/admin), con su propio menú lateral
+const PANEL: ItemNavbar = { id: "panel", label: "Panel", icon: LayoutDashboard, to: "/admin" };
+// La disponibilidad es pública: el visitante también la ve (para reservar le pide cuenta)
+const RESERVAR: ItemNavbar = { id: "reservas", label: "Reservar", icon: CalendarDays, to: "/reservas" };
+
+/*
+ * Los paneles de PROFESOR (clases, alumnos, agenda) y el resto del de EMPLEADO y ADMIN
+ * (usuarios, canchas) todavía no existen en el frontend: hasta implementarlos
+ * esos roles ven las secciones públicas, en vez de links que no llevan a ningún lado.
+ * Los avisos y el recordatorio del ADMIN están en su perfil.
+ */
+export const NAVBAR_BY_ROLE: Record<Rol | "INVITADO", ItemNavbar[]> = {
+    INVITADO: [...SECCIONES_HOME, RESERVAR],
     CLIENTE: [
-        { id: "inicio", label: "Inicio", icon: Home, to: "/#inicio" },
-        { id: "club", label: "Club", icon: Users, to: "/#historia" },
-        { id: "canchas", label: "Canchas", icon: GiTennisBall, to: "/#canchas" },
-        { id: "torneos", label: "Torneos", icon: Trophy, to: "/#torneos" },
-        { id: "noticias", label: "Noticias", icon: Newspaper, to: "/#noticias" },
-        { id: "testimonios", label: "Testimonios", icon: LuMessageSquareQuote, to: "/#testimonios" },
-        { id: "contacto", label: "Contacto", icon: MapPin, to: "/#contacto" },
-        { id: "reservas", label: "Reservar", icon: CalendarDays, to: "/reservas" },
+        ...SECCIONES_HOME,
+        RESERVAR,
+        { id: "mis-reservas", label: "Mis reservas", icon: ListChecks, to: "/mis-reservas" },
     ],
-
-    PROFESOR: [
-        { id: "inicio", label: "Inicio", icon: Home, to: "/#inicio" },
-        { id: "club", label: "Club", icon: Users, to: "/#historia" },
-        { id: "canchas", label: "Canchas", icon: GiTennisBall, to: "/#canchas" },
-        { id: "torneos", label: "Torneos", icon: Trophy, to: "/#torneos" },
-        { id: "noticias", label: "Noticias", icon: Newspaper, to: "/#noticias" },
-        { id: "testimonios", label: "Testimonios", icon: LuMessageSquareQuote, to: "/#testimonios" },
-        { id: "contacto", label: "Contacto", icon: MapPin, to: "/#contacto" },
-        { id: "clases", label: "Clases", icon: BookOpen, to: "/clases" },
-        { id: "alumnos", label: "Alumnos", icon: Users, to: "/alumnos" },
-        { id: "agenda", label: "Agenda", icon: CalendarDays, to: "/agenda" },
-    ],
-
-    ADMIN: [
-        { id: "dashboard", label: "Panel", icon: Settings, to: "/admin" },
-        { id: "usuarios", label: "Usuarios", icon: Users, to: "/admin/usuarios" },
-        { id: "canchas", label: "Canchas", icon: Trophy, to: "/admin/canchas" },
-        { id: "torneos", label: "Torneos", icon: ClipboardList, to: "/admin/torneos" },
-    ],
+    PROFESOR: SECCIONES_HOME,
+    EMPLEADO: [...SECCIONES_HOME, PANEL],
+    ADMIN: [...SECCIONES_HOME, PANEL],
 };
 
 export const SECTIONS_FOOTER = [
     { id: "club", label: "Sobre Nosotros", to: "/#historia" },
     { id: "canchas", label: "Canchas", to: "/#canchas" },
-    { id: "torneos", label: "Torneos", to: "/#torneos" },
     { id: "noticias", label: "Noticias", to: "/#noticias" },
-]
+];

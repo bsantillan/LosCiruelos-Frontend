@@ -1,0 +1,431 @@
+/* Nueva reserva (panel): pasos a la izquierda, resumen a la derecha */
+.nr-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 20px;
+    align-items: start;
+}
+
+.nr-pasos {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+.nr-numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: var(--verde-fondo);
+    border: 1px solid var(--verde-borde);
+    color: var(--verde-lima);
+    font-size: 0.75rem;
+    font-style: normal;
+}
+
+.nr-ayuda {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+/* ── Cliente ── */
+.nr-buscador {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nr-resultados {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.nr-resultado {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    background: var(--superficie-2);
+    font-family: var(--fuente-cuerpo);
+    text-align: left;
+    cursor: pointer;
+}
+
+.nr-resultado:hover {
+    border-color: var(--verde-borde);
+}
+
+.nr-cliente {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: var(--radio-md);
+    background: var(--verde-fondo);
+    border: 1px solid var(--verde-borde);
+    color: var(--verde-lima);
+}
+
+.nr-cliente__datos {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.nr-cliente__nombre {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--texto);
+}
+
+.nr-cliente__detalle {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+    overflow-wrap: anywhere;
+}
+
+/* ── Turno ── */
+.nr-turno-controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.nr-canchas {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--superficie-2);
+    border-radius: var(--radio-md);
+    overflow-x: auto;
+}
+
+.nr-cancha {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--texto-suave);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.nr-cancha--activa {
+    background: var(--superficie-3);
+    color: var(--verde-lima);
+    box-shadow: 0 0 0 1px rgba(143, 212, 0, 0.3);
+}
+
+.nr-duracion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+}
+
+.nr-duracion strong {
+    color: var(--texto);
+    min-width: 60px;
+    text-align: center;
+}
+
+.nr-duracion__btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--borde);
+    background: var(--superficie-2);
+    color: var(--texto);
+    cursor: pointer;
+}
+
+.nr-duracion__btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.nr-duracion__precio {
+    margin-left: auto;
+    color: var(--verde-lima);
+    font-weight: 600;
+}
+
+.nr-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 8px;
+}
+
+.nr-slot {
+    padding: 10px 8px;
+    border: 1px solid rgba(143, 212, 0, 0.2);
+    border-radius: var(--radio-md);
+    background: rgba(143, 212, 0, 0.06);
+    color: var(--verde-lima);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+
+.nr-slot:hover {
+    border-color: rgba(143, 212, 0, 0.45);
+}
+
+.nr-slot--activo {
+    border-color: var(--verde-lima);
+    background: rgba(143, 212, 0, 0.16);
+    box-shadow: 0 0 0 3px rgba(143, 212, 0, 0.1);
+}
+
+/* ── Resumen ── */
+.nr-resumen {
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.nr-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nr-datos div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.875rem;
+}
+
+.nr-datos dt {
+    color: var(--texto-suave);
+}
+
+.nr-datos dd {
+    color: var(--texto);
+    text-align: right;
+}
+
+.nr-extras {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 0;
+    border-top: 1px solid var(--borde);
+    border-bottom: 1px solid var(--borde);
+}
+
+.nr-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.nr-total span {
+    font-weight: 700;
+    color: var(--texto);
+}
+
+.nr-total strong {
+    font-family: var(--fuente-titulo);
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--verde-lima);
+}
+
+/* Bonificación (ADMIN) */
+.nr-bonif {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    border: 1px dashed var(--verde-borde);
+    border-radius: var(--radio-md);
+}
+
+/* ── Creada ── */
+.nr-creada {
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nr-creada__icono {
+    color: var(--verde-lima);
+}
+
+.nr-creada__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+}
+
+.nr-creada__detalle {
+    font-size: 0.9375rem;
+    color: var(--texto-suave);
+}
+
+.nr-creada__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+@media (max-width: 1100px) {
+    .nr-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nr-resumen {
+        position: static;
+    }
+}
+
+.nr-crear {
+    align-self: flex-start;
+}
+
+/* ── Partidos y turnos fijos ── */
+.form-partido {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 860px;
+}
+
+.form-partido .admin-tarjeta__titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-partido__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.elegir-turno {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.jugadores {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.jugadores__lugar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    min-width: 0;
+}
+
+.jugadores__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.jugadores__numero {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+}
+
+.jugadores .admin-form__fila {
+    grid-template-columns: 1fr;
+}
+
+@media (max-width: 760px) {
+    .jugadores {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Hora de inicio elegida en la grilla: solo se elige la duración ── */
+.elegir-turno__fijo {
+    padding: 10px 14px;
+    border-radius: var(--radio-md);
+    background: var(--superficie-2);
+    font-size: 0.9375rem;
+    color: var(--texto);
+}
+
+.elegir-turno__fijo strong {
+    color: var(--verde-lima);
+}
+
+.elegir-turno__etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+}
+
+.elegir-turno__resultado {
+    font-size: 0.9375rem;
+    color: var(--texto);
+}
+
+.elegir-turno__resultado strong {
+    color: var(--verde-lima);
+}
+
+.elegir-turno__otro {
+    align-self: flex-start;
+}

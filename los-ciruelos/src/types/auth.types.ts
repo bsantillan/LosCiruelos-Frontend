@@ -1,4 +1,3 @@
-import type { RegisterRequest as RR } from "./register.types";
 
 // ── Requests ──────────────────────────────────────
 export interface LoginRequest {
@@ -14,7 +13,8 @@ export interface VerificarEmailRequest {
 }
 
 // ── Responses ─────────────────────────────────────
-export type Rol = "ADMIN" | "CLIENTE" | "INVITADO" | "PROFESOR";
+// Roles del backend (enum Role). "Invitado" no es un rol: es no tener sesión.
+export type Rol = "ADMIN" | "CLIENTE" | "EMPLEADO" | "PROFESOR";
 
 export interface LoginResponse {
     accessToken: string;

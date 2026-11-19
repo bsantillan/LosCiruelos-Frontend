@@ -1,31 +1,25 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import type { Usuario, LoginResponse } from "../types/auth.types";
 import { authService } from "../services/authService";
+import { getRefreshToken, getUsuario, guardarSesion, guardarUsuario, limpiarSesion } from "../utils/sesion";
 
 interface AuthContextType {
     usuario: Usuario | null;
-    iniciarSesion: (respuesta: LoginResponse) => void;
+    iniciarSesion: (respuesta: LoginResponse, recordar?: boolean) => void;
+    actualizarUsuario: (cambios: Partial<Usuario>) => void;
     cerrarSesion: () => Promise<void>;
     cargando: boolean;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [usuario, setUsuario] = useState<Usuario | null>(null);
-    const [cargando, setCargando] = useState(true);
+    // La sesión se restaura de forma síncrona: no hace falta esperar un efecto
+    const [usuario, setUsuario] = useState<Usuario | null>(getUsuario);
+    const cargando = false;
 
-    // Restaurar sesión al recargar
-    useEffect(() => {
-        const usuarioGuardado = localStorage.getItem("usuario");
-        if (usuarioGuardado) {
-            setUsuario(JSON.parse(usuarioGuardado));
-        }
-        setCargando(false);
-    }, []);
-
-    const iniciarSesion = (respuesta: LoginResponse) => {
-        const usuario: Usuario = {
+    const iniciarSesion = (respuesta: LoginResponse, recordar = true) => {
+        const nuevoUsuario: Usuario = {
             id: respuesta.id,
             nombre: respuesta.nombre,
             apellido: respuesta.apellido,
@@ -33,31 +27,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             perfilCompleto: respuesta.perfilCompleto,
             rol: respuesta.rol,
         };
-        localStorage.setItem("accessToken", respuesta.accessToken);
-        localStorage.setItem("refreshToken", respuesta.refreshToken);
-        localStorage.setItem("usuario", JSON.stringify(usuario));
-        setUsuario(usuario);
+        guardarSesion({
+            accessToken: respuesta.accessToken,
+            refreshToken: respuesta.refreshToken,
+            usuario: nuevoUsuario,
+        }, recordar);
+        setUsuario(nuevoUsuario);
     };
+
+    // Estable: se usa como dependencia de efectos (Perfil sincroniza perfilCompleto con el servidor)
+    const actualizarUsuario = useCallback((cambios: Partial<Usuario>) => {
+        setUsuario(prev => {
+            if (!prev) return prev;
+            const actualizado = { ...prev, ...cambios };
+            guardarUsuario(actualizado);
+            return actualizado;
+        });
+    }, []);
 
     const cerrarSesion = async () => {
         try {
-            const refreshToken = localStorage.getItem("refreshToken");
+            const refreshToken = getRefreshToken();
             if (refreshToken) await authService.logout(refreshToken);
         } catch {
             // Si falla el logout en el server igual limpiamos localmente
         } finally {
-            localStorage.clear();
+            limpiarSesion();
             setUsuario(null);
         }
     };
 
     return (
-        <AuthContext.Provider value={{ usuario, iniciarSesion, cerrarSesion, cargando }}>
+        <AuthContext.Provider value={{ usuario, iniciarSesion, actualizarUsuario, cerrarSesion, cargando }}>
             {children}
         </AuthContext.Provider>
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
     const context = useContext(AuthContext);
     if (!context) throw new Error("useAuth debe usarse dentro de AuthProvider");

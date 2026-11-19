@@ -1,0 +1,221 @@
+.selector-fecha {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    padding: 6px 8px;
+}
+
+/* ── Flechas (día anterior/siguiente y mes) ── */
+.selector-fecha__flecha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    border-radius: var(--radio-sm);
+    color: var(--texto-suave);
+    cursor: pointer;
+    transition: color var(--transicion), background var(--transicion);
+}
+
+.selector-fecha__flecha:hover:not(:disabled) {
+    color: var(--texto);
+    background: var(--superficie-2);
+}
+
+.selector-fecha__flecha:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ── Botón que abre el calendario ── */
+.selector-fecha__disparador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 230px;
+    padding: 6px 12px;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radio-sm);
+    color: var(--verde-lima);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--transicion), border-color var(--transicion);
+}
+
+.selector-fecha__disparador:hover,
+.selector-fecha__disparador--abierto {
+    background: var(--verde-fondo);
+    border-color: var(--verde-borde);
+}
+
+.selector-fecha__texto {
+    text-transform: capitalize;
+}
+
+.selector-fecha__chevron {
+    transition: transform var(--transicion);
+}
+
+.selector-fecha__disparador--abierto .selector-fecha__chevron {
+    transform: rotate(180deg);
+}
+
+.selector-fecha button:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+/* ── Calendario ── */
+/* En un portal con posición fija (la calcula el componente): flota encima de popups y páginas */
+.selector-fecha__popover--flotante.selector-fecha__popover {
+    position: fixed;
+    transform: none;
+    z-index: 1100;
+    animation: none;
+}
+
+.selector-fecha__popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    width: 300px;
+    max-width: calc(100vw - 32px);
+    padding: 14px;
+    background: var(--superficie);
+    border: 1px solid var(--borde-activo, var(--verde-borde));
+    border-radius: var(--radio-lg);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    animation: selector-fecha-aparecer 0.18s both;
+}
+
+.selector-fecha__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.selector-fecha__mes {
+    font-family: var(--fuente-titulo);
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--texto);
+    text-transform: capitalize;
+}
+
+.selector-fecha__semana,
+.selector-fecha__grilla {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.selector-fecha__semana span {
+    text-align: center;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--texto-tenue);
+    padding-bottom: 4px;
+}
+
+.selector-fecha__dia {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radio-sm);
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background var(--transicion), border-color var(--transicion);
+}
+
+.selector-fecha__dia:hover:not(:disabled) {
+    background: var(--superficie-2);
+    border-color: var(--borde);
+}
+
+.selector-fecha__dia:disabled {
+    color: var(--texto-tenue);
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.selector-fecha__dia--hoy {
+    border-color: var(--verde-borde);
+    color: var(--verde-lima);
+}
+
+.selector-fecha__dia--elegido,
+.selector-fecha__dia--elegido:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-lima));
+    border-color: transparent;
+    color: #fff;
+    font-weight: 700;
+}
+
+.selector-fecha__pie {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--borde);
+}
+
+.selector-fecha__hoy {
+    flex: 1;
+}
+
+@keyframes selector-fecha-aparecer {
+    from { opacity: 0; transform: translate(-50%, 8px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ── Mobile ── */
+@media (max-width: 860px) {
+    .selector-fecha {
+        width: 100%;
+    }
+
+    .selector-fecha__disparador {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .selector-fecha__popover {
+        animation: none;
+    }
+}
+
+/* Sin fecha elegida: "Elegí la fecha", sin mayúsculas en cada palabra */
+.selector-fecha__texto--vacio {
+    text-transform: none;
+}
+
+/* Día en que el club no abre (feriado, obra): tachado, con el motivo en el tooltip */
+.selector-fecha__dia--cerrado,
+.selector-fecha__dia--cerrado:disabled {
+    text-decoration: line-through;
+    color: var(--error);
+    opacity: 0.7;
+}

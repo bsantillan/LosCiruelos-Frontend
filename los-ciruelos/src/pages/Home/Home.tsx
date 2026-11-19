@@ -1,12 +1,21 @@
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
     ArrowRight, MapPin, Clock,
-    Trophy, Newspaper, Users, CalendarDays,
-    CheckCircle2, UserPlus, Layers
+    Newspaper, Users, CalendarDays,
+    CheckCircle2, UserPlus, Layers, Star, Phone,
 } from "lucide-react";
-import padelBg from "../../assets/padel-bg.png";
+import { canchaService } from "../../services/canchaService";
+import { useHorariosClub } from "../../hooks/useHorariosClub";
+import { useCanchasPublicas } from "../../hooks/useCanchasPublicas";
+import { NOVEDADES_EN_INICIO, PIE_NOVEDAD } from "../../config/novedades";
+import type { Novedad } from "../../types/admin.types";
+import { urlArchivo } from "../../utils/archivos";
+import { formatFecha } from "../../utils/fechas";
+import { CELULAR_CLUB } from "../../config/contactoClub";
+import padelBg from "../../assets/padel-bg.webp";
 import "./Home.css";
 import Boton from "../../components/ui/Boton/Boton";
 
@@ -30,41 +39,45 @@ const variantesHijos = {
 };
 
 /* ─── DATOS ──────────────────────────────────────── */
-const ESTADISTICAS = [
-    { numero: "4", etiqueta: "Canchas" },
-    { numero: "+500", etiqueta: "Socios" },
+/**
+ * Cifras del club: canchas, años de trayectoria y reservas online. La cantidad de canchas sale del
+ * backend (GET /canchas, las activas), así cambia sola; si no responde, 4.
+ */
+const CANCHAS_POR_DEFECTO = 4;
+const ESTADISTICAS_FIJAS = [
     { numero: "+15", etiqueta: "Años de trayectoria" },
     { numero: "24/7", etiqueta: "Reservas online" },
 ];
 
-const CANCHAS = [
+/** Ficha del club en Google Maps (el mismo lugar del mapa de Ubicación) */
+const GOOGLE_MAPS_CLUB = "https://maps.google.com/?cid=10109990305233723795";
+
+/** Si el backend no responde: las canchas de siempre */
+const CANCHAS_RESPALDO = [
     { nombre: "Cancha 1", tipo: "Techada", superficie: "Cemento", iluminacion: true },
     { nombre: "Cancha 2", tipo: "Techada", superficie: "Cemento", iluminacion: true },
     { nombre: "Cancha 3", tipo: "Techada", superficie: "Cemento", iluminacion: true },
     { nombre: "Cancha 4", tipo: "Al aire libre", superficie: "Césped sintético · Blidex", iluminacion: true },
 ];
 
-const TORNEOS = [
-    { id: 1, nombre: "Torneo de Invierno 2025", fecha: "Julio 2025", categoria: "Todas las categorías", estado: "Próximamente" },
-    { id: 2, nombre: "Copa Los Ciruelos", fecha: "Agosto 2025", categoria: "Primera y Segunda", estado: "Próximamente" },
-    { id: 3, nombre: "Torneo de Menores", fecha: "Septiembre 2025", categoria: "Escuela de menores", estado: "Próximamente" },
-];
-
-const NOTICIAS = [
-    { id: 1, titulo: "Nuevos horarios de clases", descripcion: "Arranca una nueva tanda de clases grupales para principiantes. Cupos limitados.", fecha: "10 Jun 2025", etiqueta: "Clases" },
-    { id: 2, titulo: "Mejoras en las instalaciones", descripcion: "Renovamos los vestuarios y la zona de descanso para mejorar tu experiencia en el club.", fecha: "5 Jun 2025", etiqueta: "Novedades" },
-    { id: 3, titulo: "Escuela de menores", descripcion: "Inscripciones abiertas para la escuela de menores. Formamos jugadores desde los 6 años.", fecha: "1 Jun 2025", etiqueta: "Escuela" },
-];
-
+/** Reseñas reales del club en Google Maps, copiadas tal cual (sin fecha) */
 const TESTIMONIOS = [
-    { id: 1, nombre: "Martín G.", texto: "El mejor club de pádel de La Plata. Las canchas están impecables y el ambiente es increíble.", categoria: "Socio desde 2020" },
-    { id: 2, nombre: "Laura P.", texto: "Empecé desde cero en la escuela de adultos y hoy jugo torneos. El nivel de las clases es excelente.", categoria: "Socia desde 2022" },
-    { id: 3, nombre: "Diego M.", texto: "Un lugar donde el pádel y la buena onda van de la mano. Me siento parte de una comunidad real.", categoria: "Socio desde 2019" },
+    {
+        id: 1, nombre: "Walter Amado", estrellas: 4,
+        texto: "Las canchas están buenas pero la atención de Alejandro es lo mejor. Después de jugar siempre me quedo un rato mas.. indumentaria, palas, comida, bebidas muy completo.",
+    },
+    {
+        id: 2, nombre: "Ariel Mendoza", estrellas: 5,
+        texto: "Las canchas un 10 pero las empanadas despues de jugar son un 11!! Recomiendo las de carne y roquefort.",
+    },
+    {
+        id: 3, nombre: "santiago gotelli", estrellas: 5,
+        texto: "El mejor complejo de padel de la plata, excelente atencion la de alejandro, siempre dispuesto para armar partidos, si te falta gente el te lo arma por whatsapp, siempre contesta rapido.tiene 3 canchas cerradas y una de blindex al aire libre. Tambien tiene un excelente buffet podes pedir antes de jugar y ya lo tienen preparado para cuando terminas el turno.",
+    },
 ];
 
 /* ─── HERO ───────────────────────────────────────── */
-function Hero(props: { isLooged: boolean }) {
-    const isLogged = props.isLooged;
+function Hero({ logueado, puedeReservar }: { logueado: boolean; puedeReservar: boolean }) {
     const navigate = useNavigate();
 
     return (
@@ -101,7 +114,7 @@ function Hero(props: { isLooged: boolean }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
                 >
-                    En Los Ciruelos encontrás canchas de primer nivel, una comunidad apasionada y todo lo que necesitás para disfrutar del pádel en La Plata.
+                    En Los Ciruelos encontrás canchas, una comunidad apasionada y todo lo que necesitás para disfrutar del pádel en La Plata.
                 </motion.p>
                 <motion.div
                     className="home-hero__acciones"
@@ -109,19 +122,23 @@ function Hero(props: { isLooged: boolean }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
                 >
-                    {isLogged ? (
-                        <Boton variante="primario" ancho="auto" onClick={() => navigate("/reservas")}>
-                            <span>Reservar cancha</span>
-                            <CalendarDays size={17} />
-                        </Boton>
+                    {logueado ? (
+                        puedeReservar && (
+                            <Boton variante="primario" ancho="auto" onClick={() => navigate("/reservas")}>
+                                <span>Reservar cancha</span>
+                                <CalendarDays size={17} />
+                            </Boton>
+                        )
                     ) : (
+                        // Sin sesión se pueden ver los turnos libres; para reservar se pide cuenta
                         <>
-                            <Boton variante="primario" ancho="auto" onClick={() => navigate("/register")}>
+                            <Boton variante="primario" ancho="auto" onClick={() => navigate("/reservas")}>
+                                <span>Ver turnos libres</span>
+                                <CalendarDays size={17} />
+                            </Boton>
+                            <Boton variante="secundario" ancho="auto" onClick={() => navigate("/register")}>
                                 <span>Sumate al club</span>
                                 <ArrowRight size={17} />
-                            </Boton>
-                            <Boton variante="secundario" ancho="auto" onClick={() => navigate("/login")}>
-                                Iniciar sesión
                             </Boton>
                         </>
                     )}
@@ -133,19 +150,23 @@ function Hero(props: { isLooged: boolean }) {
 
 /* ─── ESTADÍSTICAS ───────────────────────────────── */
 function Estadisticas() {
+    const lista = useCanchasPublicas();
+    const canchas = lista ? lista.filter(c => c.activa !== false).length || CANCHAS_POR_DEFECTO : CANCHAS_POR_DEFECTO;
+    const estadisticas = [{ numero: String(canchas), etiqueta: canchas === 1 ? "Cancha" : "Canchas" }, ...ESTADISTICAS_FIJAS];
     return (
         <section className="home-estadisticas" id="club">
             <div className="home-container">
                 <motion.div
                     className="estadisticas-grid"
+                    style={{ "--estadisticas": estadisticas.length } as React.CSSProperties}
                     variants={variantes}
                     initial="oculto"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-80px" }}
                 >
-                    {ESTADISTICAS.map((e, i) => (
+                    {estadisticas.map((e, i) => (
                         <motion.div
-                            key={i}
+                            key={e.etiqueta}
                             className="estadistica-item"
                             custom={i}
                             variants={variantesHijos}
@@ -193,8 +214,9 @@ function SobreElClub() {
                 </div>
                 <motion.div
                     className="sobre-imagen"
-                    initial={{ opacity: 0, x: 40 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    // Entra desde abajo: desde el costado quedaba fuera de la pantalla y generaba scroll horizontal
+                    initial={{ opacity: 0, y: 32 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
                     aria-hidden="true"
@@ -263,7 +285,43 @@ function ComoFunciona() {
 }
 
 /* ─── CANCHAS ────────────────────────────────────── */
+interface CanchaVitrina {
+    clave: string;
+    nombre: string;
+    tipo: string;
+    superficie: string;
+    iluminacion: boolean;
+    descripcion: string | null;
+    activa: boolean;
+    fotos: string[];
+}
+
+/**
+ * Canchas del club como vitrina: la elegida se ve grande, con todas sus fotos (se cambia de foto con
+ * las miniaturas), y al costado las demás para elegir. Las desactivadas también se muestran, apagadas
+ * y con "No disponible por el momento". Si el backend no responde, las 4 de siempre, sin fotos.
+ */
 function Canchas() {
+    const desdeBackend = useCanchasPublicas();
+    // El backend viejo no manda tipo: en ese caso, las de siempre
+    const canchas: CanchaVitrina[] = desdeBackend && desdeBackend.every(c => c.tipo)
+        ? desdeBackend.map(c => ({
+            clave: String(c.id),
+            nombre: `Cancha ${c.numero}${c.nombre ? ` · ${c.nombre}` : ""}`,
+            tipo: c.tipo === "AIRE_LIBRE" ? "Al aire libre" : "Techada",
+            superficie: c.superficie ?? "",
+            iluminacion: c.iluminacion,
+            descripcion: c.descripcion,
+            activa: c.activa !== false,
+            fotos: [...c.fotos].sort((x, y) => x.orden - y.orden).map(f => urlArchivo(f.url)).filter((u): u is string => Boolean(u)),
+        }))
+        : CANCHAS_RESPALDO.map(c => ({ ...c, clave: c.nombre, descripcion: null, activa: true, fotos: [] }));
+    const [elegida, setElegida] = useState(0);
+    const [foto, setFoto] = useState(0);
+    const actual = canchas[Math.min(elegida, canchas.length - 1)];
+    const fotoActual = actual?.fotos[Math.min(foto, Math.max(0, actual.fotos.length - 1))];
+    const elegir = (i: number) => { setElegida(i); setFoto(0); };
+
     return (
         <section className="home-canchas" id="canchas">
             <div className="home-container">
@@ -281,92 +339,71 @@ function Canchas() {
                         NUESTRAS <em data-text="CANCHAS">CANCHAS</em>
                     </h2>
                 </motion.div>
-                <div className="canchas-grid">
-                    {CANCHAS.map((cancha, i) => (
-                        <motion.div
-                            key={i}
-                            className="cancha-item"
-                            custom={i}
-                            variants={variantesHijos}
-                            initial="oculto"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                        >
-                            <div className="cancha-item__imagen" aria-hidden="true">
-                                <span className="cancha-item__imagen-placeholder">{cancha.nombre}</span>
+
+                {actual && (
+                    <div className="vitrina">
+                        {/* La cancha elegida, en foco */}
+                        <article className={`vitrina__foco${actual.activa ? "" : " vitrina__foco--inactiva"}`} aria-live="polite">
+                            <div className="vitrina__foto">
+                                {fotoActual
+                                    ? <img key={fotoActual} src={fotoActual} alt={`${actual.nombre}, foto ${foto + 1} de ${actual.fotos.length}`} />
+                                    : <span className="vitrina__sin-foto" aria-hidden="true">{actual.nombre}</span>}
+                                {!actual.activa && <span className="vitrina__estado">No disponible por el momento</span>}
                             </div>
-                            <div className="cancha-item__info">
-                                <div className="cancha-item__header">
-                                    <h3 className="cancha-item__nombre">{cancha.nombre}</h3>
-                                    <span className={`cancha-item__tipo${cancha.tipo === "Al aire libre" ? " cancha-item__tipo--exterior" : ""}`}>
-                                        {cancha.tipo}
-                                    </span>
+                            {actual.fotos.length > 1 && (
+                                <div className="vitrina__miniaturas" role="group" aria-label={`Fotos de ${actual.nombre}`}>
+                                    {actual.fotos.map((f, i) => (
+                                        <button key={f} type="button" aria-pressed={i === foto} aria-label={`Ver la foto ${i + 1}`}
+                                            className={`vitrina__miniatura${i === foto ? " vitrina__miniatura--activa" : ""}`} onClick={() => setFoto(i)}>
+                                            <img src={f} alt="" />
+                                        </button>
+                                    ))}
                                 </div>
-                                <p className="cancha-item__superficie">{cancha.superficie}</p>
-                                {cancha.iluminacion && (
-                                    <span className="cancha-item__badge">
-                                        <CheckCircle2 size={11} />
-                                        Iluminación LED
-                                    </span>
-                                )}
+                            )}
+                            <div className="vitrina__info">
+                                <h3 className="vitrina__nombre">{actual.nombre}</h3>
+                                <div className="vitrina__datos">
+                                    <span className={`cancha-item__tipo${actual.tipo === "Al aire libre" ? " cancha-item__tipo--exterior" : ""}`}>{actual.tipo}</span>
+                                    {actual.superficie && <span className="vitrina__dato">{actual.superficie}</span>}
+                                    {actual.iluminacion && <span className="vitrina__dato"><CheckCircle2 size={12} /> Iluminación LED</span>}
+                                </div>
+                                {actual.descripcion && <p className="vitrina__descripcion">{actual.descripcion}</p>}
                             </div>
-                        </motion.div>
-                    ))}
-                </div>
+                        </article>
+
+                        {/* Las demás, para elegir */}
+                        <div className="vitrina__lista" role="group" aria-label="Elegí una cancha">
+                            {canchas.map((c, i) => (
+                                <button key={c.clave} type="button" aria-pressed={i === elegida} onClick={() => elegir(i)}
+                                    className={`vitrina__opcion${i === elegida ? " vitrina__opcion--activa" : ""}${c.activa ? "" : " vitrina__opcion--inactiva"}`}>
+                                    <span className="vitrina__opcion-foto">
+                                        {c.fotos[0] ? <img src={c.fotos[0]} alt="" loading="lazy" /> : <Layers size={18} aria-hidden="true" />}
+                                    </span>
+                                    <span className="vitrina__opcion-texto">
+                                        <span className="vitrina__opcion-nombre">{c.nombre}</span>
+                                        <span className="vitrina__opcion-detalle">{c.activa ? c.tipo : "No disponible por el momento"}</span>
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );
 }
 
-/* ─── TORNEOS ────────────────────────────────────── */
-function Torneos() {
-    return (
-        <motion.section
-            className="home-seccion home-container"
-            id="torneos"
-            variants={variantes}
-            initial="oculto"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-        >
-            <div className="home-seccion__badge">
-                <Trophy size={14} />
-                Competencia
-            </div>
-            <h2 className="home-seccion__titulo">
-                PRÓXIMOS <em data-text="TORNEOS">TORNEOS</em>
-            </h2>
-            <div className="torneos-grid">
-                {TORNEOS.map((torneo, i) => (
-                    <motion.div
-                        key={torneo.id}
-                        className="torneo-card"
-                        custom={i}
-                        variants={variantesHijos}
-                        initial="oculto"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                    >
-                        <div className="torneo-card__estado">{torneo.estado}</div>
-                        <h3 className="torneo-card__nombre">{torneo.nombre}</h3>
-                        <div className="torneo-card__detalles">
-                            <span><CalendarDays size={13} />{torneo.fecha}</span>
-                            <span><Users size={13} />{torneo.categoria}</span>
-                        </div>
-                        <div className="torneo-card__aviso">
-                            Las inscripciones estarán disponibles próximamente
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-        </motion.section>
-    );
-}
-
 /* ─── NOTICIAS ───────────────────────────────────── */
 function Noticias() {
+    // null: cargando; [] también si el backend no responde (se muestra un aviso, no noticias viejas)
+    const [novedades, setNovedades] = useState<Novedad[] | null>(null);
+    useEffect(() => {
+        let activo = true;
+        canchaService.novedades(NOVEDADES_EN_INICIO)
+            .then(n => { if (activo) setNovedades(n); })
+            .catch(() => { if (activo) setNovedades([]); });
+        return () => { activo = false; };
+    }, []);
     return (
         <section className="home-noticias" id="noticias">
             <div className="home-container">
@@ -384,8 +421,11 @@ function Noticias() {
                         ÚLTIMAS <em data-text="NOTICIAS">NOTICIAS</em>
                     </h2>
                 </motion.div>
+                {novedades && novedades.length === 0 && (
+                    <p className="noticias-vacio">Muy pronto vas a ver acá las novedades del club: torneos, clases y más.</p>
+                )}
                 <div className="noticias-grid">
-                    {NOTICIAS.map((noticia, i) => (
+                    {(novedades ?? []).map((noticia, i) => (
                         <motion.article
                             key={noticia.id}
                             className="noticia-card"
@@ -396,14 +436,17 @@ function Noticias() {
                             viewport={{ once: true }}
                             whileHover={{ y: -4, transition: { duration: 0.2 } }}
                         >
-                            <div className="noticia-card__imagen" aria-hidden="true" />
+                            <div className="noticia-card__imagen" aria-hidden="true">
+                                {noticia.imagenUrl && <img src={urlArchivo(noticia.imagenUrl)} alt="" loading="lazy" />}
+                            </div>
                             <div className="noticia-card__contenido">
                                 <div className="noticia-card__header">
-                                    <span className="noticia-card__etiqueta">{noticia.etiqueta}</span>
-                                    <span className="noticia-card__fecha">{noticia.fecha}</span>
+                                    {noticia.etiqueta && <span className="noticia-card__etiqueta">{noticia.etiqueta}</span>}
+                                    {noticia.publicadaAt && <span className="noticia-card__fecha">{formatFecha(noticia.publicadaAt.slice(0, 10))}</span>}
                                 </div>
                                 <h3 className="noticia-card__titulo">{noticia.titulo}</h3>
                                 <p className="noticia-card__descripcion">{noticia.descripcion}</p>
+                                <a className="noticia-card__pie" href="#contacto">{PIE_NOVEDAD}</a>
                             </div>
                         </motion.article>
                     ))}
@@ -430,7 +473,7 @@ function Testimonios() {
             </div>
             <h2 className="home-seccion__titulo home-seccion__titulo--centrado">
                 LO QUE DICEN<br />
-                NUESTROS <em data-text="SOCIOS">SOCIOS</em>
+                LOS QUE <em data-text="JUEGAN">JUEGAN</em>
             </h2>
             <div className="testimonios-grid">
                 {TESTIMONIOS.map((t, i) => (
@@ -444,16 +487,24 @@ function Testimonios() {
                         viewport={{ once: true }}
                         whileHover={{ y: -4, transition: { duration: 0.2 } }}
                     >
+                        <span className="testimonio-card__estrellas" role="img" aria-label={`${t.estrellas} de 5 estrellas`}>
+                            {[1, 2, 3, 4, 5].map(n => <Star key={n} size={16} className={n <= t.estrellas ? "testimonio-card__estrella--llena" : undefined} aria-hidden="true" />)}
+                        </span>
                         <p className="testimonio-card__texto">"{t.texto}"</p>
                         <div className="testimonio-card__autor">
                             <div className="testimonio-card__avatar">{t.nombre[0]}</div>
                             <div>
                                 <span className="testimonio-card__nombre">{t.nombre}</span>
-                                <span className="testimonio-card__categoria">{t.categoria}</span>
+                                <span className="testimonio-card__categoria">Reseña de Google</span>
                             </div>
                         </div>
                     </motion.div>
                 ))}
+            </div>
+            <div className="testimonios-pie">
+                <a className="testimonios-pie__link" href={GOOGLE_MAPS_CLUB} target="_blank" rel="noreferrer">
+                    Ver todas las reseñas en Google Maps <ArrowRight size={15} />
+                </a>
             </div>
         </motion.section>
     );
@@ -461,6 +512,8 @@ function Testimonios() {
 
 /* ─── UBICACIÓN ──────────────────────────────────── */
 function Ubicacion() {
+    // El horario sale del backend; si no responde, Lunes a Sábados · 08:00 a 23:00
+    const horario = useHorariosClub();
     return (
         <motion.section
             className="home-ubicacion"
@@ -493,9 +546,25 @@ function Ubicacion() {
                                 <Clock size={16} />
                                 <div>
                                     <span className="ubicacion-detalle__titulo">Horarios</span>
-                                    <span className="ubicacion-detalle__valor">Lunes a Sábados · 08:00 a 23:00</span>
+                                    {horario.map(r => <span key={r} className="ubicacion-detalle__valor">{r}</span>)}
                                 </div>
                             </div>
+                            {/* Celular: se carga en src/config/contactoClub.ts (vacío no se muestra en el sitio publicado) */}
+                            {(CELULAR_CLUB.mostrar || import.meta.env.DEV) && (
+                                <div className="ubicacion-detalle">
+                                    <Phone size={16} />
+                                    <div>
+                                        <span className="ubicacion-detalle__titulo">Celular</span>
+                                        {CELULAR_CLUB.mostrar ? (
+                                            <a href={`https://wa.me/${CELULAR_CLUB.whatsapp}`} target="_blank" rel="noopener noreferrer" className="ubicacion-detalle__link">
+                                                {CELULAR_CLUB.mostrar}
+                                            </a>
+                                        ) : (
+                                            <span className="ubicacion-detalle__valor">Completalo en src/config/contactoClub.ts</span>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                             <div className="ubicacion-detalle">
                                 <div>
                                     <span className="ubicacion-detalle__titulo">Instagram</span>
@@ -508,8 +577,8 @@ function Ubicacion() {
                     </div>
                     <motion.div
                         className="ubicacion-mapa"
-                        initial={{ opacity: 0, x: 40 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 32 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
                     >
@@ -532,16 +601,26 @@ function Ubicacion() {
 /* ─── COMPONENTE PRINCIPAL ───────────────────────── */
 export default function Home() {
     const { usuario } = useAuth();
+    const { hash } = useLocation();
+
+    // Links tipo "/#canchas" desde otras páginas: scroll a la sección al llegar
+    useEffect(() => {
+        if (!hash) return;
+        const id = decodeURIComponent(hash.slice(1));
+        requestAnimationFrame(() => {
+            document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }, [hash]);
+
     return (
         <div className="pagina-home">
-            <Hero isLooged={usuario ? true : false}></Hero>
+            <Hero logueado={!!usuario} puedeReservar={usuario?.rol === "CLIENTE"} />
             <Estadisticas />
             <SobreElClub />
             {!usuario ? <ComoFunciona /> : null}
             <Canchas />
-            <Torneos />
-            <Noticias />
             <Testimonios />
+            <Noticias />
             <Ubicacion />
         </div>
     );

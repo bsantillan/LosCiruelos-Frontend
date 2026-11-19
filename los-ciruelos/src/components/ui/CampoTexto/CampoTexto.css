@@ -1,0 +1,29 @@
+/* Texto largo: el campo de siempre, con alto según las filas y el contador abajo a la derecha */
+.campo-texto__area.campo__input {
+    height: auto;
+    min-height: 96px;
+    padding: 12px 14px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.campo-texto__pie {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 4px;
+    font-size: 0.75rem;
+}
+
+.campo-texto__contador {
+    color: var(--texto-suave);
+    font-variant-numeric: tabular-nums;
+}
+
+.campo-texto__contador--poco {
+    color: #f5c451;
+}
+
+.campo-texto__error {
+    color: var(--error);
+}

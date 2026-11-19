@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Mail, ArrowRight, ArrowLeft, AlertCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Mail, ArrowRight, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import Boton from "../../components/ui/Boton/Boton";
 import { useResetPassword } from "../../hooks/useResetPassword";
 import { AuthPanelLayout } from "../../layouts/AuthLayout/AuthPanelLayout";
+import { AvisoTransitorio } from "../../components/ui/Avisos/Avisos";
 
 export default function OlvideContrasena() {
     const navigate = useNavigate();
@@ -34,7 +35,9 @@ export default function OlvideContrasena() {
             navigate("/verificar-codigo", {
                 state: { email, tipo: "PASSWORD_RESET" }
             });
-        } catch { }
+        } catch {
+            // el error ya se muestra en pantalla
+        }
     };
 
     return (
@@ -46,7 +49,7 @@ export default function OlvideContrasena() {
             <div className="formulario-vista">
 
                 <button
-                    className="verificacion-panel__volver"
+                    className="accion accion--chica verificacion-panel__volver"
                     onClick={() => navigate("/login")}
                     type="button"
                 >
@@ -69,10 +72,7 @@ export default function OlvideContrasena() {
                 <form onSubmit={enviar} noValidate>
 
                     {/* Error general */}
-                    <div className={`alerta-error${erroresApi.general ? " alerta-error--visible" : ""}`} role="alert">
-                        <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
-                        {erroresApi.general}
-                    </div>
+                        {erroresApi.general && <AvisoTransitorio tipo="error">{erroresApi.general}</AvisoTransitorio>}
                     <div className="campos">
                         <CampoInput
                             id="email"
@@ -97,7 +97,7 @@ export default function OlvideContrasena() {
 
                 <p className="pie">
                     ¿Recordaste tu contraseña?&nbsp;
-                    <a href="/login">Ingresá acá</a>
+                    <Link to="/login">Ingresá acá</Link>
                 </p>
 
             </div>

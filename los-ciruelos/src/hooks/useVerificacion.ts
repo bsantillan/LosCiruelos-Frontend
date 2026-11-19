@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { authService } from "../services/authService";
-import { VerificarEmailRequest } from "../types/auth.types";
+import type { VerificarEmailRequest } from "../types/auth.types";
+import { extraerErrores } from "../utils/apiErrors";
 
-export class CuentaVerificadoError extends Error {
+export class CuentaVerificadaError extends Error {
     constructor() { super("cuenta_verificada"); }
 }
 
@@ -16,27 +17,20 @@ export function useVerificacion() {
     const [reenviando, setReenviando] = useState(false);
     const [erroresApi, setErroresApi] = useState<ErroresVerificacion>({});
 
+    const manejarError = (error: unknown): never => {
+        const errores = extraerErrores(error, "Ocurrió un error inesperado, intentá de nuevo.");
+        if (errores.cuenta_verificada) throw new CuentaVerificadaError();
+        setErroresApi(errores);
+        throw error;
+    };
+
     const verificarCodigo = async (datos: VerificarEmailRequest) => {
         setCargando(true);
         setErroresApi({});
         try {
             await authService.verificarEmail(datos);
-        } catch (error: any) {
-            const data = error.response?.data;
-
-            if (data?.errors?.cuenta_verificada) {
-                throw new CuentaVerificadoError();
-            }
-
-            if (data?.errors && typeof data.errors === "object") {
-                setErroresApi(data.errors as ErroresVerificacion);
-            } else if (typeof data?.error === "string") {
-                setErroresApi({ general: data.error });
-            } else {
-                setErroresApi({ general: "Ocurrió un error inesperado, intentá de nuevo." });
-            }
-
-            throw error;
+        } catch (error) {
+            manejarError(error);
         } finally {
             setCargando(false);
         }
@@ -47,23 +41,8 @@ export function useVerificacion() {
         setErroresApi({});
         try {
             await authService.reenviarToken(email, tipo_codigo);
-        } catch (error: any) {
-            const data = error.response?.data;
-
-            if (data?.errors?.cuenta_verificada) {
-                throw new CuentaVerificadoError();
-            }
-
-            if (data?.errors && typeof data.errors === "object") {
-                setErroresApi(data.errors as ErroresVerificacion);
-            } else if (typeof data?.error === "string") {
-                setErroresApi({ general: data.error });
-            } else {
-                setErroresApi({ general: "Ocurrió un error inesperado, intentá de nuevo." });
-            }
-
-            throw error;
-
+        } catch (error) {
+            manejarError(error);
         } finally {
             setReenviando(false);
         }

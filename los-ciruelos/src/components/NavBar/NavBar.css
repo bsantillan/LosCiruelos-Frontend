@@ -27,6 +27,7 @@
     border-radius: 10px;
     padding: 2px 8px;
     flex-shrink: 0;
+    display: block;
 }
 
 .navbar__logo-contenedor .logo__imagen {
@@ -312,8 +313,79 @@
     font-weight: 600;
 }
 
-/* ── Responsive ── */
-@media (max-width: 860px) {
+/* ── Menú del avatar (desktop) ── */
+.navbar__usuario-contenedor {
+    position: relative;
+}
+
+.navbar__usuario-flecha {
+    color: var(--texto-suave);
+}
+
+.navbar__desplegable {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 240px;
+    max-width: calc(100vw - 32px);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-card);
+    animation: aparecer 150ms ease-out;
+}
+
+.navbar__desplegable-encabezado {
+    padding: 8px 12px 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--borde);
+    overflow-wrap: anywhere;
+}
+
+/* ── Responsive ──
+   Los links nunca se parten en dos renglones: si no entran se sacan los íconos y,
+   más angosto, se pasa al menú hamburguesa. El cliente tiene 9 links (navbar--extendida),
+   así que necesita más ancho que el invitado. */
+.navbar__link {
+    white-space: nowrap;
+}
+
+@media (max-width: 1360px) {
+    .navbar--extendida .navbar__link svg {
+        display: none;
+    }
+
+    .navbar--extendida .navbar__link {
+        padding: 6px 9px;
+    }
+
+    .navbar--extendida .navbar__contenido {
+        gap: 12px;
+        padding: 0 24px;
+    }
+}
+
+@media (max-width: 1180px) {
+    .navbar--extendida .navbar__links,
+    .navbar--extendida .navbar__acciones,
+    .navbar--extendida .navbar__divisor {
+        display: none;
+    }
+
+    .navbar--extendida .navbar__hamburguesa {
+        display: flex;
+    }
+
+    .navbar--extendida .navbar__menu-mobile {
+        display: flex;
+    }
+}
+
+@media (max-width: 960px) {
     .navbar__links,
     .navbar__acciones,
     .navbar__divisor {
@@ -331,4 +403,10 @@
     .navbar__contenido {
         padding: 0 20px;
     }
+}
+
+/* Menú abierto: si no entra en la pantalla (celular apaisado) se scrollea adentro */
+.navbar__menu-mobile--abierto {
+    max-height: calc(100dvh - 60px);
+    overflow-y: auto;
 }

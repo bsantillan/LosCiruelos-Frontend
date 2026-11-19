@@ -1,0 +1,95 @@
+.selector-producto {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.selector-producto__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.selector-producto__nombre {
+    font-size: 0.9375rem;
+    color: var(--texto);
+}
+
+.selector-producto__detalle {
+    font-size: 0.75rem;
+    color: var(--texto-tenue);
+}
+
+.selector-producto__cantidad {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.selector-producto__btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--borde);
+    background: var(--superficie-2);
+    color: var(--texto);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transicion);
+}
+
+.selector-producto__btn:hover:not(:disabled) {
+    background: var(--superficie-3);
+}
+
+.selector-producto__btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.selector-producto__btn:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+.selector-producto__valor {
+    min-width: 20px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--texto);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Personal: el resto del catálogo, plegado */
+.selector-producto__mas {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    border: none;
+    background: none;
+    color: var(--verde-lima);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.selector-producto__mas:disabled {
+    color: var(--texto-suave);
+    cursor: default;
+}
+
+.selector-producto__extras {
+    display: flex;
+    flex-direction: column;
+    gap: inherit;
+    padding-left: 12px;
+    border-left: 2px solid var(--borde);
+}

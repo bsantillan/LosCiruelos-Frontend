@@ -25,11 +25,7 @@ export const authService = {
         await api.post("/auth/resend-token", { email, tipo_codigo });
     },
 
-    // POST /auth/refresh
-    refresh: async (refreshToken: string): Promise<LoginResponse> => {
-        const response = await api.post<LoginResponse>("/auth/refresh", { refreshToken });
-        return response.data;
-    },
+    // POST /auth/refresh lo hace directamente el interceptor de axiosInstance
 
     // POST /auth/logout
     logout: async (refreshToken: string): Promise<void> => {

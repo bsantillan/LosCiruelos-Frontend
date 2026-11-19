@@ -1,8 +1,14 @@
+import { Link } from "react-router-dom";
 import { SECTIONS_FOOTER } from "../../config/sections";
+import { useAuth } from "../../context/AuthContext";
+import { useHorariosClub } from "../../hooks/useHorariosClub";
 import "./Footer.css";
 import { FaInstagram } from "react-icons/fa";
 
 export function Footer() {
+    const { usuario } = useAuth();
+    // El horario sale del backend; si no responde, Lun–Sáb · 08:00 a 23:00
+    const horario = useHorariosClub(true);
     return (
         <footer className="home-footer">
             <div className="home-container">
@@ -24,29 +30,39 @@ export function Footer() {
                     <div className="footer-links">
                         <span className="footer-links__titulo">Club</span>
                         {SECTIONS_FOOTER.map(({ id, label, to }) => (
-                            <a
-                                key={id}
-                                href={to}
-                            >
+                            <Link key={id} to={to}>
                                 {label}
-                            </a>
+                            </Link>
                         ))}
                     </div>
                     <div className="footer-links">
                         <span className="footer-links__titulo">Plataforma</span>
-                        <a href="/register">Registrate</a>
-                        <a href="/login">Iniciar sesión</a>
-                        <a href="/reservas">Reservas</a>
+                        {usuario ? (
+                            <Link to="/perfil">Mi perfil</Link>
+                        ) : (
+                            <>
+                                <Link to="/register">Registrate</Link>
+                                <Link to="/login">Iniciar sesión</Link>
+                            </>
+                        )}
+                        {(!usuario || usuario.rol === "CLIENTE") && <Link to="/reservas">Reservas</Link>}
+                        {usuario?.rol === "CLIENTE" && <Link to="/mis-reservas">Mis reservas</Link>}
                     </div>
                     <div className="footer-links">
                         <span className="footer-links__titulo">Contacto</span>
                         <span>Calle 34 e/ 25 y 26 Nº 1527</span>
                         <span>La Plata, Buenos Aires</span>
-                        <span>Lun–Sáb · 08:00 a 23:00</span>
+                        {horario.map(r => <span key={r}>{r}</span>)}
                     </div>
                 </div>
                 <div className="footer-bottom">
                     <span>© {new Date().getFullYear()} Los Ciruelos Pádel. Todos los derechos reservados.</span>
+                    <span className="footer-credito">
+                        Sitio hecho por{" "}
+                        <a href="https://www.instagram.com/diagonal.software.group/" target="_blank" rel="noopener noreferrer">
+                            Diagonal Software Group
+                        </a>
+                    </span>
                 </div>
             </div>
         </footer>

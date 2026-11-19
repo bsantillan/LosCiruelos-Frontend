@@ -1,0 +1,249 @@
+/* ── Asistente para crear reservas, partidos y turnos fijos ── */
+
+/* El paso a la izquierda y, en pantallas anchas, lo elegido hasta ahora a la derecha */
+.asistente {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(300px, 24vw, 380px);
+    gap: 20px;
+    align-items: start;
+}
+
+.asistente--completo {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.asistente__paso {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+.asistente__titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.asistente__ayuda {
+    margin: -4px 0 12px;
+}
+
+.asistente__lateral {
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.asistente__lineas {
+    padding-top: 12px;
+    border-top: 1px solid var(--borde);
+}
+
+/* Atrás y Siguiente: quedan a la vista al final de la pantalla */
+.asistente__acciones {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    background: var(--fondo);
+    border-top: 1px solid var(--borde);
+}
+
+/* ── Qué crear ── */
+.asistente-tipos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    gap: 14px;
+}
+
+.asistente-tipo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 18px;
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-lg);
+    background: var(--superficie-2);
+    color: var(--texto-suave);
+    font-family: var(--fuente-cuerpo);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--transicion), background var(--transicion), color var(--transicion);
+}
+
+.asistente-tipo:hover {
+    border-color: rgba(240, 244, 240, 0.2);
+    color: var(--texto);
+}
+
+.asistente-tipo:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+.asistente-tipo--activo,
+.asistente-tipo--activo:hover {
+    border-color: var(--verde-lima);
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+}
+
+.asistente-tipo__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.2rem;
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    color: var(--texto);
+}
+
+.asistente-tipo__desc {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+.asistente-modo {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--borde);
+}
+
+/* ── Resumen final: datos del turno y total, uno al lado del otro si entran ── */
+.asistente-resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+.asistente-resumen__bloque {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.asistente__jugadores {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 12px;
+    border-top: 1px solid var(--borde);
+    font-size: 0.875rem;
+}
+
+.asistente__jugadores li {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+}
+
+.asistente__jugadores span {
+    color: var(--texto-suave);
+}
+
+.asistente__jugadores strong {
+    font-weight: 600;
+    color: var(--texto);
+}
+
+/* Los jugadores llenan el ancho: de a dos, o de a cuatro en pantallas muy anchas */
+.asistente .jugadores {
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+}
+
+@media (max-width: 1100px) {
+    .asistente {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .asistente__lateral {
+        display: none;
+    }
+}
+
+/* ── El asistente en un popup ── */
+.modal.asistente-modal {
+    max-width: min(900px, 100%);
+    width: 100%;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    padding: 24px 28px 0;
+    gap: 16px;
+    text-align: left;
+}
+
+.asistente-modal__cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.asistente-modal__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+}
+
+.asistente-modal__subtitulo {
+    margin-top: 4px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+/* Las tarjetas de cada paso, sobre el fondo del popup */
+.asistente-modal .admin-tarjeta {
+    background: var(--superficie-2);
+}
+
+.asistente-modal .asistente-tipo {
+    background: var(--superficie);
+}
+
+/* Los botones quedan abajo, dentro del popup */
+.asistente-modal .asistente__acciones {
+    margin-top: auto;
+    background: var(--superficie);
+    padding-bottom: 20px;
+}
+
+/* El contenido llena el alto del popup y los botones quedan al pie */
+.asistente-modal .asistente,
+.asistente-modal .asistente__paso {
+    flex: 1;
+}
+
+.asistente-modal .asistente {
+    align-items: stretch;
+}
+
+.asistente-modal .nr-creada {
+    padding-bottom: 24px;
+}
+
+@media (max-width: 640px) {
+    .modal-overlay:has(.asistente-modal) {
+        padding: 0;
+    }
+
+    .modal.asistente-modal {
+        max-height: 100dvh;
+        min-height: 100dvh;
+        border-radius: 0;
+        padding: 16px 16px 0;
+    }
+}

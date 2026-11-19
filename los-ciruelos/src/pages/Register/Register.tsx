@@ -1,38 +1,26 @@
 import { useState } from "react";
-import { User, Mail, Lock, Phone, ArrowRight, ArrowLeft, Check, AlertCircle } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
+import { User, Mail, Lock, Phone, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import CampoSelect from "../../components/ui/CampoSelect/CampoSelect";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";
 import Boton from "../../components/ui/Boton/Boton";
 import { AuthPanelLayout } from "../../layouts/AuthLayout/AuthPanelLayout";
-import { EmailError, ErroresRegister, useRegister } from "../../hooks/useRegister";
-import { RegisterRequest } from "../../types/register.types";
-import { useNavigate } from "react-router-dom";
+import { useRegister, type ErroresRegister } from "../../hooks/useRegister";
+import { useGoogleAuth } from "../../hooks/useGoogleAuth";
+import BotonGoogle from "../../components/ui/Boton/BotonGoogle";
+import type { RegisterRequest } from "../../types/register.types";
+import type { CredentialResponse } from "@react-oauth/google";
+import { Link, useNavigate } from "react-router-dom";
+import { telefonoValido } from "../../utils/telefono";
+import { destinoDespuesDelLogin } from "../../utils/seleccionReserva";
+import { CATEGORIAS, POSICIONES } from "../../config/opcionesJugador";
 import "./Register.css";
-
-/* ─── OPCIONES ───────────────────────────────────── */
-const CATEGORIAS = [
-    { valor: "Principiante", etiqueta: "Principiante" },
-    { valor: "Septima", etiqueta: "Séptima" },
-    { valor: "Sexta", etiqueta: "Sexta" },
-    { valor: "Quinta", etiqueta: "Quinta" },
-    { valor: "Cuarta", etiqueta: "Cuarta" },
-    { valor: "Tercera", etiqueta: "Tercera" },
-    { valor: "Segunda", etiqueta: "Segunda" },
-    { valor: "Primera", etiqueta: "Primera" },
-];
-
-const POSICIONES = [
-    { valor: "Drive", etiqueta: "Drive" },
-    { valor: "Reves", etiqueta: "Revés" },
-    { valor: "Ambos", etiqueta: "Ambos" },
-];
+import { AvisoTransitorio } from "../../components/ui/Avisos/Avisos";
 
 const PASOS = [
     { numero: 1, etiqueta: "Personal" },
     { numero: 2, etiqueta: "Club" },
-    { numero: 3, etiqueta: "Términos y condiciones" },
+    { numero: 3, etiqueta: "Términos" },
 ];
 
 const INFO_PASOS = [
@@ -54,12 +42,14 @@ function TerminosContenido() {
             <h4>1. Uso de la plataforma</h4>
             <p>Este sistema es exclusivo para socios del club. Tu cuenta es personal e intransferible.</p>
             <h4>2. Reservas</h4>
-            <p>Las reservas están sujetas a disponibilidad. La cancelación debe realizarse con al menos 2 horas de anticipación.</p>
-            <h4>3. Datos personales</h4>
+            <p>Las reservas están sujetas a disponibilidad. Podés cancelar hasta que empiece el turno: con 24 horas o más de anticipación se devuelve todo lo pagado; con 12 horas o más, la seña; con menos, no hay devolución.</p>
+            <h4>3. Notificaciones</h4>
+            <p>Te avisamos sobre tus reservas por mail o, si verificás tu celular, por WhatsApp. Desde tu perfil elegís el medio y qué avisos recibir; las cancelaciones se avisan siempre.</p>
+            <h4>4. Datos personales</h4>
             <p>Tus datos serán utilizados únicamente para la gestión del club y no serán compartidos con terceros sin tu consentimiento, conforme a la Ley 25.326 de Protección de Datos Personales.</p>
-            <h4>4. Conducta</h4>
+            <h4>5. Conducta</h4>
             <p>Los socios deben respetar las instalaciones y a los demás miembros. El incumplimiento puede resultar en la suspensión de la cuenta.</p>
-            <h4>5. Modificaciones</h4>
+            <h4>6. Modificaciones</h4>
             <p>El club se reserva el derecho de modificar estos términos con previo aviso.</p>
         </div>
     );
@@ -71,11 +61,23 @@ export default function Register() {
     const [datos, setDatos] = useState<RegisterRequest>({
         nombre: "", apellido: "", email: "",
         password: "", telefono: "", categoria: "",
-        posicion: "", termsAccepted: false,
+        posicion: "", termsAccepted: false, aceptarNotificacion: false,
     });
     const [confirmarPassword, setConfirmarPassword] = useState("");
     const [errores, setErrores] = useState<ErroresRegister>({});
     const { register, cargando, erroresApi, setErroresApi } = useRegister();
+    const { loginConGoogle, handleGoogleError, erroresApi: erroresGoogle, setErroresApi: setErroresGoogle } = useGoogleAuth();
+
+    const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+        try {
+            const respuesta = await loginConGoogle(credentialResponse);
+            // Si venía de elegir un turno, se retoma (antes, a completar el perfil si hace falta)
+            const destino = destinoDespuesDelLogin(respuesta.perfilCompleto, respuesta.rol);
+            navigate(destino, destino === "/reservas" || destino === "/perfil" ? { state: { desdeReserva: true } } : undefined);
+        } catch {
+            // el error ya se muestra en pantalla
+        }
+    };
 
     const cambiarInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -86,6 +88,7 @@ export default function Register() {
         }
         setErrores({});
         setErroresApi({});
+        setErroresGoogle({});
     };
 
     const cambiarSelect = (name: keyof RegisterRequest) => (e: { target: { value: string | number } }) => {
@@ -94,8 +97,8 @@ export default function Register() {
         setErroresApi({});
     };
 
-    const cambiarToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDatos(p => ({ ...p, termsAccepted: e.target.checked }));
+    const cambiarToggle = (campo: "termsAccepted" | "aceptarNotificacion") => (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDatos(p => ({ ...p, [campo]: e.target.checked }));
         setErrores({});
         setErroresApi({});
     };
@@ -110,8 +113,8 @@ export default function Register() {
         else if (datos.apellido.length > 50) e.apellido = "Máximo 50 caracteres.";
         if (!datos.email) e.email = "El correo es obligatorio.";
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) e.email = "El correo no es válido.";
-        if (!datos.telefono) e.telefono = "El teléfono es obligatorio.";
-        else if (!/^\+?[0-9]{8,15}$/.test(datos.telefono)) e.telefono = "Formato inválido. Ej: +5491123456789";
+        if (!datos.telefono) e.telefono = "El celular es obligatorio.";
+        else if (!telefonoValido(datos.telefono)) e.telefono = "Ingresá un celular válido. Ej: 11 1234-5678";
         if (!datos.password) {
             e.password = "La contraseña es obligatoria.";
         } else if (
@@ -138,6 +141,7 @@ export default function Register() {
     const validarPaso3 = (): boolean => {
         const e: ErroresRegister = {};
         if (!datos.termsAccepted) e.termsAccepted = "Debés aceptar los términos para continuar.";
+        if (!datos.aceptarNotificacion) e.aceptarNotificacion = "Necesitamos poder avisarte sobre tus reservas.";
         setErrores(e);
         return Object.keys(e).length === 0;
     };
@@ -157,11 +161,13 @@ export default function Register() {
         if (!validarPaso3()) return;
         try {
             await register(datos);
-            navigate("/login");
-        } catch (error: any) {
-            if (error.nombre || error.apellido || error.email || error.telefono || error.password) setPaso(1);
-            if (error.categoria || error.posicion) setPaso(2);
-            if (error.termsAccepted) setPaso(3);
+            // El backend ya envió el código de verificación al email
+            navigate("/verificar-codigo", { state: { email: datos.email, tipo: "VERIFY_EMAIL" } });
+        } catch (error) {
+            const e = error as ErroresRegister;
+            if (e.nombre || e.apellido || e.email || e.telefono || e.password) setPaso(1);
+            else if (e.categoria || e.posicion) setPaso(2);
+            else if (e.termsAccepted || e.aceptarNotificacion) setPaso(3);
         }
     };
 
@@ -192,7 +198,7 @@ export default function Register() {
                                 <span className="register-tab__numero">
                                     {completado ? <Check size={11} /> : p.numero}
                                 </span>
-                                {p.etiqueta}
+                                <span className="register-tab__etiqueta">{p.etiqueta}</span>
                             </button>
                         );
                     })}
@@ -242,9 +248,10 @@ export default function Register() {
                                 autoComplete="email" required error={errores.email || erroresApi.email}
                             />
                             <CampoInput
-                                id="telefono" name="telefono" label="Teléfono"
+                                id="telefono" name="telefono" label="Celular"
                                 type="tel" value={datos.telefono} onChange={cambiarInput}
-                                placeholder="+5491123456789" icono={<Phone size={16} />}
+                                placeholder="11 1234-5678" icono={<Phone size={16} />}
+                                autoComplete="tel"
                                 required error={errores.telefono || erroresApi.telefono}
                             />
                             <CampoInput
@@ -287,10 +294,7 @@ export default function Register() {
                     )}
 
                     {/* Error general */}
-                    <div className={`alerta-error${erroresApi.general ? " alerta-error--visible" : ""}`} role="alert">
-                        <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
-                        {erroresApi.general}
-                    </div>
+                        {(erroresApi.general || erroresGoogle.general) && <AvisoTransitorio tipo="error">{erroresApi.general || erroresGoogle.general}</AvisoTransitorio>}
 
                     {/* Paso 3 */}
                     {paso === 3 && (
@@ -303,8 +307,16 @@ export default function Register() {
                                 label="Acepto los términos y condiciones"
                                 descripcion="Leí y acepto los términos de uso del club."
                                 checked={datos.termsAccepted}
-                                onChange={cambiarToggle}
+                                onChange={cambiarToggle("termsAccepted")}
                                 error={errores.termsAccepted || erroresApi.termsAccepted}
+                            />
+                            <CampoToggle
+                                id="aceptarNotificacion" name="aceptarNotificacion"
+                                label="Acepto recibir notificaciones del club"
+                                descripcion="Te avisamos por mail sobre tus reservas. Desde tu perfil podés verificar tu celular y pasarte a WhatsApp."
+                                checked={datos.aceptarNotificacion}
+                                onChange={cambiarToggle("aceptarNotificacion")}
+                                error={errores.aceptarNotificacion || erroresApi.aceptarNotificacion}
                             />
                         </div>
                     )}
@@ -336,15 +348,16 @@ export default function Register() {
                 {paso === 1 && (
                     <>
                         <div className="separador"><span>o continuá con</span></div>
-                        <Boton variante="secundario" onClick={() => {}}>
-                            <FcGoogle size={18} />
-                            Registrate con Google
-                        </Boton>
+                        <BotonGoogle
+                            onSuccess={handleGoogleSuccess}
+                            onError={handleGoogleError}
+                            texto="signup_with"
+                        />
                     </>
                 )}
 
                 <p className="pie">
-                    ¿Ya tenés cuenta?&nbsp;<a href="/login">Ingresá acá</a>
+                    ¿Ya tenés cuenta?&nbsp;<Link to="/login">Ingresá acá</Link>
                 </p>
 
             </div>

@@ -2,7 +2,8 @@
 .pagina-login {
     min-height: 100dvh;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* el formulario lleva un poco más de ancho que el panel visual */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
 }
 
 /* ── Panel visual ── */
@@ -130,8 +131,8 @@
     justify-content: center;
     padding-top: 48px;
     padding-bottom: 52px;
-    padding-left: 44px;
-    padding-right: 44px;
+    padding-left: 56px;
+    padding-right: 56px;
     background: var(--superficie);
     position: relative;
     overflow: hidden;
@@ -172,7 +173,7 @@
 
 .formulario-contenedor {
     width: 100%;
-    max-width: 400px;
+    max-width: 520px;
     position: relative;
     z-index: 1;
 }
@@ -229,6 +230,13 @@
 .alerta-error--visible {
     opacity: 1;
     margin-top: 20px;
+}
+
+/* Éxito: reutiliza la caja de .alerta-error con colores de marca */
+.alerta-exito {
+    background: var(--verde-fondo);
+    border-color: var(--verde-borde);
+    color: var(--verde-lima);
 }
 
 .campos {
@@ -406,7 +414,7 @@
     }
 
     .formulario-contenedor {
-        max-width: 440px;
+        max-width: 520px;
     }
 
     .opciones {
@@ -571,19 +579,7 @@
 }
 
 .verificacion-panel__volver {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.8125rem;
-    color: var(--texto-suave);
-    padding: 0;
+    align-self: flex-start;
     margin-bottom: 20px;
-    transition: color var(--transicion);
 }
 
-.verificacion-panel__volver:hover {
-    color: var(--texto);
-}

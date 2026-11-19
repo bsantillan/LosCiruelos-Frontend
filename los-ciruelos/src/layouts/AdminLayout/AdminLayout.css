@@ -1,0 +1,341 @@
+/* ── Panel del club: sidebar fijo + contenido ── */
+.admin {
+    --ancho-sidebar: 248px;
+    min-height: 100dvh;
+    background: var(--negro);
+}
+
+.admin-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 60;
+    width: var(--ancho-sidebar);
+    display: flex;
+    flex-direction: column;
+    background: var(--fondo);
+    border-right: 1px solid var(--borde);
+}
+
+.admin-sidebar__cabecera {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--borde);
+}
+
+.admin-sidebar__logo {
+    background: rgba(46, 100, 46, 0.85);
+    border: 1px solid rgba(143, 212, 0, 0.2);
+    border-radius: 10px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+}
+
+.admin-sidebar__logo .logo__imagen {
+    height: 26px;
+}
+
+.admin-sidebar__panel {
+    font-family: var(--fuente-titulo);
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--texto);
+    line-height: 1.1;
+}
+
+.admin-sidebar__cerrar {
+    display: none;
+    margin-left: auto;
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--borde);
+    border-radius: 50%;
+    background: var(--superficie-2);
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+
+.admin-sidebar__nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.admin-sidebar__grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.admin-sidebar__grupo-titulo {
+    padding: 0 12px 6px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.admin-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radio-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--texto-suave);
+    text-decoration: none;
+    transition: background var(--transicion), color var(--transicion);
+}
+
+.admin-sidebar__link:hover {
+    background: var(--superficie);
+    color: var(--texto);
+}
+
+.admin-sidebar__link--activo,
+.admin-sidebar__link--activo:hover {
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+    box-shadow: inset 3px 0 0 var(--verde-lima);
+}
+
+.admin-sidebar__pie {
+    padding: 12px;
+    border-top: 1px solid var(--borde);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-sidebar__usuario {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: var(--radio-md);
+    background: var(--superficie);
+}
+
+.admin-sidebar__avatar {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-lima));
+    color: var(--negro);
+    font-family: var(--fuente-titulo);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.admin-sidebar__usuario-datos {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-sidebar__usuario-nombre {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--texto);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-sidebar__usuario-rol {
+    font-size: 0.75rem;
+    color: var(--texto-suave);
+}
+
+.admin-sidebar__salir {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radio-sm);
+    background: transparent;
+    color: var(--error);
+    cursor: pointer;
+}
+
+.admin-sidebar__salir:hover {
+    background: var(--error-fondo);
+}
+
+/* ── Desplegable (Nueva reserva: reserva, partido, turno fijo) ── */
+.admin-sidebar__padre-fila {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.admin-sidebar__padre {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-sidebar__desplegar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radio-md);
+    background: none;
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+
+.admin-sidebar__desplegar:hover {
+    background: var(--superficie);
+    color: var(--texto);
+}
+
+.admin-sidebar__desplegar:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: -2px;
+}
+
+.admin-sidebar__padre--en-ruta {
+    color: var(--texto);
+}
+
+.admin-sidebar__chevron {
+    transition: transform var(--transicion);
+}
+
+.admin-sidebar__chevron--abierto {
+    transform: rotate(180deg);
+}
+
+.admin-sidebar__hijos {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 2px 0 4px 20px;
+    padding-left: 10px;
+    border-left: 1px solid var(--borde);
+}
+
+.admin-sidebar__hijo {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: 0.875rem;
+}
+
+/* ── Contenido ── */
+.admin-contenido {
+    margin-left: var(--ancho-sidebar);
+    min-width: 0;
+    min-height: 100dvh;
+    padding: clamp(24px, 2.5vw, 40px) clamp(20px, 2.5vw, 44px) 48px;
+    background: var(--fondo);
+}
+
+/* "Mi cuenta" reutiliza la página de perfil: dentro del panel no lleva su propio fondo ni márgenes */
+.admin-contenido .perfil-pagina {
+    min-height: 0;
+    padding: 0;
+    background: none;
+}
+
+.admin-contenido .perfil-contenedor {
+    margin: 0;
+    max-width: none;
+}
+
+/* ── Barra superior y menú deslizable (pantallas angostas) ── */
+.admin-topbar {
+    display: none;
+}
+
+.admin-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: rgba(0, 0, 0, 0.6);
+    animation: aparecer 0.2s both;
+}
+
+@media (max-width: 960px) {
+    .admin-topbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 56px;
+        padding: 0 16px;
+        background: rgba(8, 12, 8, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--borde);
+    }
+
+    .admin-topbar__menu {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--borde);
+        border-radius: var(--radio-md);
+        background: var(--superficie);
+        color: var(--texto);
+        cursor: pointer;
+    }
+
+    .admin-topbar__titulo {
+        font-family: var(--fuente-titulo);
+        font-size: 1.05rem;
+        font-weight: 700;
+        font-style: italic;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--texto);
+    }
+
+    .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform var(--transicion-lenta);
+        width: min(300px, 86vw);
+        box-shadow: none;
+    }
+
+    .admin-sidebar--abierto {
+        transform: none;
+        box-shadow: 12px 0 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .admin-sidebar__cerrar {
+        display: flex;
+    }
+
+    .admin-contenido {
+        margin-left: 0;
+        min-height: calc(100dvh - 56px);
+        padding: 24px 16px 40px;
+    }
+}

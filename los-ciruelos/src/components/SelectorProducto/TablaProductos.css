@@ -1,0 +1,187 @@
+/* ── Productos en una tabla compacta (personal) ── */
+.tabla-productos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tabla-productos__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.tabla-productos__buscar {
+    flex: 1 1 220px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    background: var(--superficie);
+    color: var(--texto-tenue);
+}
+
+.tabla-productos__buscar:focus-within {
+    border-color: var(--verde-borde);
+}
+
+.tabla-productos__buscar input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: none;
+    outline: none;
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.875rem;
+}
+
+/* La lista se desliza dentro de su recuadro (con muchos productos no se hace eterna) */
+.tabla-productos__lista {
+    max-height: 340px;
+    overflow-y: auto;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+}
+
+.tabla-productos__fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 96px 72px 128px;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--borde);
+    font-size: 0.875rem;
+    color: var(--texto);
+}
+
+.tabla-productos__fila--cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-top: none;
+    background: var(--superficie-2);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.tabla-productos__fila--elegida {
+    background: var(--verde-fondo);
+}
+
+.tabla-productos__fila--sin {
+    opacity: 0.55;
+}
+
+.tabla-productos__nombre {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.tabla-productos__nombre small {
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: var(--texto-suave);
+}
+
+.tabla-productos__num {
+    font-variant-numeric: tabular-nums;
+    color: var(--texto-suave);
+}
+
+.tabla-productos__cantidad {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.tabla-productos__cantidad button {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--borde);
+    border-radius: 50%;
+    background: var(--superficie-2);
+    color: var(--texto);
+    cursor: pointer;
+}
+
+.tabla-productos__cantidad button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.tabla-productos__cantidad input {
+    width: 44px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    background: var(--superficie);
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-weight: 700;
+    -moz-appearance: textfield;
+}
+
+.tabla-productos__cantidad input::-webkit-outer-spin-button,
+.tabla-productos__cantidad input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.tabla-productos__ayuda {
+    padding: 10px 12px;
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+.tabla-productos__total {
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+}
+
+.tabla-productos__total strong {
+    color: var(--verde-lima);
+}
+
+/* Celular: precio y libres van debajo del nombre */
+@media (max-width: 560px) {
+    .tabla-productos__fila {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas: "nombre cantidad" "datos datos";
+        row-gap: 2px;
+    }
+
+    .tabla-productos__fila--cabecera {
+        display: none;
+    }
+
+    .tabla-productos__nombre { grid-area: nombre; }
+    .tabla-productos__cantidad { grid-area: cantidad; }
+
+    .tabla-productos__num {
+        font-size: 0.75rem;
+    }
+
+    .tabla-productos__fila > .tabla-productos__num:nth-of-type(2) {
+        grid-column: 1;
+    }
+
+    .tabla-productos__fila > .tabla-productos__num:nth-of-type(3) {
+        display: none;
+    }
+}

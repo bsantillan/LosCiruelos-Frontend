@@ -1,5 +1,5 @@
-import logoLosCiruelos from "../../assets/LogoSinFondo.png";
-import padelBg from "../../assets/padel-bg.png";
+import logoLosCiruelos from "../../assets/LogoSinFondo.webp";
+import padelBg from "../../assets/padel-bg.webp";
 import "./AuthPanelLayout.css";
 
 interface LogoProps {

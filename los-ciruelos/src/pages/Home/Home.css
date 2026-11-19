@@ -178,7 +178,8 @@
 
 .estadisticas-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    /* Tantas columnas como cifras haya (las del backend aparecen cuando llegan) */
+    grid-template-columns: repeat(var(--estadisticas, 4), 1fr);
     gap: 0;
 }
 
@@ -388,63 +389,11 @@
     padding: 80px 0;
 }
 
-.canchas-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
-
-.cancha-item {
-    background: var(--fondo);
-    border: 1px solid var(--borde);
-    border-radius: var(--radio-lg);
-    overflow: hidden;
-    transition: border-color var(--transicion), transform var(--transicion);
-}
-
-.cancha-item:hover {
-    border-color: var(--verde-borde);
-    transform: translateY(-3px);
-}
-
-.cancha-item__imagen {
-    height: 160px;
-    background: linear-gradient(135deg, var(--superficie-2), var(--superficie-3));
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Reemplazá con: background-image: url(cancha.foto) */
-}
-
-.cancha-item__imagen-placeholder {
-    font-family: var(--fuente-titulo);
-    font-size: 1.1rem;
-    font-style: italic;
-    font-weight: 700;
-    color: var(--texto-suave);
-}
-
-.cancha-item__info {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.cancha-item__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.cancha-item__nombre {
-    font-family: var(--fuente-titulo);
-    font-size: 1.1rem;
-    font-weight: 700;
-    font-style: italic;
-    color: var(--texto);
+.noticia-card__imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .cancha-item__tipo {
@@ -466,84 +415,258 @@
     border-color: rgba(245, 158, 11, 0.25);
 }
 
-.cancha-item__superficie {
-    font-size: 0.8125rem;
-    color: var(--texto-suave);
-}
-
-.cancha-item__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.6875rem;
-    color: var(--texto-suave);
-    margin-top: 4px;
-}
-
-/* ── Torneos ── */
-.torneos-grid {
+/* Vitrina de canchas: la elegida grande con sus fotos, y al costado las demás para elegir */
+.vitrina {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 300px);
     gap: 20px;
+    align-items: start;
 }
 
-.torneo-card {
-    background: var(--superficie);
-    border: 1px solid var(--borde);
-    border-radius: var(--radio-lg);
-    padding: 24px;
+.vitrina__foco {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    transition: border-color var(--transicion);
+    overflow: hidden;
+    background: var(--fondo, var(--superficie-2));
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-lg);
 }
 
-.torneo-card:hover {
-    border-color: var(--verde-borde);
+.vitrina__foto {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    background: linear-gradient(135deg, var(--superficie-2), var(--superficie-3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.torneo-card__estado {
-    font-size: 0.625rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.25);
-    border-radius: var(--radio-pill);
-    padding: 3px 10px;
-    width: fit-content;
+.vitrina__foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    animation: vitrina-foto 0.35s ease;
 }
 
-.torneo-card__nombre {
+@keyframes vitrina-foto {
+    from { opacity: 0.4; transform: scale(1.02); }
+    to { opacity: 1; transform: none; }
+}
+
+.vitrina__sin-foto {
     font-family: var(--fuente-titulo);
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.6rem;
     font-style: italic;
+    font-weight: 700;
+    color: var(--texto-suave);
+}
+
+/* Desactivada: la foto apagada y el aviso encima */
+.vitrina__foco--inactiva .vitrina__foto img,
+.vitrina__foco--inactiva .vitrina__sin-foto {
+    filter: grayscale(1) brightness(0.55);
+}
+
+.vitrina__estado {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    padding: 6px 12px;
+    border-radius: var(--radio-pill);
+    background: rgba(10, 14, 10, 0.85);
+    border: 1px solid rgba(245, 196, 81, 0.5);
+    color: #f5c451;
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+
+.vitrina__miniaturas {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px 0;
+    overflow-x: auto;
+}
+
+.vitrina__miniatura {
+    flex: 0 0 auto;
+    width: 76px;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid transparent;
+    border-radius: var(--radio-sm);
+    background: var(--superficie-2);
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity var(--transicion), border-color var(--transicion);
+}
+
+.vitrina__miniatura img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.vitrina__miniatura:hover,
+.vitrina__miniatura--activa {
+    opacity: 1;
+}
+
+.vitrina__miniatura--activa {
+    border-color: var(--verde-lima);
+}
+
+.vitrina__info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 20px 22px;
+}
+
+.vitrina__nombre {
+    font-family: var(--fuente-titulo);
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
     color: var(--texto);
 }
 
-.torneo-card__detalles {
+.vitrina__datos {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
 }
 
-.torneo-card__detalles span {
-    display: flex;
+.vitrina__dato {
+    display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 5px;
     font-size: 0.8125rem;
     color: var(--texto-suave);
 }
 
-.torneo-card__aviso {
+.vitrina__descripcion {
+    max-width: 60ch;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--texto-suave);
+}
+
+/* Las demás canchas, para elegir */
+.vitrina__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vitrina__opcion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    background: var(--fondo, var(--superficie-2));
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--transicion), background var(--transicion), transform var(--transicion);
+}
+
+.vitrina__opcion:hover {
+    border-color: var(--verde-borde);
+    transform: translateX(2px);
+}
+
+.vitrina__opcion--activa {
+    border-color: var(--verde-lima);
+    background: var(--verde-fondo);
+}
+
+.vitrina__opcion:focus-visible,
+.vitrina__miniatura:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+.vitrina__opcion-foto {
+    flex: 0 0 auto;
+    width: 64px;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: var(--radio-sm);
+    background: var(--superficie-3, var(--superficie-2));
+    color: var(--texto-suave);
+}
+
+.vitrina__opcion-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.vitrina__opcion-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.vitrina__opcion-nombre {
+    font-weight: 700;
+    font-size: 0.9375rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vitrina__opcion-detalle {
     font-size: 0.75rem;
     color: var(--texto-suave);
-    font-style: italic;
-    border-top: 1px solid var(--borde);
-    padding-top: 12px;
-    margin-top: 4px;
+}
+
+.vitrina__opcion--inactiva .vitrina__opcion-foto img {
+    filter: grayscale(1) brightness(0.6);
+}
+
+.vitrina__opcion--inactiva .vitrina__opcion-detalle {
+    color: #f5c451;
+}
+
+/* Celular: la elegida arriba y las demás en una fila que se desliza */
+@media (max-width: 860px) {
+    .vitrina {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .vitrina__lista {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .vitrina__opcion {
+        flex: 0 0 auto;
+        width: 230px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vitrina__foto img { animation: none; }
+    .vitrina__opcion:hover { transform: none; }
 }
 
 /* ── Noticias ── */
@@ -575,8 +698,8 @@
 
 .noticia-card__imagen {
     height: 160px;
+    overflow: hidden;
     background: linear-gradient(135deg, var(--superficie-2), var(--superficie-3));
-    /* Reemplazá con: background-image: url(noticia.imagen) */
 }
 
 .noticia-card__contenido {
@@ -622,6 +745,26 @@
     font-size: 0.8125rem;
     color: var(--texto-suave);
     line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* "Para más información, comunicate con el club": lleva a Contacto */
+.noticia-card__pie {
+    margin-top: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--verde-lima);
+    text-decoration: none;
+}
+
+.noticia-card__pie:hover {
+    text-decoration: underline;
+}
+
+.noticias-vacio {
+    margin-bottom: 8px;
+    font-size: 0.9375rem;
+    color: var(--texto-suave);
 }
 
 /* ── Testimonios ── */
@@ -688,6 +831,38 @@
     color: var(--texto-suave);
 }
 
+/* Estrellas de la reseña: las que tiene, en amarillo; el resto, apagadas */
+.testimonio-card__estrellas {
+    display: inline-flex;
+    gap: 2px;
+    color: var(--texto-tenue);
+}
+
+.testimonio-card__estrella--llena {
+    color: #f5c451;
+    fill: #f5c451;
+}
+
+.testimonios-pie {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+.testimonios-pie__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--verde-lima);
+    text-decoration: none;
+}
+
+.testimonios-pie__link:hover {
+    text-decoration: underline;
+}
+
 /* ── Ubicación ── */
 .home-ubicacion {
     padding: 80px 0;
@@ -752,18 +927,9 @@
 }
 
 /* Reemplazá en todas las cards que tienen transition + hover transform */
-.cancha-item {
-    /* eliminá: transition: border-color var(--transicion), transform var(--transicion); */
-    transition: border-color var(--transicion);
-}
-
 /* ── Animaciones ── */
 
 .como-card {
-    transition: border-color var(--transicion);
-}
-
-.torneo-card {
     transition: border-color var(--transicion);
 }
 
@@ -777,10 +943,7 @@
 
 /* ── Responsive ── */
 @media (max-width: 1024px) {
-    .canchas-grid {
-        grid-template-columns: repeat(2, 1fr);
     }
-}
 
 @media (max-width: 860px) {
     .home-hero {
@@ -823,10 +986,6 @@
     }
 
     .como-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .torneos-grid {
         grid-template-columns: 1fr;
     }
 
@@ -879,7 +1038,4 @@
         justify-content: center;
     }
 
-    .canchas-grid {
-        grid-template-columns: 1fr;
     }
-}

@@ -82,6 +82,7 @@ export default function CampoSelect({
 
             <div
                 ref={triggerRef}
+                id={id}
                 className={`campo__select-trigger${abierto ? " campo__select-trigger--abierto" : ""}${error ? " campo__select-trigger--error" : ""}${disabled ? " campo__select-trigger--deshabilitado" : ""}`}
                 onClick={() => !disabled && setAbierto(v => !v)}
                 role="combobox"

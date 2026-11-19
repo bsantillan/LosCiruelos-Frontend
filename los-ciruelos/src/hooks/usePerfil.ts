@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { ErroresPerfil, PerfilRequest, PerfilResponse } from "../types/perfil.types";
+import { useState, useEffect, useCallback } from "react";
+import type { ErroresPerfil, PerfilRequest, PerfilResponse } from "../types/perfil.types";
 import { perfilService } from "../services/perfilService";
+import { extraerErrores } from "../utils/apiErrors";
 
 export function usePerfil() {
     const [perfil, setPerfil] = useState<PerfilResponse | null>(null);
@@ -10,20 +11,21 @@ export function usePerfil() {
     const [exitoso, setExitoso] = useState(false);
 
     useEffect(() => {
-        const cargar = async () => {
-            try {
-                const data = await perfilService.getPerfil();
-                setPerfil(data);
-            } catch {
-                setErroresApi({ general: "No se pudo cargar el perfil." });
-            } finally {
-                setCargando(false);
-            }
-        };
-        cargar();
+        let activo = true;
+        perfilService.getPerfil()
+            .then(data => { if (activo) setPerfil(data); })
+            .catch(e => { if (activo) setErroresApi(extraerErrores(e, "No se pudo cargar el perfil.")); })
+            .finally(() => { if (activo) setCargando(false); });
+        return () => { activo = false; };
     }, []);
 
-    const actualizar = async (datos: PerfilRequest): Promise<boolean> => {
+    useEffect(() => {
+        if (!exitoso) return;
+        const timer = setTimeout(() => setExitoso(false), 3000);
+        return () => clearTimeout(timer);
+    }, [exitoso]);
+
+    const actualizar = async (datos: PerfilRequest): Promise<PerfilResponse | null> => {
         setGuardando(true);
         setErroresApi({});
         setExitoso(false);
@@ -31,22 +33,23 @@ export function usePerfil() {
             const actualizado = await perfilService.updatePerfil(datos);
             setPerfil(actualizado);
             setExitoso(true);
-            setTimeout(() => setExitoso(false), 3000);
-            return true;
-        } catch (error: any) {
-            const data = error.response?.data;
-            if (data?.errors && typeof data.errors === "object") {
-                setErroresApi(data.errors as ErroresPerfil);
-            } else if (typeof data?.error === "string") {
-                setErroresApi({ general: data.error });
-            } else {
-                setErroresApi({ general: "No se pudo actualizar el perfil." });
-            }
-            return false;
+            return actualizado;
+        } catch (error) {
+            setErroresApi(extraerErrores(error, "No se pudo actualizar el perfil."));
+            return null;
         } finally {
             setGuardando(false);
         }
     };
 
-    return { perfil, cargando, guardando, erroresApi, exitoso, actualizar, setErroresApi };
+    /** Vuelve a pedir el perfil (por ejemplo, después de verificar el celular cambia perfilCompleto). */
+    const recargar = useCallback(async () => {
+        try {
+            setPerfil(await perfilService.getPerfil());
+        } catch {
+            // se mantiene el perfil que había
+        }
+    }, []);
+
+    return { perfil, cargando, guardando, erroresApi, exitoso, actualizar, recargar, setErroresApi };
 }

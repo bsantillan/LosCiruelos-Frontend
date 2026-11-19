@@ -1,0 +1,136 @@
+/* ── Ventas sueltas: consulta con filtros; la venta nueva va en un panel lateral ── */
+.ventas-nueva {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.ventas-nueva .admin-tarjeta__titulo {
+    margin-bottom: 0;
+}
+
+.ventas-nueva__registrar {
+    justify-content: center;
+}
+
+.ventas-carrito {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px;
+    border-radius: var(--radio-md);
+    background: var(--superficie-2);
+    font-size: 0.875rem;
+    color: var(--texto);
+}
+
+.ventas-carrito li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.ventas-carrito__monto {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ventas-carrito__quitar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: var(--radio-sm);
+    background: var(--error-fondo);
+    color: var(--error);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.ventas-carrito__quitar:hover,
+.ventas-carrito__quitar:focus-visible {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: var(--error);
+    outline: none;
+}
+
+.ventas-carrito__total {
+    padding-top: 8px;
+    border-top: 1px solid var(--borde);
+    font-weight: 700;
+}
+
+.ventas-tabla__items {
+    display: block;
+    max-width: 420px;
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+    .ventas-tabla__items {
+        max-width: none;
+        text-align: right;
+    }
+}
+
+/* Venta anulada o sin cobrar: el total tachado */
+.ventas-tachado {
+    text-decoration: line-through;
+    color: var(--texto-tenue) !important;
+}
+
+.ventas-devueltas {
+    color: #f5c451;
+    font-size: 0.8125rem;
+}
+
+.ventas-devolucion__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--borde);
+}
+
+/* Esperando el pago con el QR de la caja */
+.ventas-qr {
+    align-items: center;
+    text-align: center;
+    padding: 12px 0;
+}
+
+.ventas-qr__icono {
+    color: var(--verde-lima);
+}
+
+.ventas-qr__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.2rem;
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    color: var(--texto);
+}
+
+.ventas-qr__spinner {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+/* Alta de una venta en un popup */
+.modal.venta-modal {
+    max-width: min(560px, 100%);
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    text-align: left;
+}
