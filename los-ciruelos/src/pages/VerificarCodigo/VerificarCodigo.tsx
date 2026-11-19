@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, ArrowRight, AlertCircle, MailCheck } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import Boton from "../../components/ui/Boton/Boton";
-import { ErroresVerificacion, useVerificacion } from "../../hooks/useVerificacion";
-import { useLogin } from "../../hooks/useLogin";
+import { CuentaVerificadaError, useVerificacion, type ErroresVerificacion } from "../../hooks/useVerificacion";
 import { AuthPanelLayout } from "../../layouts/AuthLayout/AuthPanelLayout";
 
 const LARGO_CODIGO = 6;
@@ -15,6 +14,7 @@ const CONFIG = {
         titulo: "REVISÁ TU EMAIL",
         descripcion: "Te enviamos un código de 6 dígitos para activar tu cuenta.",
         exitoRuta: "/login",
+        exitoState: { cuentaVerificada: true },
         volverRuta: "/login",
         volverTexto: "Volver al inicio de sesión",
     },
@@ -23,31 +23,32 @@ const CONFIG = {
         titulo: "INGRESÁ EL CÓDIGO",
         descripcion: "Te enviamos un código de 6 dígitos para resetear tu contraseña.",
         exitoRuta: "/nueva-contrasena",
+        exitoState: {},
         volverRuta: "/olvide-contrasena",
         volverTexto: "Volver",
     },
 };
 
+type TipoCodigo = keyof typeof CONFIG;
+
 /* ─── COMPONENTE PRINCIPAL ───────────────────────── */
 export default function VerificarCodigo() {
+    const { email, tipo } = (useLocation().state ?? {}) as { email?: string; tipo?: TipoCodigo };
+
+    // Sin email o tipo (entrada directa por URL) no hay nada que verificar
+    if (!email || !tipo || !(tipo in CONFIG)) return <Navigate to="/login" replace />;
+    return <FormularioCodigo email={email} tipo={tipo} />;
+}
+
+function FormularioCodigo({ email, tipo }: { email: string; tipo: TipoCodigo }) {
     const navigate = useNavigate();
-    const location = useLocation();
     const [errores, setErrores] = useState<ErroresVerificacion>({});
-    const { email, tipo } = (location.state ?? {}) as {
-        email: string;
-        tipo: "VERIFY_EMAIL" | "PASSWORD_RESET";
-    };
 
     const titular = tipo === "VERIFY_EMAIL"
         ? <><br />VERIFICÁ<br />TU <em>CUENTA</em></>
         : <>RESETEÁ<br />TU <em>CONTRASEÑA</em></>;
 
-    // Si no vienen los datos necesarios, redirigir
-    useEffect(() => {
-        if (!email || !tipo) navigate("/login", { replace: true });
-    }, []);
-
-    const config = CONFIG[tipo ?? "VERIFY_EMAIL"];
+    const config = CONFIG[tipo];
     const { verificarCodigo, reenviarCodigo, cargando, reenviando, erroresApi, setErroresApi } = useVerificacion();
 
     const [codigo, setCodigo] = useState<string[]>(Array(LARGO_CODIGO).fill(""));
@@ -114,8 +115,12 @@ export default function VerificarCodigo() {
                 codigo: codigoStr,
                 tipo_codigo: tipo,
             });
-            navigate(config.exitoRuta, { state: { email } });
-        } catch {
+            navigate(config.exitoRuta, { state: { email, ...config.exitoState } });
+        } catch (error) {
+            if (error instanceof CuentaVerificadaError) {
+                navigate("/login", { state: { cuentaYaVerificada: true } });
+                return;
+            }
             setCodigo(Array(LARGO_CODIGO).fill(""));
             inputsRef.current[0]?.focus();
         }
@@ -123,11 +128,15 @@ export default function VerificarCodigo() {
 
     const handleReenviar = async () => {
         try {
-            await reenviarCodigo(email!, tipo!);
+            await reenviarCodigo(email, tipo);
             setReenvioContador(SEGUNDOS_REENVIO);
             setCodigo(Array(LARGO_CODIGO).fill(""));
             inputsRef.current[0]?.focus();
-        } catch { }
+        } catch (error) {
+            if (error instanceof CuentaVerificadaError) {
+                navigate("/login", { state: { cuentaYaVerificada: true } });
+            }
+        }
     };
 
     return (
@@ -136,7 +145,7 @@ export default function VerificarCodigo() {
             <div className="formulario-vista">
 
                 <button
-                    className="verificacion-panel__volver"
+                    className="accion accion--chica verificacion-panel__volver"
                     onClick={() => navigate(config.volverRuta)}
                     type="button"
                 >

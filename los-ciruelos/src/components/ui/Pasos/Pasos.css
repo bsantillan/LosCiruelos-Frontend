@@ -1,0 +1,135 @@
+/* ── Pasos de un asistente ── */
+.pasos {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-lg);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.pasos::-webkit-scrollbar {
+    display: none;
+}
+
+.pasos__paso {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Línea entre un paso y el siguiente */
+.pasos__paso + .pasos__paso::before {
+    content: "";
+    flex: 0 0 16px;
+    height: 1px;
+    background: var(--borde);
+}
+
+.pasos__paso--hecho + .pasos__paso::before,
+.pasos__paso--actual::before {
+    background: var(--verde-borde);
+}
+
+.pasos__boton {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: var(--radio-md);
+    background: transparent;
+    color: var(--texto-tenue);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: default;
+}
+
+.pasos__paso--hecho .pasos__boton {
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+
+.pasos__paso--hecho .pasos__boton:hover {
+    background: var(--superficie-2);
+    color: var(--texto);
+}
+
+.pasos__boton:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: -2px;
+}
+
+.pasos__paso--actual .pasos__boton {
+    background: var(--superficie-2);
+    color: var(--texto);
+}
+
+.pasos__numero {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1.5px solid var(--borde);
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+
+.pasos__paso--hecho .pasos__numero {
+    border-color: var(--verde-borde);
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+}
+
+.pasos__paso--actual .pasos__numero {
+    border-color: var(--verde-lima);
+    background: var(--verde-lima);
+    color: #0b0f0b;
+}
+
+.pasos__nombre {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* En el celular solo se ve el nombre del paso actual */
+@media (max-width: 760px) {
+    .pasos__paso {
+        flex: 0 0 auto;
+    }
+
+    .pasos__paso--actual {
+        flex: 1 1 auto;
+    }
+
+    .pasos__paso:not(.pasos__paso--actual) .pasos__nombre {
+        display: none;
+    }
+
+    /* Sin las líneas entre pasos, para que entre el nombre del actual */
+    .pasos {
+        gap: 2px;
+    }
+
+    .pasos__paso + .pasos__paso::before {
+        display: none;
+    }
+
+    .pasos__boton {
+        padding: 6px;
+    }
+}

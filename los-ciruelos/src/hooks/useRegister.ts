@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { authService } from "../services/authService";
 import type { RegisterRequest } from "../types/register.types";
-
-export class EmailError extends Error {
-    constructor() { super("email"); }
-}
+import { extraerErrores } from "../utils/apiErrors";
 
 export interface ErroresRegister {
     nombre?: string;
@@ -16,6 +13,7 @@ export interface ErroresRegister {
     categoria?: string;
     posicion?: string;
     termsAccepted?: string;
+    aceptarNotificacion?: string;
     general?: string;
 }
 
@@ -23,30 +21,18 @@ export function useRegister() {
     const [cargando, setCargando] = useState(false);
     const [erroresApi, setErroresApi] = useState<ErroresRegister>({});
 
+    /** Si falla, lanza los errores normalizados para que la página vuelva al paso correcto. */
     const register = async (datos: RegisterRequest) => {
         setCargando(true);
         setErroresApi({});
         try {
             await authService.register(datos);
-        } catch (error: any) {
-            const data = error.response?.data;
-
-            let errores: ErroresRegister = {};
-
-            if (data?.errors && typeof data.errors === "object") {
-                errores = data.errors;
-            } else if (typeof data?.error === "string") {
-                errores = { general: data.error };
-            } else {
-                errores = {
-                    general: "Ocurrió un error inesperado."
-                };
-            }
-
+        } catch (error) {
+            const { terminos, ...resto } = extraerErrores(error, "Ocurrió un error inesperado.");
+            // El backend informa los términos como "terminos"
+            const errores: ErroresRegister = terminos ? { ...resto, termsAccepted: terminos } : resto;
             setErroresApi(errores);
-
             throw errores;
-
         } finally {
             setCargando(false);
         }

@@ -34,10 +34,23 @@ export default function CampoInput({
     const tieneIconoIzq = !!icono || !!prefijo;
     const tieneIconoDer = esPassword || !!sufijo;
 
-    const bloquearDecimales = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (entero && (e.key === "." || e.key === "," || e.key === "e" || e.key === "E")) {
+    // Campos numéricos: sin notación científica, sin negativos si el mínimo es 0 o más, sin decimales
+    // si es entero; y lo pegado o escrito fuera de rango se lleva al mínimo o al máximo
+    const esNumero = type === "number";
+    const sinNegativos = min !== undefined && min >= 0;
+    const bloquearTeclas = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const k = e.key;
+        if (k === "e" || k === "E" || k === "+" || (k === "-" && sinNegativos) || (entero && (k === "." || k === ","))) {
             e.preventDefault();
         }
+    };
+    const cambiar = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (esNumero && e.target.value !== "") {
+            const n = Number(e.target.value);
+            if (sinNegativos && n < 0) e.target.value = String(Math.abs(n));
+            if (max !== undefined && n > max) e.target.value = String(max);
+        }
+        onChange(e);
     };
 
     return (
@@ -59,7 +72,7 @@ export default function CampoInput({
                     name={name}
                     type={tipoReal}
                     value={value}
-                    onChange={onChange}
+                    onChange={esNumero ? cambiar : onChange}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
                     required={required}
@@ -69,7 +82,7 @@ export default function CampoInput({
                     disabled={disabled}
                     aria-invalid={!!error}
                     aria-describedby={error ? `${id}-error` : undefined}
-                    onKeyDown={entero ? bloquearDecimales : undefined}
+                    onKeyDown={esNumero ? bloquearTeclas : undefined}
                 />
 
                 {/* Sufijo derecho */}

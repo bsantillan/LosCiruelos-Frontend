@@ -1,0 +1,187 @@
+/* Usa los estilos del calendario de SelectorFecha (popover, grilla, días). */
+
+.selector-periodo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.selector-periodo__disparador {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-pill);
+    color: var(--texto-suave);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: border-color var(--transicion), color var(--transicion), background var(--transicion);
+}
+
+.selector-periodo__disparador:hover {
+    border-color: var(--verde-borde);
+    color: var(--texto);
+}
+
+.selector-periodo__disparador--activo {
+    border-color: var(--verde-lima);
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+    font-weight: 600;
+}
+
+.selector-periodo__texto {
+    text-transform: capitalize;
+}
+
+/* El texto del botón y, con "Todo el período", de qué fecha a qué fecha va */
+.selector-periodo__textos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+    min-width: 0;
+}
+
+.selector-periodo__rango {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--texto-suave);
+    white-space: nowrap;
+}
+
+.selector-periodo__pie {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    text-align: center;
+}
+
+.selector-periodo__limpiar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--borde);
+    background: var(--superficie);
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+
+.selector-periodo__limpiar:hover {
+    color: var(--error);
+    border-color: rgba(255, 107, 107, 0.35);
+}
+
+.selector-periodo button:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+/* El popover se abre alineado a la izquierda del botón (el filtro está a la izquierda) */
+.selector-periodo__popover {
+    left: 0;
+    transform: none;
+    animation: subirAparecer 0.18s both;
+}
+
+/* Pegado al borde derecho: se abre hacia la izquierda */
+.selector-periodo__popover--derecha {
+    left: auto;
+    right: 0;
+}
+
+/* Día | Mes | Rango */
+.selector-periodo__modos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+    margin-bottom: 12px;
+    background: var(--superficie-2);
+    border-radius: var(--radio-md);
+}
+
+.selector-periodo__modo {
+    padding: 7px 0;
+    border: none;
+    border-radius: var(--radio-sm);
+    background: transparent;
+    color: var(--texto-suave);
+    font-family: var(--fuente-titulo);
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.selector-periodo__modo--activo {
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+}
+
+.selector-periodo__ayuda {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+/* Días dentro del rango */
+.selector-periodo__dia--en-rango {
+    background: var(--verde-fondo);
+    border-color: transparent;
+    color: var(--texto);
+}
+
+/* Meses */
+.selector-periodo__meses {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.selector-periodo__mes {
+    padding: 12px 0;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radio-sm);
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.875rem;
+    text-transform: capitalize;
+    cursor: pointer;
+    transition: background var(--transicion), border-color var(--transicion);
+}
+
+.selector-periodo__mes:hover:not(.selector-fecha__dia--elegido) {
+    background: var(--superficie-2);
+    border-color: var(--borde);
+}
+
+@media (max-width: 720px) {
+    .selector-periodo__popover {
+        position: fixed;
+        top: auto;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: none;
+    }
+}
+
+/* Meses anteriores a la fecha mínima */
+.selector-periodo__mes:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}

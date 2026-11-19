@@ -23,6 +23,12 @@
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--texto-suave);
+    min-width: 0;
+}
+
+/* El recorte va en la etiqueta: el círculo con el número nunca se corta */
+.register-tab__etiqueta {
+    min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -43,8 +49,9 @@
 }
 
 .register-tab__numero {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -120,8 +127,9 @@
     background: var(--superficie-2);
     border: 1.5px solid var(--borde);
     border-radius: var(--radio-md);
-    padding: 20px;
-    max-height: 220px;
+    padding: 20px 24px;
+    /* alto suficiente para leer casi todo sin scrollear (antes 220px) */
+    max-height: clamp(280px, 50vh, 520px);
     overflow-y: auto;
 }
 

@@ -7,4 +7,6 @@ export interface RegisterRequest {
     categoria: string;
     posicion: string;
     termsAccepted: boolean;
+    /** Obligatorio en true: "Acepto recibir notificaciones del club" (arrancan por mail) */
+    aceptarNotificacion: boolean;
 }

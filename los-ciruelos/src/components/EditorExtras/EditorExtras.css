@@ -1,0 +1,33 @@
+.editor-extras {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--verde-borde);
+    border-radius: var(--radio-md);
+    background: var(--superficie-2);
+}
+
+.editor-extras__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 10px;
+    border-top: 1px solid var(--borde);
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+}
+
+.editor-extras__total strong {
+    font-family: var(--fuente-titulo);
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--verde-lima);
+}
+
+.editor-extras__acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

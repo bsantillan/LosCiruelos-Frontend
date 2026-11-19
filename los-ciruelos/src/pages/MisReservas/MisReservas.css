@@ -1,0 +1,318 @@
+.mis-reservas {
+    min-height: calc(100dvh - 60px);
+    background: var(--fondo);
+    padding: 40px 32px;
+}
+
+.mis-reservas__contenedor {
+    max-width: var(--ancho-pagina);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.mis-reservas__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.mis-reservas__seccion {
+    font-family: var(--fuente-titulo);
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--texto);
+    margin-bottom: 12px;
+}
+
+/* ── Lista: una reserva por fila, aprovechando todo el ancho ── */
+.mis-reservas__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mis-reservas__item {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr) 190px auto;
+    grid-template-areas: "cancha datos pago acciones";
+    align-items: center;
+    gap: 20px;
+    padding: 16px 20px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-lg);
+    transition: border-color var(--transicion);
+}
+
+.mis-reservas__item:hover {
+    border-color: var(--verde-borde);
+}
+
+.mis-reservas__item--inactiva {
+    opacity: 0.7;
+}
+
+/* Cancha + estado */
+.mis-reservas__cancha-col {
+    grid-area: cancha;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+/* Las etiquetas largas ("Jugada · saldo pendiente", "Pago en revisión") pasan a dos
+   líneas dentro de su columna en lugar de invadir la de al lado */
+.mis-reservas__cancha-col {
+    min-width: 0;
+}
+
+.mis-reservas__cancha-col .estado-reserva {
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.3;
+    text-align: left;
+}
+
+.mis-reservas__cancha {
+    font-family: var(--fuente-titulo);
+    font-size: 1.3rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+    line-height: 1;
+}
+
+/* Fecha, horario, duración y extras, cada uno con su ícono */
+.mis-reservas__datos {
+    grid-area: datos;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+}
+
+.mis-reservas__datos li {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.9375rem;
+    color: var(--texto);
+}
+
+.mis-reservas__datos svg {
+    flex-shrink: 0;
+    color: var(--verde-lima);
+}
+
+.mis-reservas__fecha {
+    text-transform: capitalize;
+}
+
+/* Lo pagado */
+.mis-reservas__pago {
+    grid-area: pago;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 18px;
+    border-left: 1px solid var(--borde);
+}
+
+.mis-reservas__pago-etiqueta {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.mis-reservas__pago-monto {
+    font-family: var(--fuente-titulo);
+    font-size: 1.35rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+    font-variant-numeric: tabular-nums;
+}
+
+.mis-reservas__pago--ok .mis-reservas__pago-monto {
+    color: var(--verde-lima);
+}
+
+.mis-reservas__pago--pendiente .mis-reservas__pago-monto {
+    color: #f5c451;
+}
+
+.mis-reservas__pago-detalle {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+/* Acciones */
+.mis-reservas__acciones {
+    grid-area: acciones;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mis-reservas__acciones .boton {
+    height: 44px;
+    font-size: 0.95rem;
+    padding: 0 18px;
+}
+
+.mis-reservas__acciones:empty {
+    display: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+    .mis-reservas__item {
+        grid-template-columns: 170px minmax(0, 1fr) 180px;
+        grid-template-areas:
+            "cancha datos    pago"
+            "cancha acciones acciones";
+    }
+}
+
+@media (max-width: 720px) {
+    .mis-reservas {
+        padding: 24px 16px;
+    }
+
+    .mis-reservas__item {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "cancha   pago"
+            "datos    datos"
+            "acciones acciones";
+        gap: 14px;
+        padding: 16px;
+    }
+
+    .mis-reservas__pago {
+        align-items: flex-end;
+        text-align: right;
+        padding-left: 0;
+        border-left: none;
+    }
+
+    .mis-reservas__acciones {
+        justify-content: stretch;
+    }
+
+    .mis-reservas__acciones .boton {
+        flex: 1;
+    }
+}
+
+/* ── Historial: filtros y paginado ── */
+.mis-reservas__historial-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.mis-reservas__total {
+    font-size: 0.8125rem;
+    color: var(--texto-tenue);
+}
+
+.mis-reservas__filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin-bottom: 14px;
+}
+
+.mis-reservas__filtro {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.mis-reservas__filtro-etiqueta {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.mis-reservas__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mis-reservas__chip {
+    padding: 6px 14px;
+    border-radius: var(--radio-pill);
+    border: 1px solid var(--borde);
+    background: var(--superficie);
+    color: var(--texto-suave);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: border-color var(--transicion), color var(--transicion), background var(--transicion);
+}
+
+.mis-reservas__chip:hover {
+    border-color: var(--verde-borde);
+    color: var(--texto);
+}
+
+.mis-reservas__chip--activo {
+    border-color: var(--verde-lima);
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+    font-weight: 600;
+}
+
+.mis-reservas__chip:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+.mis-reservas__lista--cargando {
+    opacity: 0.55;
+    transition: opacity var(--transicion);
+}
+
+.mis-reservas__paginado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.mis-reservas__pagina-actual {
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Partido armado por el club */
+.mis-reservas__tipo {
+    align-self: flex-start;
+    padding: 2px 8px;
+    border: 1px solid var(--verde-borde);
+    border-radius: var(--radio-pill);
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}

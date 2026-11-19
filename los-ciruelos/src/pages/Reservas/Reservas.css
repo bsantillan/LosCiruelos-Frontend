@@ -1,0 +1,630 @@
+/* ── Página ── */
+.reservas-pagina {
+    min-height: calc(100dvh - 60px);
+    background: var(--fondo);
+    padding: 40px 32px;
+}
+
+.reservas-pagina--cargando {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reservas-contenedor {
+    max-width: var(--ancho-pagina);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* ── Header ── */
+.reservas-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* ── Tabs canchas ── */
+.reservas-tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    padding: 4px;
+}
+
+.reservas-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    transition: background var(--transicion);
+    font-family: var(--fuente-cuerpo);
+}
+
+.reservas-tab:hover {
+    background: var(--superficie-2);
+}
+
+.reservas-tab--activa {
+    background: var(--superficie-2);
+    box-shadow: 0 0 0 1px rgba(143, 212, 0, 0.3);
+}
+
+.reservas-tab__nombre {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--texto);
+}
+
+.reservas-tab--activa .reservas-tab__nombre {
+    color: var(--verde-lima);
+}
+
+.reservas-tab__desc {
+    font-size: 0.6875rem;
+    color: var(--texto-suave);
+}
+
+/* ── Grid principal ── */
+.reservas-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    align-items: start;
+}
+
+/* ── Selector duración ── */
+.reservas-duracion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    margin-bottom: 16px;
+    color: var(--verde-lima);
+}
+
+.reservas-duracion__label {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+    flex: 1;
+}
+
+.reservas-duracion__btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--borde);
+    background: var(--superficie-2);
+    color: var(--texto);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transicion);
+}
+
+.reservas-duracion__btn:hover:not(:disabled) {
+    background: var(--superficie-3);
+}
+
+.reservas-duracion__btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.reservas-duracion__valor {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--texto);
+    min-width: 52px;
+    text-align: center;
+}
+
+/* ── Timeline ── */
+.reservas-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reservas-timeline__rango {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75rem;
+    color: var(--texto-tenue);
+}
+
+.reservas-timeline__linea {
+    flex: 1;
+    height: 1px;
+    background: var(--borde);
+}
+
+.reservas-timeline__items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 24px;
+    position: relative;
+}
+
+.reservas-timeline__items::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--borde);
+    border-radius: 2px;
+}
+
+/* ── Slot libre ── */
+.timeline-slot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(143, 212, 0, 0.06);
+    border: 1px solid rgba(143, 212, 0, 0.2);
+    border-radius: var(--radio-md);
+    cursor: pointer;
+    font-family: var(--fuente-cuerpo);
+    position: relative;
+    transition: border-color var(--transicion), background var(--transicion);
+}
+
+.timeline-slot::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--verde-lima);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.timeline-slot:hover {
+    background: rgba(143, 212, 0, 0.1);
+    border-color: rgba(143, 212, 0, 0.4);
+}
+
+.timeline-slot--activo {
+    background: rgba(143, 212, 0, 0.12);
+    border-color: var(--verde-lima);
+    box-shadow: 0 0 0 3px rgba(143, 212, 0, 0.1);
+}
+
+.timeline-slot__hora {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--verde-lima);
+}
+
+.timeline-slot__badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--verde-lima);
+    opacity: 0.7;
+}
+
+/* ── Slot ocupado ── */
+.timeline-ocupado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    opacity: 0.5;
+    position: relative;
+}
+
+.timeline-ocupado::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--borde);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.timeline-ocupado__hora {
+    font-size: 0.875rem;
+    color: var(--texto-tenue);
+}
+
+.timeline-ocupado__label {
+    font-size: 0.6875rem;
+    color: var(--texto-tenue);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* ── Panel resumen ── */
+.reservas-panel-lateral {
+    position: sticky;
+    top: 80px;
+}
+
+.reservas-resumen {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-xl);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.reservas-resumen__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.reservas-resumen__cancha {
+    font-family: var(--fuente-titulo);
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--texto);
+    margin-bottom: 4px;
+}
+
+.reservas-resumen__fecha {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+    text-transform: capitalize;
+}
+
+.reservas-resumen__horario {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--fuente-titulo);
+    font-style: italic;
+    color: var(--verde-lima);
+    margin-top: 4px;
+}
+
+/* ── Extras ── */
+.reservas-resumen__extras {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid var(--borde);
+    border-bottom: 1px solid var(--borde);
+    padding: 16px 0;
+}
+
+.reservas-extra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9375rem;
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+
+.reservas-extra input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--verde-lima);
+    cursor: pointer;
+}
+
+/* ── Botón confirmar ── */
+.reservas-resumen__confirmar {
+    width: 100%;
+    height: 48px;
+    background: linear-gradient(100deg, var(--verde-oscuro), var(--verde-lima));
+    color: #fff;
+    border: none;
+    border-radius: var(--radio-md);
+    font-family: var(--fuente-titulo);
+    font-size: 1rem;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow var(--transicion), transform var(--transicion);
+}
+
+.reservas-resumen__confirmar:hover:not(:disabled) {
+    box-shadow: var(--sombra-verde);
+    transform: translateY(-1px);
+}
+
+.reservas-resumen__confirmar:disabled {
+    opacity: 0.4;
+    filter: grayscale(0.6);
+    cursor: not-allowed;
+}
+
+/* ── Panel vacío ── */
+.reservas-panel-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px 24px;
+    border: 1.5px dashed var(--borde);
+    border-radius: var(--radio-xl);
+    color: var(--texto-tenue);
+    text-align: center;
+}
+
+.reservas-panel-vacio p {
+    font-size: 0.875rem;
+}
+
+/* ── Cargando ── */
+.reservas-cargando {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 40px;
+    color: var(--texto-tenue);
+    font-size: 0.875rem;
+}
+
+.reservas-cargando__spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--borde);
+    border-top-color: var(--verde-lima);
+    border-radius: 50%;
+    animation: girar 0.7s linear infinite;
+}
+
+/* ── Error ── */
+.reservas-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--error-fondo);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: var(--radio-md);
+    padding: 12px 14px;
+    font-size: 0.875rem;
+    color: var(--error);
+}
+
+/* ── Avisos (día cerrado, sin turnos, perfil incompleto, reserva pendiente) ── */
+.reservas-aviso {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 16px;
+    color: var(--texto-suave);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.reservas-aviso--fila {
+    flex-direction: row;
+    text-align: left;
+    padding: 12px 14px;
+    background: var(--verde-fondo);
+    border: 1px solid var(--verde-borde);
+    border-radius: var(--radio-md);
+    color: var(--texto);
+}
+
+.reservas-aviso--fila p {
+    flex: 1;
+}
+
+.reservas-aviso--fila .accion {
+    flex-shrink: 0;
+}
+
+.reservas-aviso--fila svg {
+    flex-shrink: 0;
+    color: var(--verde-lima);
+}
+
+.reservas-resumen__nota {
+    font-size: 0.8125rem;
+    color: var(--texto-tenue);
+    line-height: 1.5;
+}
+
+/* ── Timeline contenedor ── */
+.reservas-timeline-contenedor {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-xl);
+    padding: 24px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+    .reservas-pagina {
+        padding: 24px 20px;
+    }
+
+    .reservas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reservas-panel-lateral {
+        position: static;
+    }
+
+    .reservas-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Celular: las canchas en una sola fila de pestañas (sin la descripción, que es igual en
+   todas y ocupaba media pantalla) y la línea de tiempo sin tarjeta propia */
+@media (max-width: 600px) {
+    .reservas-pagina {
+        padding: 20px 16px 32px;
+    }
+
+    .reservas-contenedor {
+        gap: 18px;
+    }
+
+    .reservas-tab {
+        padding: 10px 4px;
+        min-width: 0;
+    }
+
+    .reservas-tab__desc {
+        display: none;
+    }
+
+    .reservas-tab__nombre {
+        white-space: nowrap;
+    }
+
+    .reservas-timeline-contenedor {
+        padding: 16px 12px;
+        border-radius: var(--radio-lg);
+    }
+
+    .reservas-aviso--fila {
+        flex-wrap: wrap;
+    }
+
+    .reservas-aviso--fila .accion {
+        width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .reservas-tab__nombre {
+        font-size: 0.8125rem;
+    }
+
+    .timeline-slot__badge {
+        display: none;
+    }
+}
+
+/* Por qué todavía no se puede reservar (sin sesión o con el perfil incompleto) */
+.reservas-resumen__bloqueo {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: var(--radio-md);
+    background: rgba(245, 196, 81, 0.1);
+    border: 1px solid rgba(245, 196, 81, 0.3);
+    color: #f5c451;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.reservas-resumen__bloqueo svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* El botón secundario del panel (Crear cuenta, Completar perfil) va pegado al principal */
+.reservas-resumen .accion--ancha {
+    margin-top: -8px;
+    min-height: 44px;
+}
+
+.reservas-aviso__acciones {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+    .reservas-aviso__acciones {
+        width: 100%;
+    }
+
+    .reservas-aviso__acciones .accion {
+        flex: 1;
+    }
+}
+
+/* Resumen dentro de la hoja inferior (celular): la hoja ya es la tarjeta */
+.reservas-resumen--hoja {
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 4px 0 0;
+    gap: 16px;
+}
+
+.reservas-resumen--hoja .reservas-resumen__header {
+    padding-right: 44px; /* lugar para la X de la hoja */
+}
+/* ── Precio en el resumen ── */
+.reservas-precio {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.reservas-precio div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+}
+
+.reservas-precio dd {
+    color: var(--texto);
+    font-variant-numeric: tabular-nums;
+}
+
+.reservas-precio__total {
+    padding-top: 10px;
+    border-top: 1px solid var(--borde);
+}
+
+.reservas-precio__total dt {
+    font-weight: 700;
+    color: var(--texto);
+}
+
+.reservas-precio__total dd {
+    font-family: var(--fuente-titulo);
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--verde-lima) !important;
+}

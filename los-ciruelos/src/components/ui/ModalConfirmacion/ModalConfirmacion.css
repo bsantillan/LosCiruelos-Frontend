@@ -55,9 +55,73 @@
     line-height: 1.6;
 }
 
+.modal__error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: var(--error);
+}
+
 .modal__acciones {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
     margin-top: 8px;
+}
+
+/* Si el contenido es más alto que la pantalla, el modal scrollea por dentro */
+.modal {
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+}
+
+/* Popups de confirmación y de formulario: el ícono, el título y los botones quedan fijos y scrollea
+   solo el contenido del medio (si scrolleaba todo, los campos se cortaban contra el borde de arriba) */
+.modal.modal--confirmacion {
+    overflow: hidden;
+}
+
+.modal__cuerpo {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* Lugar para que el foco de los campos no quede cortado por el scroll */
+    margin: -4px -6px;
+    padding: 4px 6px;
+}
+
+.modal__acciones,
+.modal__icono,
+.modal__titulo {
+    flex-shrink: 0;
+}
+
+/* Celular: el modal sube desde abajo (como la hoja del resumen) y los botones van
+   apilados a todo el ancho, con la opción principal arriba */
+@media (max-width: 560px) {
+    .modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal {
+        max-width: none;
+        max-height: 90dvh;
+        border-bottom: none;
+        border-radius: var(--radio-xl) var(--radio-xl) 0 0;
+        padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
+    }
+
+    .modal__acciones {
+        flex-direction: column-reverse;
+    }
+
+    .modal__acciones > * {
+        width: 100%;
+    }
 }

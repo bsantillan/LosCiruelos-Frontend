@@ -3,7 +3,7 @@ import "./Boton.css";
 interface BotonProps {
     children: React.ReactNode;
     type?: "submit" | "button";
-    variante?: "primario" | "secundario" | "fantasma";
+    variante?: "primario" | "secundario" | "fantasma" | "peligro";
     cargando?: boolean;
     disabled?: boolean;
     onClick?: () => void;

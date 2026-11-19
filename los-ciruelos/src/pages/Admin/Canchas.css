@@ -1,0 +1,201 @@
+/* ── Canchas (ADMIN): tarjetas con la portada, los datos y las acciones ── */
+.canchas-admin {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 18px;
+}
+
+.cancha-admin {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-lg);
+}
+
+.cancha-admin--inactiva .cancha-admin__foto img,
+.cancha-admin--inactiva .cancha-admin__cuerpo {
+    opacity: 0.55;
+}
+
+.cancha-admin__foto {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--superficie-2);
+}
+
+.cancha-admin__foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cancha-admin__sin-foto {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+    color: var(--texto-tenue);
+}
+
+.cancha-admin__estado {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--superficie);
+}
+
+.cancha-admin__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px;
+    flex: 1;
+}
+
+.cancha-admin__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.1rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--texto);
+}
+
+.cancha-admin__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.cancha-admin__chips .admin-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cancha-admin__descripcion {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+.cancha-admin__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--borde);
+}
+
+/* ── El popup de alta y edición ── */
+.modal.modal-cancha {
+    max-width: 640px;
+}
+
+.cancha-fotos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--borde);
+}
+
+.cancha-fotos__cabecera {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cancha-fotos__grilla {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.cancha-fotos__foto {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    background: var(--superficie-2);
+}
+
+.cancha-fotos__foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cancha-fotos__portada {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding: 2px 8px;
+    border-radius: var(--radio-pill);
+    background: var(--verde-lima);
+    color: var(--negro);
+    font-size: 0.6875rem;
+    font-weight: 700;
+}
+
+.cancha-fotos__acciones {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    display: flex;
+    gap: 4px;
+}
+
+.cancha-fotos__acciones button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-sm);
+    background: rgba(10, 14, 10, 0.85);
+    color: var(--texto);
+    cursor: pointer;
+}
+
+.cancha-fotos__acciones button:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.cancha-fotos__acciones .cancha-fotos__sacar {
+    color: var(--error);
+}
+
+.cancha-fotos__agregar {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1.5px dashed var(--borde-activo, var(--verde-borde));
+    border-radius: var(--radio-md);
+    background: transparent;
+    color: var(--verde-lima);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cancha-fotos__agregar:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}

@@ -1,0 +1,20 @@
+{
+    "_comentario": "Tarjetas y titulares de prueba de Mercado Pago (Argentina). Solo funcionan con credenciales TEST-. El nombre del titular define el resultado del pago.",
+    "tarjetas": [
+        { "id": "master", "nombre": "Mastercard", "numero": "5031755734530604", "cvv": "123", "vencimiento": "11/30" },
+        { "id": "visa", "nombre": "Visa", "numero": "4509953566233704", "cvv": "123", "vencimiento": "11/30" },
+        { "id": "amex", "nombre": "American Express", "numero": "371180303257522", "cvv": "1234", "vencimiento": "11/30" },
+        { "id": "debmaster", "nombre": "Mastercard Débito", "numero": "5287338310253304", "cvv": "123", "vencimiento": "11/30" },
+        { "id": "debvisa", "nombre": "Visa Débito", "numero": "4002768694395619", "cvv": "123", "vencimiento": "11/30" }
+    ],
+    "escenarios": [
+        { "titular": "APRO", "descripcion": "Pago aprobado", "dni": "12345678", "esperado": { "estado": "APROBADO" } },
+        { "titular": "OTHE", "descripcion": "Rechazado por error general", "dni": "12345678", "esperado": { "estado": "RECHAZADO", "detalle": "cc_rejected_other_reason" } },
+        { "titular": "CONT", "descripcion": "Pendiente de pago", "dni": "12345678", "esperado": { "estado": "RECHAZADO" }, "nota": "El backend cobra con binary_mode: Mercado Pago no deja pagos pendientes y los rechaza" },
+        { "titular": "CALL", "descripcion": "Rechazado con validación para autorizar", "dni": "12345678", "esperado": { "estado": "RECHAZADO", "detalle": "cc_rejected_call_for_authorize" } },
+        { "titular": "FUND", "descripcion": "Rechazado por importe insuficiente", "dni": "12345678", "esperado": { "estado": "RECHAZADO", "detalle": "cc_rejected_insufficient_amount" } },
+        { "titular": "SECU", "descripcion": "Rechazado por código de seguridad inválido", "dni": "12345678", "esperado": { "estado": "RECHAZADO", "detalle": "cc_rejected_bad_filled_security_code" } },
+        { "titular": "EXPI", "descripcion": "Rechazado por fecha de vencimiento", "dni": "12345678", "esperado": { "estado": "RECHAZADO", "detalle": "cc_rejected_bad_filled_date" } },
+        { "titular": "FORM", "descripcion": "Rechazado por error de formulario", "dni": "12345678", "esperado": { "estado": "RECHAZADO", "detalle": "cc_rejected_bad_filled_other" } }
+    ]
+}

@@ -5,7 +5,7 @@
 }
 
 .perfil-contenedor {
-    max-width: 900px;
+    max-width: var(--ancho-pagina);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -82,24 +82,117 @@
     animation: subirAparecer 0.3s both;
 }
 
-.perfil-error-general {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--error-fondo);
-    border: 1px solid rgba(255, 107, 107, 0.3);
-    border-radius: var(--radio-md);
-    padding: 12px 16px;
-    font-size: 0.875rem;
-    color: var(--error);
-}
-
 /* ── Grid ── */
 .perfil-grid {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 400px;
     gap: 24px;
     align-items: start;
+}
+
+/* ── Tabs ── */
+.perfil-tabs {
+    display: flex;
+    align-self: flex-start;
+    max-width: 100%;
+    gap: 4px;
+    padding: 4px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    /* En el celular, si no entran, se deslizan dentro de la barra (sin scroll de la página) */
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.perfil-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.perfil-tab {
+    position: relative;
+    flex: 1 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--texto-suave);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background var(--transicion), color var(--transicion);
+}
+
+.perfil-tab:hover {
+    background: var(--superficie-2);
+    color: var(--texto);
+}
+
+.perfil-tab:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: -2px;
+}
+
+.perfil-tab--activa {
+    background: var(--superficie-2);
+    color: var(--verde-lima);
+    box-shadow: 0 0 0 1px rgba(143, 212, 0, 0.3);
+}
+
+.perfil-tab--activa:hover {
+    color: var(--verde-lima);
+}
+
+/* Algo pendiente en esa tab (perfil incompleto) */
+.perfil-tab__punto {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.perfil-panel {
+    width: 100%;
+    max-width: 860px;
+    margin-top: -12px;
+}
+
+.perfil-club {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.perfil-exito--accion {
+    flex-wrap: wrap;
+}
+
+.perfil-exito--accion span {
+    flex: 1;
+    min-width: 200px;
+}
+
+.perfil-columna {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.perfil-alerta {
+    flex-wrap: wrap;
+}
+
+.perfil-alerta span {
+    flex: 1;
+    min-width: 200px;
 }
 
 /* ── Sección ── */
@@ -263,5 +356,24 @@
     .perfil-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    /* Todas las tabs a la vista: a lo ancho y sin íconos */
+    .perfil-tabs {
+        align-self: stretch;
+    }
+
+    .perfil-tab {
+        flex: 1 1 auto;
+        padding: 10px 10px;
+        font-size: 0.8125rem;
+    }
+
+    .perfil-tab > svg {
+        display: none;
+    }
+
+    .perfil-seccion {
+        padding: 22px 18px;
     }
 }

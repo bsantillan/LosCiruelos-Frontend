@@ -1,0 +1,96 @@
+/* ── Selector de hora propio ── */
+.selector-hora {
+    position: relative;
+}
+
+.selector-hora__boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    background: var(--superficie);
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: border-color var(--transicion);
+}
+
+.selector-hora__boton svg {
+    color: var(--verde-lima);
+}
+
+.selector-hora__boton:hover,
+.selector-hora__boton--abierto {
+    border-color: var(--verde-borde);
+}
+
+.selector-hora__boton:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+.selector-hora__chevron {
+    color: var(--texto-suave) !important;
+    transition: transform var(--transicion);
+}
+
+.selector-hora__boton--abierto .selector-hora__chevron {
+    transform: rotate(180deg);
+}
+
+.selector-hora__popover {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 60;
+    width: 260px;
+    max-width: calc(100vw - 32px);
+    max-height: 264px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    padding: 8px;
+    background: var(--superficie);
+    border: 1px solid var(--verde-borde);
+    border-radius: var(--radio-lg);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    animation: subirAparecer 0.15s both;
+}
+
+.selector-hora__opcion {
+    padding: 7px 0;
+    border: 1px solid transparent;
+    border-radius: var(--radio-md);
+    background: none;
+    color: var(--texto-suave);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+
+.selector-hora__opcion--entera {
+    color: var(--texto);
+    font-weight: 600;
+}
+
+.selector-hora__opcion:hover,
+.selector-hora__opcion:focus-visible {
+    background: var(--superficie-2);
+    outline: none;
+    border-color: var(--borde);
+}
+
+.selector-hora__opcion--elegida,
+.selector-hora__opcion--elegida:hover {
+    background: var(--verde-lima);
+    border-color: var(--verde-lima);
+    color: #0b0f0b;
+}

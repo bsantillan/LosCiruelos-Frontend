@@ -1,0 +1,100 @@
+.detalle-cancelacion {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* El turno: cancha, fecha y horario, cada uno con su ícono */
+.detalle-cancelacion__turno {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px;
+    background: var(--superficie-2);
+    border-radius: var(--radio-md);
+}
+
+.detalle-cancelacion__turno li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: var(--texto);
+}
+
+.detalle-cancelacion__turno svg {
+    flex-shrink: 0;
+    color: var(--verde-lima);
+}
+
+.detalle-cancelacion__fecha {
+    text-transform: capitalize;
+}
+
+/* Pagaste / Te devolvemos */
+.detalle-cancelacion__montos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.detalle-cancelacion__montos div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+}
+
+.detalle-cancelacion__montos dt {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.detalle-cancelacion__montos dd {
+    font-family: var(--fuente-titulo);
+    font-size: 1.3rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+    font-variant-numeric: tabular-nums;
+}
+
+.detalle-cancelacion__devolucion {
+    border-color: var(--verde-borde) !important;
+    background: var(--verde-fondo);
+}
+
+.detalle-cancelacion__devolucion dd {
+    color: var(--verde-lima);
+}
+
+.detalle-cancelacion__sin-devolucion {
+    border-color: rgba(255, 107, 107, 0.3) !important;
+    background: var(--error-fondo);
+}
+
+.detalle-cancelacion__sin-devolucion dd {
+    color: var(--error);
+}
+
+.detalle-cancelacion__motivo {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+.detalle-cancelacion__medio {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--texto-tenue);
+}
+
+.detalle-cancelacion__montos--uno {
+    grid-template-columns: 1fr;
+}

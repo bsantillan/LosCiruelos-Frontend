@@ -1,19 +1,22 @@
-import { useState, useEffect } from "react";
-import { Lock, ArrowLeft, Check, AlertCircle } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Lock, ArrowLeft, Check } from "lucide-react";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import Boton from "../../components/ui/Boton/Boton";
-import { ErroresResetPassword, useResetPassword } from "../../hooks/useResetPassword";
+import { useResetPassword, type ErroresResetPassword } from "../../hooks/useResetPassword";
 import { AuthPanelLayout } from "../../layouts/AuthLayout/AuthPanelLayout";
+import { AvisoTransitorio } from "../../components/ui/Avisos/Avisos";
 
 export default function NuevaContrasena() {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { email } = (location.state ?? {}) as { email?: string };
+    const { email } = (useLocation().state ?? {}) as { email?: string };
 
-    useEffect(() => {
-        if (!email) navigate("/login", { replace: true });
-    }, []);
+    // Solo se llega después de verificar el código de reseteo
+    if (!email) return <Navigate to="/olvide-contrasena" replace />;
+    return <FormularioNuevaContrasena email={email} />;
+}
+
+function FormularioNuevaContrasena({ email }: { email: string }) {
+    const navigate = useNavigate();
 
     const [datos, setDatos] = useState({ nuevaPassword: "", confirmarPassword: "" });
     const [errores, setErrores] = useState<ErroresResetPassword>({});
@@ -53,9 +56,10 @@ export default function NuevaContrasena() {
         if (!validar()) return;
 
         try {
-            await confirmarReset(email!, datos.nuevaPassword);
-            navigate("/login", { state: { passwordReseteado: true } });
-        } catch (error) {
+            await confirmarReset(email, datos.nuevaPassword);
+            navigate("/login", { replace: true, state: { passwordReseteado: true } });
+        } catch {
+            // el error ya se muestra en pantalla
         }
     };
 
@@ -67,7 +71,7 @@ export default function NuevaContrasena() {
             <div className="formulario-vista">
 
                 <button
-                    className="verificacion-panel__volver"
+                    className="accion accion--chica verificacion-panel__volver"
                     onClick={() => navigate(-1)}
                     type="button"
                 >
@@ -88,10 +92,7 @@ export default function NuevaContrasena() {
 
                 <form onSubmit={enviar} noValidate>
 
-                    <div className={`alerta-error${erroresApi.general ? " alerta-error--visible" : ""}`} role="alert">
-                        <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
-                        {erroresApi.general}
-                    </div>
+                        {erroresApi.general && <AvisoTransitorio tipo="error">{erroresApi.general}</AvisoTransitorio>}
 
                     <div className="campos">
                         <CampoInput

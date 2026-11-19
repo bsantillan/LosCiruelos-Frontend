@@ -1,0 +1,12 @@
+/* ── Campo de búsqueda (Enter busca en el momento) ── */
+.campo-busqueda {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.campo-busqueda__ayuda {
+    font-size: 0.75rem;
+    color: var(--texto-tenue);
+}

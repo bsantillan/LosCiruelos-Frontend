@@ -80,6 +80,28 @@
     font-size: 0.8125rem;
     color: var(--texto-suave);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Quién hizo el sitio: discreto, con link a su Instagram */
+.footer-credito {
+    font-size: 0.75rem;
+    color: var(--texto-tenue);
+}
+
+.footer-credito a {
+    color: var(--texto-suave);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.footer-credito a:hover,
+.footer-credito a:focus-visible {
+    color: var(--verde-lima);
+    text-decoration: underline;
 }
 
 /* ── Responsive ── */

@@ -1,0 +1,443 @@
+/* ── Resumen: bloques con una cifra principal y su desglose ── */
+.resumen-turnos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+.resumen-bloque {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.resumen-bloque__cabecera {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.resumen-bloque__icono {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radio-md);
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+}
+
+.resumen-bloque__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.1rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--texto);
+}
+
+.resumen-bloque__desc {
+    margin-top: 2px;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+.resumen-bloque__cifras {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.resumen-cifra {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: var(--radio-md);
+    background: var(--superficie-2);
+    min-width: 0;
+}
+
+.resumen-cifra dt {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.resumen-cifra dd {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--texto);
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+/* La cifra principal ocupa toda la primera fila */
+.resumen-cifra--principal {
+    grid-column: 1 / -1;
+    background: none;
+    padding: 0 0 6px;
+    border-bottom: 1px solid var(--borde);
+    border-radius: 0;
+}
+
+.resumen-cifra--principal dd {
+    font-family: var(--fuente-titulo);
+    font-size: 2.1rem;
+    font-weight: 800;
+    font-style: italic;
+    line-height: 1.1;
+}
+
+.resumen-cifra--ok dd { color: var(--verde-lima); }
+.resumen-cifra--alerta dd { color: #f5c451; }
+.resumen-cifra--error dd { color: var(--error); }
+.resumen-cifra--tenue dd { color: var(--texto-suave); font-weight: 600; }
+
+.resumen-bloque__pie {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--texto-tenue);
+}
+
+/* La tabla de productos va dentro de una tarjeta: sin su propio borde */
+.resumen-productos {
+    border: none;
+    background: none;
+}
+
+@media (max-width: 420px) {
+    .resumen-turnos {
+        grid-template-columns: 1fr;
+    }
+
+    .resumen-bloque__cifras {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ── Grupos de cifras de cada pestaña ── */
+.resumen-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.resumen-grupo__cabecera {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.resumen-grupo__titulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--fuente-titulo);
+    font-size: 1.05rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--texto);
+}
+
+.resumen-grupo__desc {
+    max-width: 760px;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+.resumen-grupo + .resumen-grupo {
+    padding-top: 8px;
+    border-top: 1px solid var(--borde);
+}
+
+.resumen-nota {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--texto-tenue);
+}
+
+.resumen-productos__desc {
+    margin: -6px 0 14px;
+}
+
+.resumen-productos__total td {
+    border-top: 1px solid var(--borde);
+    background: var(--superficie-2);
+}
+
+@media (max-width: 760px) {
+    .resumen-productos__total td[data-label=""] {
+        display: none;
+    }
+}
+
+/* Caja de la jornada: lo que sale (devoluciones, anulaciones) */
+.caja-salida {
+    color: var(--error);
+}
+
+/* ── Métricas: comparación, barras, mapa de calor ── */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Cambio contra el período anterior: flecha + % + el valor de antes (el texto, no solo el color) */
+.metrica-var {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.metrica-var--bien { color: var(--verde-lima); }
+.metrica-var--mal { color: var(--error); }
+.metrica-var--neutra { color: var(--texto-suave); font-weight: 500; }
+
+.metrica-var__antes {
+    font-weight: 500;
+    color: var(--texto-suave);
+}
+
+/* Dos secciones lado a lado (una debajo de la otra en pantallas chicas) */
+.metrica-dos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+    gap: 20px 28px;
+    padding-top: 8px;
+    border-top: 1px solid var(--borde);
+}
+
+.metrica-dos > .resumen-grupo + .resumen-grupo {
+    padding-top: 0;
+    border-top: none;
+}
+
+/* Barras horizontales de un color, con el valor escrito al lado */
+.metrica-barras {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.metrica-barras__fila {
+    display: grid;
+    grid-template-columns: minmax(90px, 160px) minmax(60px, 1fr) minmax(90px, auto);
+    align-items: center;
+    gap: 12px;
+    font-size: 0.875rem;
+}
+
+.metrica-barras__etiqueta {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--texto);
+}
+
+.metrica-barras__pista {
+    height: 12px;
+    border-radius: 4px;
+    background: rgba(240, 244, 240, 0.05);
+    overflow: hidden;
+}
+
+.metrica-barras__barra {
+    display: block;
+    height: 100%;
+    border-radius: 0 4px 4px 0;
+    background: var(--verde-lima);
+}
+
+.metrica-barras__fila:hover .metrica-barras__barra {
+    background: color-mix(in srgb, var(--verde-lima) 80%, white);
+}
+
+.metrica-barras__valor {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--texto);
+    white-space: nowrap;
+}
+
+.metrica-barras__valor small {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--texto-suave);
+}
+
+/* Mapa de calor día × hora: un verde más intenso cuanto más ocupado */
+.metrica-mapa-contenedor {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+}
+
+/* Una sección nunca se estira más que la pantalla: lo ancho (el mapa) scrollea adentro */
+.resumen-grupo {
+    min-width: 0;
+}
+
+/* La ayuda de un título se abre hacia la derecha (el título está a la izquierda) */
+.resumen-grupo__titulo .ayuda__popup {
+    left: -6px;
+    right: auto;
+}
+
+.metrica-mapa {
+    width: 100%;
+    min-width: 640px;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 2px;
+    font-size: 0.75rem;
+    color: var(--texto-suave);
+}
+
+.metrica-mapa thead th:first-child,
+.metrica-mapa th[scope="row"] {
+    width: 44px;
+}
+
+.metrica-mapa th {
+    padding: 2px 4px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.metrica-mapa th[scope="row"] {
+    text-align: left;
+    padding-right: 8px;
+    color: var(--texto);
+}
+
+.metrica-mapa td {
+    height: 30px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--verde-lima) var(--intensidad, 0%), var(--superficie));
+}
+
+.metrica-mapa td:hover {
+    outline: 2px solid var(--texto);
+    outline-offset: -1px;
+}
+
+/* El porcentaje dentro de cada celda, en blanco (con sombra para leerse también sobre el verde claro) */
+.metrica-mapa__valor {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.metrica-mapa__cerrado,
+.metrica-mapa__muestra-cerrado {
+    background: repeating-linear-gradient(135deg, rgba(240, 244, 240, 0.05) 0 4px, transparent 4px 8px) !important;
+}
+
+.metrica-mapa__leyenda {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--texto-suave);
+}
+
+.metrica-mapa__escala {
+    width: 140px;
+    height: 10px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--verde-lima) 8%, var(--superficie)), var(--verde-lima));
+}
+
+.metrica-mapa__muestra-cerrado {
+    display: inline-block;
+    width: 16px;
+    height: 10px;
+    margin-left: 12px;
+    border-radius: 3px;
+    border: 1px solid var(--borde);
+}
+
+.metrica-contacto {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--verde-lima);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.metrica-contacto:hover {
+    text-decoration: underline;
+}
+
+.metrica-stock {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.metrica-stock li {
+    padding: 6px 12px;
+    border: 1px solid rgba(245, 196, 81, 0.35);
+    border-radius: var(--radio-pill);
+    font-size: 0.8125rem;
+    color: var(--texto);
+}
+
+.metrica-stock li strong {
+    margin-left: 4px;
+    color: #f5c451;
+}
+
+.metrica-stock li.metrica-stock--sin {
+    border-color: rgba(255, 107, 107, 0.35);
+}
+
+.metrica-stock li.metrica-stock--sin strong {
+    color: var(--error);
+}
+
+@media (max-width: 560px) {
+    .metrica-barras__fila {
+        grid-template-columns: minmax(70px, 110px) minmax(40px, 1fr) auto;
+        gap: 8px;
+    }
+}

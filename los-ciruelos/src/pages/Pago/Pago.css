@@ -1,0 +1,490 @@
+/* ── Página ── */
+.pago-pagina {
+    min-height: calc(100dvh - 60px);
+    background: var(--fondo);
+    padding: 40px 32px;
+}
+
+.pago-contenedor {
+    max-width: var(--ancho-pagina);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.pago-contenedor--centrado {
+    max-width: 520px;
+    padding-top: 40px;
+}
+
+/* ── Header ── */
+.pago-header__acciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.pago-header__acciones:empty {
+    display: none;
+}
+
+
+/* ── Grid ── */
+.pago-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* ── Resumen ── */
+.pago-resumen {
+    position: sticky;
+    top: 80px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-xl);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pago-resumen__etiqueta {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.pago-resumen__cancha {
+    font-family: var(--fuente-titulo);
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+}
+
+.pago-resumen__fecha {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+    text-transform: capitalize;
+}
+
+.pago-resumen__horario {
+    font-family: var(--fuente-titulo);
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--verde-lima);
+}
+
+.pago-resumen__detalle {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid var(--borde);
+    margin-top: 12px;
+    padding-top: 16px;
+}
+
+.pago-resumen__detalle div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.875rem;
+}
+
+.pago-resumen__detalle dt {
+    color: var(--texto-suave);
+}
+
+.pago-resumen__detalle dd {
+    color: var(--texto);
+    text-align: right;
+}
+
+.pago-resumen__total dd {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* ── Reloj ── */
+.pago-reloj {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radio-md);
+    background: var(--verde-fondo);
+    border: 1px solid var(--verde-borde);
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+.pago-reloj strong {
+    color: var(--texto);
+    font-variant-numeric: tabular-nums;
+}
+
+.pago-reloj--urgente {
+    background: var(--error-fondo);
+    border-color: rgba(255, 107, 107, 0.3);
+}
+
+.pago-reloj--urgente strong {
+    color: var(--error);
+}
+
+/* ── Panel ── */
+.pago-panel {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-xl);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pago-panel__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--texto);
+}
+
+/* ── Opciones seña / total ── */
+.pago-opciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.pago-opcion {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px;
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-lg, 12px);
+    background: var(--superficie-2);
+    cursor: pointer;
+    transition: border-color var(--transicion), background var(--transicion);
+}
+
+.pago-opcion:hover {
+    border-color: var(--verde-borde);
+}
+
+.pago-opcion--activa {
+    border-color: var(--verde-lima);
+    background: var(--verde-fondo);
+}
+
+.pago-opcion input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pago-opcion:has(input:focus-visible) {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+.pago-opcion__titulo {
+    font-weight: 700;
+    color: var(--texto);
+}
+
+.pago-opcion__desc {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+/* ── Monto y Brick ── */
+.pago-monto {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--borde);
+    color: var(--texto-suave);
+    font-size: 0.875rem;
+}
+
+.pago-monto strong {
+    font-family: var(--fuente-titulo);
+    font-size: 1.8rem;
+    font-style: italic;
+    color: var(--verde-lima);
+}
+
+.pago-brick {
+    min-height: 200px;
+}
+
+.pago-cargando {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 40px;
+    color: var(--texto-tenue);
+    font-size: 0.875rem;
+}
+
+.pago-seguro,
+.pago-nota {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--texto-tenue);
+}
+
+.pago-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--error-fondo);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: var(--radio-md);
+    padding: 12px 14px;
+    font-size: 0.875rem;
+    color: var(--error);
+}
+
+
+
+
+
+/* ── Estados finales ── */
+.pago-estado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    padding: 12px 0;
+}
+
+.pago-estado__icono {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pago-estado__icono--exito,
+.pago-estado__icono--info {
+    background: var(--verde-fondo);
+    border: 1px solid var(--verde-borde);
+    color: var(--verde-lima);
+}
+
+.pago-estado__icono--error {
+    background: var(--error-fondo);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    color: var(--error);
+}
+
+.pago-estado__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.6rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+}
+
+.pago-estado__texto {
+    max-width: 420px;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--texto-suave);
+}
+
+.pago-estado__texto strong {
+    color: var(--texto);
+}
+
+.pago-estado__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+    .pago-pagina {
+        padding: 24px 16px;
+    }
+
+    .pago-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pago-resumen {
+        position: static;
+    }
+}
+
+@media (max-width: 520px) {
+    .pago-opciones {
+        grid-template-columns: 1fr;
+    }
+
+    .pago-panel {
+        padding: 20px;
+    }
+}
+
+/* ── Agregados: desglose, estado y cambiar opción ── */
+.pago-resumen__fila-titulo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.pago-resumen__secundario dt,
+.pago-resumen__secundario dd {
+    font-size: 0.8125rem;
+    color: var(--texto-tenue) !important;
+}
+
+
+
+/* ── Métodos de pago: selector (tarjeta | Mercado Pago) y contenido de cada uno ── */
+.pago-metodos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.pago-metodo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px 16px;
+    background: var(--superficie-2);
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-lg);
+    color: var(--texto-suave);
+    font-family: var(--fuente-cuerpo);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--transicion), background var(--transicion), color var(--transicion);
+}
+
+.pago-metodo:hover:not(:disabled) {
+    border-color: var(--verde-borde);
+}
+
+.pago-metodo:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.pago-metodo--activo {
+    border-color: var(--verde-lima);
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+}
+
+.pago-metodo:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+.pago-metodo__nombre {
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--texto);
+}
+
+.pago-metodo__desc {
+    font-size: 0.75rem;
+    color: var(--texto-tenue);
+}
+
+.pago-metodo__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.pago-metodo__ayuda {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+}
+
+.pago-wallet {
+    min-height: 48px;
+    position: relative;
+}
+
+.pago-wallet__placeholder {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radio-md);
+    background: var(--superficie-2);
+    animation: pago-pulso 1.2s ease-in-out infinite;
+}
+
+@keyframes pago-pulso {
+    50% { opacity: 0.5; }
+}
+
+.pago-esperando {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border-radius: var(--radio-md);
+    background: var(--verde-fondo);
+    border: 1px solid var(--verde-borde);
+    font-size: 0.875rem;
+    color: var(--texto);
+}
+
+.pago-esperando .reservas-cargando__spinner {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+    flex-shrink: 0;
+}
+
+.pago-esperando p {
+    margin-top: 2px;
+    color: var(--texto-suave);
+}
+
+/* ── Resumen: cantidad y precio unitario de cada producto ── */
+.pago-resumen__cantidad {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--texto-tenue);
+}
+
+
+.pago-resumen__editar {
+    align-self: flex-start;
+    margin-top: 12px;
+}

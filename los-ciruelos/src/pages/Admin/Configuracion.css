@@ -1,0 +1,372 @@
+/* ── Configuración del club: secciones en grilla y los horarios de la semana ── */
+/* Una sección por pestaña: ocupa el ancho, con un tope para que los campos no queden larguísimos */
+.config-grilla {
+    display: grid;
+    gap: 16px;
+}
+
+.config-grilla .config-seccion {
+    max-width: 880px;
+}
+
+.config-seccion {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.config-seccion__titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+.config-error {
+    font-size: 0.8125rem;
+    color: var(--error);
+}
+
+/* Precio de cada duración */
+.config-ejemplos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+}
+
+.config-ejemplos div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: var(--radio-md);
+    background: var(--superficie-2);
+}
+
+.config-ejemplos dt {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.config-ejemplos dd {
+    font-weight: 700;
+    color: var(--texto);
+    font-variant-numeric: tabular-nums;
+}
+
+.config-ejemplos dd span {
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: var(--texto-suave);
+}
+
+/* "= 1 h 30 min" debajo de los campos en minutos */
+.config-equivale {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+.config-equivale strong {
+    color: var(--verde-lima);
+}
+
+/* ── La semana: un renglón por día (día, horario, la franja abierta sobre las 24 h, copiar) ── */
+.config-semana {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    /* sin overflow: hidden, para que la grilla de horas se abra por encima */
+}
+
+.config-semana__fila--cabecera {
+    border-radius: var(--radio-md) var(--radio-md) 0 0;
+}
+
+.config-semana__fila {
+    display: grid;
+    grid-template-columns: 150px 230px minmax(0, 1fr) 96px;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--borde);
+}
+
+.config-semana__fila--cabecera {
+    border-top: none;
+    background: var(--superficie-2);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+}
+
+.config-semana__fila--cerrado {
+    background: rgba(0, 0, 0, 0.12);
+}
+
+.config-semana__dia {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--texto);
+}
+
+.config-semana__fila--cerrado .config-semana__dia {
+    color: var(--texto-tenue);
+}
+
+/* Interruptor chico */
+.config-semana__switch {
+    position: relative;
+    flex-shrink: 0;
+    width: 34px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.config-semana__switch input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.config-semana__switch span {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--superficie-2);
+    border: 1px solid var(--borde);
+    transition: background var(--transicion);
+}
+
+.config-semana__switch span::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--texto-tenue);
+    transition: transform var(--transicion), background var(--transicion);
+}
+
+.config-semana__switch input:checked + span {
+    background: var(--verde-fondo);
+    border-color: var(--verde-borde);
+}
+
+.config-semana__switch input:checked + span::after {
+    transform: translateX(14px);
+    background: var(--verde-lima);
+}
+
+.config-semana__switch input:focus-visible + span {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 2px;
+}
+
+.config-semana__horas {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+.config-semana__horas input {
+    width: 96px;
+    height: 36px;
+    padding: 0 8px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    background: var(--superficie);
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.875rem;
+    color-scheme: dark;
+}
+
+.config-semana__horas input:focus {
+    outline: none;
+    border-color: var(--verde-borde);
+}
+
+.config-semana__cerrado {
+    font-style: italic;
+    color: var(--texto-tenue);
+}
+
+/* La franja abierta sobre el día (0 a 24 h) */
+.config-semana__barra,
+.config-semana__escala {
+    position: relative;
+    height: 10px;
+}
+
+.config-semana__barra {
+    border-radius: 999px;
+    background: var(--superficie-2);
+}
+
+.config-semana__barra span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--verde-borde), var(--verde-lima));
+}
+
+.config-semana__escala {
+    height: auto;
+}
+
+.config-semana__escala span {
+    position: absolute;
+    top: -6px;
+    transform: translateX(-50%);
+    letter-spacing: 0;
+}
+
+.config-semana__error {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+    .config-semana__fila {
+        grid-template-columns: minmax(0, 1fr) auto;
+        row-gap: 8px;
+    }
+
+    .config-semana__fila--cabecera {
+        display: none;
+    }
+
+    .config-semana__horas {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .config-semana__barra {
+        grid-column: 1 / -1;
+        grid-row: 3;
+    }
+
+    .config-semana__copiar {
+        display: none;
+    }
+}
+
+/* Guardar / Descartar: al final; fijos abajo solo mientras haya cambios */
+.config-acciones--cambios {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+}
+
+.config-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 0;
+    background: var(--fondo);
+    border-top: 1px solid var(--borde);
+}
+
+.config-acciones__estado {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+.config-acciones--cambios .config-acciones__estado {
+    color: #f5c451;
+}
+
+.config-acciones__botones {
+    display: flex;
+    gap: 8px;
+}
+
+/* Lista del 409 */
+.config-fuera__lista {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 0.875rem;
+    color: var(--texto);
+}
+
+.config-fuera__lista li {
+    padding: 8px 10px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+}
+
+.modal:has(.config-fuera) {
+    max-width: 520px;
+}
+
+/* ── Días cerrados ── */
+.config-cierre {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+}
+
+.config-cierre .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.config-cierre__boton {
+    height: 48px;
+}
+
+.config-cierres {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.config-cierres li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+}
+
+.config-cierres li div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.config-cierres li span {
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+@media (max-width: 760px) {
+    .config-cierre {
+        grid-template-columns: 1fr;
+    }
+}

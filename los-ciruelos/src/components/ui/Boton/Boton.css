@@ -57,38 +57,45 @@
     opacity: 1;
 }
 
-/* Variante secundario */
+/* Todas las variantes comparten la tipografía de .boton (mayúsculas, fuente de títulos);
+   solo cambian los colores. */
 
-.boton--secundario {
-    background: var(--superficie-2);
-    border: 1.5px solid var(--borde);
-    color: var(--texto);
-    font-family: var(--fuente-cuerpo);
-    font-style: normal;
-    font-size: 0.9375rem;
-    font-weight: 500;
-    letter-spacing: 0;
-    text-transform: none;
-}
-
-.boton--secundario:not(:disabled):hover {
-    border-color: rgba(240, 244, 240, 0.2);
-    background: var(--superficie-3);
-}
-
-/* Variante fantasma */
+/* Variante secundario: la opción secundaria al lado del primario (contorno verde).
+   "fantasma" es el mismo estilo; se mantiene por compatibilidad. */
+.boton--secundario,
 .boton--fantasma {
     background: transparent;
     border: 1.5px solid var(--verde-borde);
     color: var(--verde-lima);
-    font-family: var(--fuente-cuerpo);
-    font-style: normal;
-    font-size: 0.9375rem;
-    letter-spacing: 0;
 }
 
+.boton--secundario:not(:disabled):hover,
 .boton--fantasma:not(:disabled):hover {
     background: var(--verde-fondo);
+    border-color: var(--verde-lima);
+}
+
+.boton--secundario .boton__spinner,
+.boton--fantasma .boton__spinner {
+    border-color: rgba(143, 212, 0, 0.3);
+    border-top-color: var(--verde-lima);
+}
+
+/* Variante peligro: cancelar y acciones destructivas (mismo estilo que .accion--peligro) */
+.boton--peligro {
+    background: var(--error-fondo);
+    border: 1.5px solid rgba(255, 107, 107, 0.35);
+    color: var(--error);
+}
+
+.boton--peligro:not(:disabled):hover {
+    border-color: var(--error);
+    background: rgba(255, 107, 107, 0.16);
+}
+
+.boton--peligro .boton__spinner {
+    border-color: rgba(255, 107, 107, 0.3);
+    border-top-color: var(--error);
 }
 
 /* Estados compartidos */

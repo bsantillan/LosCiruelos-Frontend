@@ -1,7 +1,9 @@
 import { useState } from "react";
+import type { CredentialResponse } from "@react-oauth/google";
 import { authService } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
-import type { CredentialResponse } from "@react-oauth/google";
+import { extraerErrores, primerError } from "../utils/apiErrors";
+import type { LoginResponse } from "../types/auth.types";
 
 export interface ErroresGoogle {
     general?: string;
@@ -12,7 +14,7 @@ export function useGoogleAuth() {
     const [erroresApi, setErroresApi] = useState<ErroresGoogle>({});
     const { iniciarSesion } = useAuth();
 
-    const loginConGoogle = async (credentialResponse: CredentialResponse): Promise<void> => {
+    const loginConGoogle = async (credentialResponse: CredentialResponse, recordar = true): Promise<LoginResponse> => {
         if (!credentialResponse.credential) {
             setErroresApi({ general: "No se recibió el token de Google." });
             throw new Error("Sin token");
@@ -21,21 +23,12 @@ export function useGoogleAuth() {
         setErroresApi({});
         try {
             const respuesta = await authService.loginGoogle(credentialResponse.credential);
-            iniciarSesion(respuesta);
-        } catch (error: any) {
-            const data = error.response?.data;
-                        console.log(data)
-
-            if (data?.errors && typeof data.errors === "object") {
-                setErroresApi({ general: Object.values(data.errors)[0] as string });
-                console.log(error);
-            } else if (typeof data?.error === "string") {
-                setErroresApi({ general: data.error });
-                console.log(error);
-            } else {
-                setErroresApi({ general: "Ocurrió un error inesperado, intentá de nuevo." });
-                console.log(error); 
-            }
+            iniciarSesion(respuesta, recordar);
+            return respuesta;
+        } catch (error) {
+            setErroresApi({
+                general: primerError(extraerErrores(error, "Ocurrió un error inesperado, intentá de nuevo.")),
+            });
             throw error;
         } finally {
             setCargando(false);

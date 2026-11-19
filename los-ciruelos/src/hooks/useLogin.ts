@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { authService } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
-import type { LoginRequest } from "../types/auth.types";
+import type { LoginRequest, LoginResponse } from "../types/auth.types";
+import { extraerErrores } from "../utils/apiErrors";
 
 export class EmailNoVerificadoError extends Error {
     constructor() { super("email_no_verificado"); }
@@ -18,29 +19,18 @@ export function useLogin() {
     const [erroresApi, setErroresApi] = useState<ErroresLogin>({});
     const { iniciarSesion } = useAuth();
 
-    const login = async (datos: LoginRequest): Promise<void> => {
+    const login = async (datos: LoginRequest, recordar: boolean): Promise<LoginResponse> => {
         setCargando(true);
         setErroresApi({});
         try {
             const respuesta = await authService.login(datos);
-            iniciarSesion(respuesta);
-        } catch (error: any) {
-            const data = error.response?.data;
-
-            if (data?.errors?.email_verificado) {
-                throw new EmailNoVerificadoError();
-            }
-
-            if (data?.errors && typeof data.errors === "object") {
-                setErroresApi(data.errors as ErroresLogin);
-            } else if (typeof data?.error === "string") {
-                setErroresApi({ general: data.error });
-            } else {
-                setErroresApi({ general: "Ocurrió un error inesperado, intentá de nuevo." });
-            }
-
+            iniciarSesion(respuesta, recordar);
+            return respuesta;
+        } catch (error) {
+            const errores = extraerErrores(error, "Ocurrió un error inesperado, intentá de nuevo.");
+            if (errores.email_verificado) throw new EmailNoVerificadoError();
+            setErroresApi(errores);
             throw error;
-
         } finally {
             setCargando(false);
         }

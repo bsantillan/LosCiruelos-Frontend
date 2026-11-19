@@ -1,0 +1,328 @@
+/* ── Grilla del día: canchas en columnas, horarios en filas ──
+   Cada media hora mide 56px: un turno de 1 h (112px) entra entero con el ícono, cuatro jugadores en
+   dos renglones, el horario y la deuda. */
+.grilla-reservas {
+    --grilla-fila: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.grilla-reservas__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.grilla-reservas__fecha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.grilla-reservas__totales {
+    font-size: 0.875rem;
+    color: var(--texto-suave);
+}
+
+.grilla-reservas__totales strong {
+    color: var(--texto);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Colores por estado (bloques y leyenda) ── */
+.grilla-color--pagada { --grilla-color: var(--verde-lima); }
+.grilla-color--por-cobrar { --grilla-color: #f5c451; }
+.grilla-color--pendiente { --grilla-color: #6cb6ff; }
+.grilla-color--deuda { --grilla-color: #ff6b6b; }
+
+.grilla-leyenda {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+.grilla-leyenda li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.grilla-leyenda__color {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--grilla-color) 25%, transparent);
+    border: 1px solid var(--grilla-color);
+    border-left-width: 4px;
+}
+
+.grilla-leyenda__color--libre {
+    --grilla-color: var(--borde);
+    background: none;
+    border: 1px dashed rgba(240, 244, 240, 0.35);
+}
+
+/* ── La grilla ── */
+.grilla {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-lg);
+    /* Si no entra, se desliza dentro de su tarjeta (nunca la página) */
+    overflow-x: auto;
+}
+
+.grilla__cuerpo {
+    position: relative;
+    display: grid;
+}
+
+.grilla__esquina,
+.grilla__cancha {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--superficie-2);
+    border-bottom: 1px solid var(--borde);
+}
+
+.grilla__cancha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+    border-left: 1px solid var(--borde);
+}
+
+/* La columna de horas queda fija al deslizar de costado */
+.grilla__esquina,
+.grilla__hora {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--superficie);
+}
+
+.grilla__esquina {
+    z-index: 4;
+}
+
+.grilla__hora {
+    padding: 4px 8px 0 0;
+    text-align: right;
+    font-size: 0.6875rem;
+    color: var(--texto-tenue);
+    font-variant-numeric: tabular-nums;
+    border-top: 1px solid rgba(240, 244, 240, 0.03);
+}
+
+.grilla__hora--entera {
+    font-weight: 700;
+    color: var(--texto-suave);
+    border-top-color: var(--borde);
+}
+
+.grilla__celda {
+    border-left: 1px solid var(--borde);
+    border-top: 1px solid rgba(240, 244, 240, 0.04);
+}
+
+.grilla__celda--libre {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border-right: none;
+    border-bottom: none;
+    /* Se insinúa siempre (en el celular no hay hover) y se marca al pasar o con foco */
+    color: rgba(240, 244, 240, 0.14);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transicion), color var(--transicion);
+}
+
+.grilla__celda--libre:hover,
+.grilla__celda--libre:focus-visible {
+    background: var(--verde-fondo);
+    color: var(--verde-lima);
+    outline: 1px dashed var(--verde-borde);
+    outline-offset: -3px;
+}
+
+/* ── Una reserva ── */
+.grilla__reserva {
+    z-index: 1;
+    margin: 2px 4px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 6px 8px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--grilla-color) 45%, transparent);
+    border-left: 4px solid var(--grilla-color);
+    border-radius: var(--radio-md);
+    background: color-mix(in srgb, var(--grilla-color) 16%, var(--superficie));
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    text-align: left;
+    cursor: pointer;
+    transition: transform var(--transicion), box-shadow var(--transicion);
+}
+
+.grilla__reserva:hover,
+.grilla__reserva:focus-visible {
+    box-shadow: 0 0 0 1px var(--grilla-color), 0 6px 18px rgba(0, 0, 0, 0.35);
+    outline: none;
+    z-index: 2;
+}
+
+.grilla__reserva--atenuada {
+    opacity: 0.35;
+}
+
+.grilla__reserva-titulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: 100%;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grilla__reserva-nombres {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grilla__reserva-icono {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--grilla-color);
+}
+
+.grilla__reserva-detalle,
+.grilla__reserva-debe {
+    max-width: 100%;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--texto-suave);
+}
+
+.grilla__reserva-debe {
+    font-weight: 700;
+    color: #f5c451;
+}
+
+/* Hora actual */
+.grilla__ahora {
+    z-index: 2;
+    align-self: start;
+    height: 2px;
+    margin-top: calc(var(--grilla-fila) * var(--grilla-ahora, 0));
+    background: var(--error);
+    box-shadow: 0 0 6px rgba(255, 107, 107, 0.6);
+    pointer-events: none;
+}
+
+.grilla-reservas__canchas {
+    align-self: stretch;
+}
+
+@media (max-width: 760px) {
+    .grilla-reservas {
+        --grilla-fila: 56px;
+    }
+}
+
+/* ── Fuera del horario actual del club (el ADMIN lo cambió después de reservarse) ── */
+.grilla__celda--fuera,
+.grilla-leyenda__color--fuera {
+    background: repeating-linear-gradient(135deg, rgba(240, 244, 240, 0.05) 0 6px, transparent 6px 12px);
+}
+
+.grilla-leyenda__color--fuera {
+    --grilla-color: var(--borde);
+    border: 1px solid var(--borde);
+}
+
+.grilla__hora--fuera {
+    color: var(--texto-tenue);
+    font-style: italic;
+}
+
+.grilla__reserva--fuera {
+    border-style: dashed;
+    border-left-style: solid;
+}
+
+.grilla__reserva-fuera {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #f5c451;
+}
+
+.grilla-reservas__aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid rgba(245, 196, 81, 0.35);
+    border-radius: var(--radio-md);
+    background: rgba(245, 196, 81, 0.08);
+    color: #f5c451;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.grilla-reservas__aviso svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Filtro "Canceladas": las canceladas y vencidas se ven (no ocupan la cancha) */
+.grilla__reserva--cancelada {
+    --grilla-color: var(--texto-tenue);
+    background: repeating-linear-gradient(135deg, rgba(240, 244, 240, 0.04) 0 6px, transparent 6px 12px), var(--superficie);
+}
+
+.grilla__reserva--cancelada .grilla__reserva-titulo {
+    text-decoration: line-through;
+    color: var(--texto-suave);
+}
+
+/* El selector de fecha de la grilla con ancho fijo: no se corre al cambiar de día ni al aparecer "Hoy" */
+.grilla-reservas__fecha .selector-fecha {
+    width: 340px;
+    max-width: 100%;
+}
+
+.grilla-reservas__fecha .selector-fecha__disparador {
+    flex: 1;
+    justify-content: center;
+}

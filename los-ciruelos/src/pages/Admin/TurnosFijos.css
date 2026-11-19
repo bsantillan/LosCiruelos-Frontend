@@ -1,0 +1,78 @@
+/* ── Turnos fijos ── */
+.tf-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.tf-turno {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tf-turno--baja {
+    opacity: 0.6;
+}
+
+.tf-turno__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.tf-turno__titulo {
+    font-family: var(--fuente-titulo);
+    font-size: 1.1rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--texto);
+}
+
+.tf-turno__jugadores {
+    font-size: 0.9375rem;
+    color: var(--texto);
+}
+
+.tf-partidos {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--borde);
+}
+
+.tf-partidos li {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.875rem;
+    color: var(--texto);
+}
+
+.tf-partidos__baja {
+    opacity: 0.55;
+}
+
+.tf-partidos__fecha {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tf-partidos__monto {
+    color: var(--texto-suave);
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+    .tf-partidos li {
+        grid-template-columns: minmax(0, 1fr) auto;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--borde);
+    }
+}

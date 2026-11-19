@@ -1,29 +1,46 @@
 import { useState } from "react";
-import { Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
+import { Mail, Lock, ArrowRight, CheckCircle2 } from "lucide-react";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import Boton from "../../components/ui/Boton/Boton";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";
-import { EmailNoVerificadoError, ErroresLogin, useLogin } from "../../hooks/useLogin";
-import { LoginRequest } from "../../types/auth.types";
-import { useNavigate } from "react-router-dom";
+import { EmailNoVerificadoError, useLogin, type ErroresLogin } from "../../hooks/useLogin";
+import type { LoginRequest, LoginResponse } from "../../types/auth.types";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthPanelLayout } from "../../layouts/AuthLayout/AuthPanelLayout";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import BotonGoogle from "../../components/ui/Boton/BotonGoogle";
-import { CredentialResponse } from "@react-oauth/google";
+import type { CredentialResponse } from "@react-oauth/google";
+import { destinoDespuesDelLogin, leerSeleccion } from "../../utils/seleccionReserva";
+import { AvisoTransitorio } from "../../components/ui/Avisos/Avisos";
+
+const MENSAJES_EXITO: Record<string, string> = {
+    passwordReseteado: "Tu contraseña se actualizó. Ya podés ingresar.",
+    cuentaVerificada: "Tu cuenta está verificada. Ya podés ingresar.",
+    cuentaYaVerificada: "Tu cuenta ya estaba verificada. Ingresá con tu email y contraseña.",
+};
 
 export default function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const estado = (location.state ?? {}) as Record<string, unknown>;
+    const mensajeExito = Object.keys(MENSAJES_EXITO).find(clave => estado[clave]);
+    // Viene de elegir un turno sin sesión: después del login se retoma
+    const [hayTurnoGuardado] = useState(() => leerSeleccion() !== null);
+    const irDespuesDelLogin = ({ perfilCompleto, rol }: LoginResponse) => {
+        const destino = destinoDespuesDelLogin(perfilCompleto, rol);
+        navigate(destino, destino === "/reservas" || destino === "/perfil" ? { state: { desdeReserva: true } } : undefined);
+    };
     const [datos, setDatos] = useState<LoginRequest>({ email: "", password: "" });
     const [recordar, setRecordar] = useState(false);
     const [errores, setErrores] = useState<ErroresLogin>({});
     const { login, cargando, erroresApi, setErroresApi } = useLogin();
-    const { loginConGoogle, handleGoogleError, cargando: cargandoGoogle, erroresApi: erroresGoogle, setErroresApi: setErroresGoogle } = useGoogleAuth();
+    const { loginConGoogle, handleGoogleError, erroresApi: erroresGoogle, setErroresApi: setErroresGoogle } = useGoogleAuth();
 
     const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
         try {
-            await loginConGoogle(credentialResponse);
-            navigate("/");
-        } catch (error) {
+            irDespuesDelLogin(await loginConGoogle(credentialResponse, recordar));
+        } catch {
+            // el error ya se muestra en pantalla
         }
     };
 
@@ -47,8 +64,7 @@ export default function Login() {
         e.preventDefault();
         if (!validar()) return;
         try {
-            await login(datos);
-            navigate("/");
+            irDespuesDelLogin(await login(datos, recordar));
         } catch (error) {
             if (error instanceof EmailNoVerificadoError) {
                 navigate("/verificar-codigo", {
@@ -75,10 +91,18 @@ export default function Login() {
                 </div>
 
                 <form onSubmit={enviar} noValidate>
-                    <div className={`alerta-error${(erroresApi.general || erroresGoogle.general) ? " alerta-error--visible" : ""}`} role="alert">
-                        <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
-                        {erroresApi.general || erroresGoogle.general}
-                    </div>
+                    {/* Nota fija: viene de elegir un turno sin sesión */}
+                    {hayTurnoGuardado && (
+                        <div className="alerta-error alerta-error--visible alerta-exito" role="status">
+                            <CheckCircle2 size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+                            Ingresá para terminar tu reserva. Guardamos el turno que elegiste.
+                        </div>
+                    )}
+                    {/* Éxito (contraseña cambiada, cuenta verificada) o error: aviso flotante arriba a la derecha */}
+                        {mensajeExito && <AvisoTransitorio tipo="ok">{MENSAJES_EXITO[mensajeExito]}</AvisoTransitorio>}
+                        {(erroresApi.general || erroresGoogle.general) && (
+                            <AvisoTransitorio tipo="error">{erroresApi.general || erroresGoogle.general}</AvisoTransitorio>
+                        )}
                     <div className="campos">
                         <CampoInput
                             id="email" name="email" label="Correo electrónico"
@@ -101,7 +125,7 @@ export default function Login() {
                             checked={recordar}
                             onChange={e => setRecordar(e.target.checked)}
                         />
-                        <a href="/olvide-contrasena" className="olvide">¿Olvidaste tu contraseña?</a>
+                        <Link to="/olvide-contrasena" className="olvide">¿Olvidaste tu contraseña?</Link>
                     </div>
                     <Boton type="submit" variante="primario" cargando={cargando}>
                         <span>Ingresar al club</span>
@@ -113,10 +137,10 @@ export default function Login() {
                 <BotonGoogle
                     onSuccess={handleGoogleSuccess}
                     onError={handleGoogleError}
-                    texto="Continuar con Google"
+                    texto="continue_with"
                 />
                 <p className="pie">
-                    ¿No tenés cuenta?&nbsp;<a href="/register">Registrate gratis</a>
+                    ¿No tenés cuenta?&nbsp;<Link to="/register">Registrate gratis</Link>
                 </p>
             </div>
         </AuthPanelLayout>
