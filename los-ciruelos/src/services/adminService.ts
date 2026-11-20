@@ -1,4 +1,5 @@
 import api from "../api/axiosInstance";
+import { prepararImagen } from "../utils/archivos";
 import type {
     ClienteBusqueda, CobroQr, ConfiguracionClub, ConfiguracionClubGuardada, ConfiguracionClubRequest, DiaCerrado, HorariosClub, ConfigReservas, CrearReservaAdminRequest, FiltrosReservasAdmin, FiltrosUsuarios,
     ListadoReservas, MedioCobro, PartidoRequest, ProductoAdmin, ProductoAgregado, ProductoRequest, ResumenAdmin, CajaJornada, MetricasClub, BajaDeCancha, CanchaRequest, Novedad, NovedadRequest, FiltrosVentasApi, ListadoVentas,
@@ -118,7 +119,7 @@ export const adminService = {
     },
     agregarFotoCancha: async (id: number, archivo: File): Promise<CanchaResponse> => {
         const datos = new FormData();
-        datos.append("archivo", archivo);
+        datos.append("archivo", await prepararImagen(archivo));
         const res = await api.post<CanchaResponse>(`/admin/canchas/${id}/fotos`, datos, { timeout: 60000, headers: MULTIPART });
         return res.data;
     },
@@ -153,7 +154,7 @@ export const adminService = {
     },
     subirImagenNovedad: async (id: number, archivo: File): Promise<Novedad> => {
         const datos = new FormData();
-        datos.append("archivo", archivo);
+        datos.append("archivo", await prepararImagen(archivo));
         const res = await api.post<Novedad>(`/admin/novedades/${id}/imagen`, datos, { timeout: 60000, headers: MULTIPART });
         return res.data;
     },
