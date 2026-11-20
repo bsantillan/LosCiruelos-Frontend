@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { User, Mail, Lock, Phone, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
+import CampoTelefono from "../../components/ui/CampoTelefono/CampoTelefono";
 import CampoSelect from "../../components/ui/CampoSelect/CampoSelect";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";
 import Boton from "../../components/ui/Boton/Boton";
@@ -11,7 +12,7 @@ import BotonGoogle from "../../components/ui/Boton/BotonGoogle";
 import type { RegisterRequest } from "../../types/register.types";
 import type { CredentialResponse } from "@react-oauth/google";
 import { Link, useNavigate } from "react-router-dom";
-import { telefonoValido } from "../../utils/telefono";
+import { celularValido } from "../../utils/telefono";
 import { destinoDespuesDelLogin } from "../../utils/seleccionReserva";
 import { CATEGORIAS, POSICIONES } from "../../config/opcionesJugador";
 import "./Register.css";
@@ -114,7 +115,7 @@ export default function Register() {
         if (!datos.email) e.email = "El correo es obligatorio.";
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) e.email = "El correo no es válido.";
         if (!datos.telefono) e.telefono = "El celular es obligatorio.";
-        else if (!telefonoValido(datos.telefono)) e.telefono = "Ingresá un celular válido. Ej: 11 1234-5678";
+        else if (!celularValido(datos.telefono)) e.telefono = "Ingresá un celular válido, con el código de área.";
         if (!datos.password) {
             e.password = "La contraseña es obligatoria.";
         } else if (
@@ -247,11 +248,10 @@ export default function Register() {
                                 placeholder="vos@email.com" icono={<Mail size={16} />}
                                 autoComplete="email" required error={errores.email || erroresApi.email}
                             />
-                            <CampoInput
+                            <CampoTelefono
                                 id="telefono" name="telefono" label="Celular"
-                                type="tel" value={datos.telefono} onChange={cambiarInput}
-                                placeholder="11 1234-5678" icono={<Phone size={16} />}
-                                autoComplete="tel"
+                                value={datos.telefono}
+                                onChange={telefono => { setDatos(prev => ({ ...prev, telefono })); setErrores({}); setErroresApi({}); }}
                                 required error={errores.telefono || erroresApi.telefono}
                             />
                             <CampoInput

@@ -1,0 +1,60 @@
+/* El campo entero se ve como un CampoInput: la bandera y el número quedan adentro de la misma caja */
+.campo-telefono {
+    --PhoneInputCountryFlag-height: 1.05em;
+    --PhoneInputCountryFlag-borderColor: transparent;
+    --PhoneInput-color--focus: var(--verde-lima);
+    height: 52px;
+    gap: 4px;
+    padding: 0 16px;
+    background: var(--superficie-2);
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-md);
+    transition: border-color var(--transicion), background var(--transicion), box-shadow var(--transicion);
+}
+
+.campo-telefono:focus-within {
+    border-color: var(--verde-lima);
+    background: var(--superficie-3);
+    box-shadow: 0 0 0 4px rgba(143, 212, 0, 0.08);
+}
+
+.campo-telefono--error,
+.campo-telefono--error:focus-within {
+    border-color: var(--error);
+    box-shadow: 0 0 0 4px var(--error-fondo);
+}
+
+.campo-telefono--deshabilitado {
+    opacity: 0.6;
+}
+
+.campo-telefono .PhoneInputInput {
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.campo-telefono .PhoneInputCountryIcon {
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+/* La lista de países es el <select> nativo (cómodo en el celular): con los colores del sitio */
+.campo-telefono .PhoneInputCountrySelect {
+    color-scheme: dark;
+    cursor: pointer;
+}
+
+.campo-telefono .PhoneInputCountrySelect option {
+    background: var(--superficie-2);
+    color: var(--texto);
+}
+
+.campo-telefono .PhoneInputCountrySelect:focus + .PhoneInputCountryIcon--border {
+    box-shadow: 0 0 0 1px var(--verde-lima);
+}

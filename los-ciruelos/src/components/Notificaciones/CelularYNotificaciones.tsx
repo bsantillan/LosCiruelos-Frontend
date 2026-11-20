@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { AlertCircle, BellRing, CheckCircle2, KeyRound, Mail, MessageCircle, Phone, Smartphone } from "lucide-react";
+import { AlertCircle, BellRing, CheckCircle2, KeyRound, Mail, MessageCircle, Smartphone } from "lucide-react";
 import CampoInput from "../ui/CampoInput/CampoInput";
+import CampoTelefono from "../ui/CampoTelefono/CampoTelefono";
 import CampoToggle from "../ui/CampoToggle/CampoToggle";
 import Boton from "../ui/Boton/Boton";
 import { perfilService } from "../../services/perfilService";
@@ -8,7 +9,7 @@ import type {
     CanalNotificacion, NotificacionesResponse, PerfilResponse, SuscripcionesResponse,
 } from "../../types/perfil.types";
 import { extraerErrores, primerError } from "../../utils/apiErrors";
-import { formatTelefono, telefonoValido } from "../../utils/telefono";
+import { aInternacional, celularValido, formatTelefono, mismoTelefono } from "../../utils/telefono";
 import "./Notificaciones.css";
 import { AvisoTransitorio } from "../ui/Avisos/Avisos";
 
@@ -93,15 +94,15 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
     };
 
     const empezarEdicion = () => {
-        setNuevoTelefono(formatTelefono(telefono));
+        setNuevoTelefono(aInternacional(telefono));
         setErrorTelefono(null);
         setEditando(true);
     };
 
     const guardarTelefono = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!telefonoValido(nuevoTelefono)) {
-            setErrorTelefono("Ingresá un celular válido. Ej: 11 1234-5678");
+        if (!celularValido(nuevoTelefono)) {
+            setErrorTelefono("Ingresá un celular válido, con el código de área.");
             return;
         }
         if (!notif) return;
@@ -227,17 +228,16 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
 
                 {mostrarFormulario && (
                     <form className="notif-codigo" onSubmit={guardarTelefono} noValidate>
-                        <CampoInput
+                        <CampoTelefono
                             id="celular" name="telefono" label={tieneTelefono ? "Celular nuevo" : "Celular"}
-                            type="tel" value={nuevoTelefono}
-                            onChange={e => { setNuevoTelefono(e.target.value); setErrorTelefono(null); }}
-                            placeholder="11 1234-5678" icono={<Phone size={16} />} autoComplete="tel"
+                            value={nuevoTelefono}
+                            onChange={v => { setNuevoTelefono(v); setErrorTelefono(null); }}
                             required error={errorTelefono ?? undefined}
                         />
                         <p className="notif-ayuda">
                             {tieneTelefono && telefonoVerificado
                                 ? "Si lo cambiás, vas a tener que verificar el número nuevo."
-                                : "Con código de área, sin 0 ni 15. Después lo verificás con un código por WhatsApp."}
+                                : "Elegí el país y escribí el número con el código de área, sin 0 ni 15. Después lo verificás con un código por WhatsApp."}
                         </p>
                         <div className="notif-codigo__acciones">
                             {tieneTelefono && (
@@ -247,7 +247,7 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
                                 </Boton>
                             )}
                             <Boton ancho="auto" type="submit" cargando={guardandoTelefono}
-                                disabled={!nuevoTelefono.trim() || (tieneTelefono && nuevoTelefono === formatTelefono(telefono))}>
+                                disabled={!nuevoTelefono || (tieneTelefono && mismoTelefono(nuevoTelefono, telefono))}>
                                 <span>Guardar celular</span>
                             </Boton>
                         </div>

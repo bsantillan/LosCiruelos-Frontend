@@ -118,3 +118,8 @@ Las tablas pasan a tarjetas en celular. El cobro en el club es un modal comparti
 | `PROFESOR` | Las secciones públicas (su panel todavía no existe) |
 
 Con sesión, "Mi perfil" y "Cerrar sesión" están en el menú del avatar. Los links no se parten en dos renglones: entre 1180 y 1360 px se muestran sin íconos y, más angosto, la barra pasa al menú hamburguesa (desde 1180 px con más de 7 links, como CLIENTE, ADMIN y EMPLEADO; desde 960 px sin sesión).
+
+## Celulares: selector de país
+
+Todos los campos de celular (registro, "Celular y avisos" del perfil y del panel, alta de cliente, usuarios del panel y el celular opcional de un jugador invitado) usan `components/ui/CampoTelefono`, con `react-phone-number-input`: la bandera y el código del país (`+54` por defecto) quedan fijos a la izquierda y el número se escribe con el formato de ese país. La lista muestra cada país en castellano con su código ("Uruguay (+598)"), con Argentina y los países limítrofes primero. Las banderas van empaquetadas (no se piden a otro sitio). El campo devuelve el número en formato internacional (`+5491123456789`); el backend lo normaliza al de WhatsApp (`5491123456789`). Helpers en `src/utils/telefono.ts`: `aInternacional` (de lo guardado al formato del campo), `celularValido` (número posible para ese país) y `mismoTelefono`.
+
