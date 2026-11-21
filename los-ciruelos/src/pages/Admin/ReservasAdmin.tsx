@@ -79,7 +79,8 @@ const editable = (r: ReservaResponse) =>
  * partido de turno fijo, el ADMIN también edita o da de baja la serie o esa fecha.
  */
 export default function ReservasAdmin() {
-    const { canchas } = useCanchas();
+    // También las dadas de baja: sus reservas pasadas se siguen consultando
+    const { canchas } = useCanchas(true);
     // Bonificar (no cobrarle al cliente) es solo del ADMIN
     const { usuario } = useAuth();
     const esAdmin = usuario?.rol === "ADMIN";
@@ -497,7 +498,7 @@ export default function ReservasAdmin() {
                     <CampoBusqueda id="ra-cliente" label="Cliente" placeholder="Nombre, apellido o email" busqueda={campoCliente} />
                     <CampoSelect id="ra-cancha" name="cancha" label="Cancha" value={canchaId}
                         onChange={e => setCanchaId(e.target.value === "" ? "" : Number(e.target.value))}
-                        opciones={[{ valor: "", etiqueta: "Todas" }, ...canchas.map(c => ({ valor: c.id, etiqueta: `Cancha ${c.numero}` }))]} />
+                        opciones={[{ valor: "", etiqueta: "Todas" }, ...canchas.map(c => ({ valor: c.id, etiqueta: `Cancha ${c.numero}${c.activa === false ? " (desactivada)" : ""}` }))]} />
                     <button type="button" className="accion admin-filtros__fijo admin-filtros__limpiar" onClick={limpiarFiltros} disabled={!hayFiltros}>
                         <X size={15} /> Limpiar filtros
                     </button>

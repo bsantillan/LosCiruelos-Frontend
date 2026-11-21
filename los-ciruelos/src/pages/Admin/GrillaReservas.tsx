@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { AlertTriangle, CalendarX2, Repeat, Swords } from "lucide-react";
 import { useCanchas } from "../../hooks/useCanchas";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
@@ -112,7 +112,10 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
 }) {
     const hoy = hoyISO();
 
-    const { canchas, error: errorCanchas } = useCanchas();
+    // Todas, también las dadas de baja: su columna aparece los días en que tienen reservas (las pasadas)
+    const { canchas: todas, error: errorCanchas } = useCanchas(true);
+    // Memorizadas: son dependencia de la carga de datos (un filter nuevo en cada render la repetiría sin fin)
+    const canchas = useMemo(() => todas.filter(c => c.activa !== false), [todas]);
     const unaCancha = useMediaQuery(MEDIA_UNA_CANCHA);
     const [canchaMovil, setCanchaMovil] = useState<number | null>(null);
 
@@ -121,11 +124,11 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
     const mostrarCanceladas = estadoFiltro === "canceladas";
     // Los horarios libres se ofrecen solo sin filtro de estado (y en días de hoy en adelante)
     const conLibres = !pasado && estadoFiltro === "todas";
-    const clave = `${fecha}|${version}|${canchas.map(c => c.id).join(",")}`;
+    const clave = `${fecha}|${version}|${todas.map(c => c.id).join(",")}`;
     const [datos, setDatos] = useState<Datos | null>(null);
 
     useEffect(() => {
-        if (canchas.length === 0) return;
+        if (todas.length === 0) return;
         let activo = true;
         Promise.all([
             adminService.reservas({ desde: fecha, hasta: fecha, size: 100 }),
@@ -142,7 +145,7 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
             if (activo) setDatos({ clave, error: primerError(extraerErrores(e, "No se pudo cargar la grilla.")) });
         });
         return () => { activo = false; };
-    }, [clave, canchas, fecha, pasado]);
+    }, [clave, canchas, todas.length, fecha, pasado]); // todas.length: con solo canchas dadas de baja igual se carga
 
     const actual = datos?.clave === clave ? datos : null;
     // Mientras se actualiza se conserva lo anterior (sin parpadeo), si es del mismo día
@@ -167,7 +170,10 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
     const cierre = fines.length ? Math.ceil(Math.max(...fines) / BLOQUE) * BLOQUE : 0;
     const filas = Math.max(0, (cierre - apertura) / BLOQUE);
 
-    const columnas = unaCancha ? canchas.filter(c => c.id === (canchaMovil ?? canchas[0]?.id)) : canchas;
+    // Las activas y las dadas de baja con alguna reserva ese día (para ver lo que se jugó)
+    const delDiaPorCancha = new Set(delDia.map(r => r.canchaId));
+    const visibles = todas.filter(c => c.activa !== false || delDiaPorCancha.has(c.id));
+    const columnas = unaCancha ? visibles.filter(c => c.id === (canchaMovil ?? visibles[0]?.id)) : visibles;
     const fila = (min: number) => Math.round((min - apertura) / BLOQUE) + 2; // la fila 1 es la cabecera
 
     // Línea de la hora actual (hora del club)
@@ -200,14 +206,14 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
                 {(tipoFiltro === "todas" || tipoFiltro === "turnos-fijos") && <li><Repeat size={13} aria-hidden="true" /> Turno fijo</li>}
             </ul>
 
-            {unaCancha && canchas.length > 1 && (
+            {unaCancha && visibles.length > 1 && (
                 <div className="nr-canchas grilla-reservas__canchas" role="tablist" aria-label="Cancha">
-                    {canchas.map(c => {
-                        const activa = (canchaMovil ?? canchas[0]?.id) === c.id;
+                    {visibles.map(c => {
+                        const activa = (canchaMovil ?? visibles[0]?.id) === c.id;
                         return (
                             <button key={c.id} type="button" role="tab" aria-selected={activa}
                                 className={`nr-cancha${activa ? " nr-cancha--activa" : ""}`} onClick={() => setCanchaMovil(c.id)}>
-                                Cancha {c.numero}
+                                Cancha {c.numero}{c.activa === false ? " (desactivada)" : ""}
                             </button>
                         );
                     })}
@@ -228,7 +234,10 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
                         {/* Cabecera: canchas */}
                         <div className="grilla__esquina" style={{ gridRow: 1, gridColumn: 1 }} />
                         {columnas.map((c, i) => (
-                            <div key={c.id} className="grilla__cancha" role="columnheader" style={{ gridRow: 1, gridColumn: i + 2 }}>Cancha {c.numero}</div>
+                            <div key={c.id} className={`grilla__cancha${c.activa === false ? " grilla__cancha--inactiva" : ""}`} role="columnheader" style={{ gridRow: 1, gridColumn: i + 2 }}
+                                title={c.activa === false ? "Cancha dada de baja: se ven sus reservas, no se puede reservar" : undefined}>
+                                Cancha {c.numero}{c.activa === false && <small> · desactivada</small>}
+                            </div>
                         ))}
 
                         {/* Horas y celdas (libres o no) */}
