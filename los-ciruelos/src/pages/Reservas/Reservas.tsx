@@ -43,18 +43,25 @@ function TabsCanchas({
 }) {
     return (
         <div className="reservas-tabs" role="tablist" aria-label="Canchas">
-            {canchas.map(c => (
-                <button
-                    key={c.id}
-                    role="tab"
-                    aria-selected={activa === c.id}
-                    className={`reservas-tab${activa === c.id ? " reservas-tab--activa" : ""}`}
-                    onClick={() => onSeleccionar(c.id)}
-                >
-                    <span className="reservas-tab__nombre">Cancha {c.numero}</span>
-                    <span className="reservas-tab__desc">{c.descripcion}</span>
-                </button>
-            ))}
+            {canchas.map(c => {
+                // Una cancha dada de baja se muestra, pero no se puede elegir
+                const disponible = c.activa !== false;
+                return (
+                    <button
+                        key={c.id}
+                        role="tab"
+                        aria-selected={activa === c.id}
+                        aria-disabled={!disponible}
+                        disabled={!disponible}
+                        title={disponible ? undefined : `La cancha ${c.numero} no está disponible por el momento`}
+                        className={`reservas-tab${activa === c.id ? " reservas-tab--activa" : ""}${disponible ? "" : " reservas-tab--inactiva"}`}
+                        onClick={() => onSeleccionar(c.id)}
+                    >
+                        <span className="reservas-tab__nombre">Cancha {c.numero}</span>
+                        <span className="reservas-tab__desc">{disponible ? c.descripcion : "No disponible por el momento"}</span>
+                    </button>
+                );
+            })}
         </div>
     );
 }
@@ -355,7 +362,8 @@ export default function Reservas() {
     const navigate = useNavigate();
     const { usuario } = useAuth();
     const esVisitante = usuario === null;
-    const { canchas, cargando: cargandoCanchas, error: errorCanchas } = useCanchas();
+    // Todas las canchas, también las dadas de baja (se ven como "No disponible por el momento")
+    const { canchas, cargando: cargandoCanchas, error: errorCanchas } = useCanchas(true);
     // Las reservas propias necesitan sesión (sin ella el backend responde 401)
     const { reservas, recargar: recargarMias } = useMisReservas(FILTRO_PENDIENTES, !esVisitante);
 
@@ -376,8 +384,9 @@ export default function Reservas() {
     const { crear, cancelar, cargando: cargandoReserva, cancelando, error, setError } = useReserva();
     const esMovil = useMediaQuery(MEDIA_MOVIL);
 
-    // Primera cancha seleccionada por defecto
-    const canchaActiva = canchaElegida ?? canchas[0]?.id ?? null;
+    // La elegida si se puede reservar; si no (o no se eligió), la primera disponible
+    const disponibles = canchas.filter(c => c.activa !== false);
+    const canchaActiva = disponibles.find(c => c.id === canchaElegida)?.id ?? disponibles[0]?.id ?? null;
     const cancha = canchas.find(c => c.id === canchaActiva) ?? null;
 
     // Días en que el club no abre (feriados, obras): ese día no se consultan turnos y se muestra el motivo

@@ -326,3 +326,14 @@
     flex: 1;
     justify-content: center;
 }
+
+/* Cancha dada de baja (solo aparece los días en que tiene reservas) */
+.grilla__cancha--inactiva {
+    color: var(--texto-suave);
+    gap: 4px;
+}
+
+.grilla__cancha--inactiva small {
+    font-size: 0.7rem;
+    font-weight: 500;
+}

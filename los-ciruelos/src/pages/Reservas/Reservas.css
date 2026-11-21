@@ -77,6 +77,18 @@
     color: var(--texto-suave);
 }
 
+/* Cancha dada de baja: se ve, pero no se puede elegir */
+.reservas-tab--inactiva,
+.reservas-tab--inactiva:hover {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: none;
+}
+
+.reservas-tab--inactiva .reservas-tab__desc {
+    font-style: italic;
+}
+
 /* ── Grid principal ── */
 .reservas-grid {
     display: grid;
