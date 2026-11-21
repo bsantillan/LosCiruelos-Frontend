@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Eye, Plus, QrCode, ShoppingBag, Trash2, X } from "lucide-react";
+import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import CampoBusqueda from "../../components/ui/CampoBusqueda/CampoBusqueda";
 import { useBusqueda } from "../../hooks/useBusqueda";
 import CampoAutocompletar from "../../components/ui/CampoAutocompletar/CampoAutocompletar";
@@ -19,7 +20,7 @@ import BuscadorCliente from "./BuscadorCliente";
 import { BotonActualizar, Cargando, Encabezado, Mensaje, Vacio, VerificacionCuentaDni } from "./comunes";
 import FormProducto from "./FormProducto";
 import { ModalDetalleVenta } from "./ModalesVenta";
-import { ETIQUETA_ESTADO_VENTA, TONO_ESTADO_VENTA } from "./reglasVenta";
+import { estadoVenta } from "./reglasVenta";
 import "./ReservasAdmin.css";
 import "./Ventas.css";
 
@@ -42,11 +43,17 @@ function NuevaVenta({ onRegistrada, onEsperando }: {
     onEsperando: (ventaId: number | null) => void;
 }) {
     const catalogo = useCatalogo();
-    const { medios } = useMediosVenta();
+    const { usuario } = useAuth();
+    const { medios: todos } = useMediosVenta();
+    // La bonificación es solo del ADMIN
+    const medios = todos.filter(m => !m.soloAdmin || usuario?.rol === "ADMIN");
     // Los alquileres van con un turno: no se venden sueltos
     const vendibles = catalogo.productos.filter(p => p.tipo === "VENTA");
     const [items, setItems] = useState<ItemCarrito[]>([]);
     const [medio, setMedio] = useState<MedioVenta>("EFECTIVO");
+    // Bonificada: por qué no se le cobra (opcional)
+    const [motivo, setMotivo] = useState("");
+    const bonificada = medio === "BONIFICACION";
     const [cliente, setCliente] = useState<ClienteBusqueda | null>(null);
     const [guardando, setGuardando] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -104,6 +111,7 @@ function NuevaVenta({ onRegistrada, onEsperando }: {
         try {
             const venta = await adminService.registrarVenta({
                 medio, clienteId: cliente?.id ?? null, items: items.map(i => i.producto),
+                motivo: bonificada && motivo.trim() ? motivo.trim() : null,
             });
             if (venta.estado === "ESPERANDO_PAGO") {
                 // El carrito se conserva por si el cliente no paga y se cobra por otro medio
@@ -111,7 +119,7 @@ function NuevaVenta({ onRegistrada, onEsperando }: {
                 onEsperando(venta.id);
                 return;
             }
-            setItems([]); setCliente(null); setMedio("EFECTIVO");
+            setItems([]); setCliente(null); setMedio("EFECTIVO"); setMotivo("");
             onRegistrada(venta);
         } catch (e) {
             setError(primerError(extraerErrores(e, "No se pudo registrar la venta.")) ?? null);
@@ -182,6 +190,15 @@ function NuevaVenta({ onRegistrada, onEsperando }: {
                     Débito o crédito {medio === "TARJETA_MP" ? "en el posnet de Mercado Pago" : "en otro posnet (Clover u otro)"}, ya aprobada.
                 </p>
             )}
+            {bonificada && (
+                <>
+                    <p className="modal__descripcion">
+                        El club no se la cobra: los productos se entregan y baja el stock, pero no entra plata a la caja. Queda en lo bonificado.
+                    </p>
+                    <CampoInput id="venta-motivo-bonificacion" name="motivo" label="Motivo (opcional)" value={motivo}
+                        placeholder="Ej: cumpleaños, compensación por un turno" onChange={e => setMotivo(e.target.value.slice(0, 200))} />
+                </>
+            )}
 
             <BuscadorCliente id="venta-cliente" label="Cliente (opcional)" cliente={cliente} onElegir={setCliente} avisarPerfilIncompleto={false} />
 
@@ -189,10 +206,10 @@ function NuevaVenta({ onRegistrada, onEsperando }: {
             <button type="button" className="accion accion--primaria ventas-nueva__registrar" onClick={() => void registrar()}
                 disabled={guardando || items.length === 0}>
                 <ShoppingBag size={15} />
-                {guardando ? "Registrando..." : items.length > 0 ? `Registrar venta · ${formatMonto(total)}` : "Registrar venta"}
+                {guardando ? "Registrando..." : `${bonificada ? "Bonificar" : "Registrar venta"}${items.length > 0 ? ` · ${formatMonto(total)}` : ""}`}
             </button>
             <p className="modal__descripcion">
-                Se cobra el precio de hoy y baja el stock. Lo que se consume en un turno se suma a la reserva (desde su detalle), no acá.
+                {bonificada ? "Se registra al precio de hoy y baja el stock." : "Se cobra el precio de hoy y baja el stock."} Lo que se consume en un turno se suma a la reserva (desde su detalle), no acá.
             </p>
         </section>
     );
@@ -261,9 +278,11 @@ const DESDE_SIEMPRE = "2020-01-01";
  */
 export default function Ventas() {
     const { usuario } = useAuth();
-    const { medios, etiqueta: etiquetaMedio } = useMediosVenta();
+    const { medios: todosLosMedios, etiqueta: etiquetaMedio } = useMediosVenta();
     const catalogo = useCatalogo();
     const esAdmin = usuario?.rol === "ADMIN";
+    // La bonificación es solo del ADMIN: el EMPLEADO no la filtra ni la ve en los totales
+    const medios = todosLosMedios.filter(m => !m.soloAdmin || esAdmin);
     const [periodo, setPeriodo] = useState<Periodo>(() => ({ desde: hoyISO(), hasta: hoyISO() }));
     // El EMPLEADO ve su jornada (pasada la medianoche, sigue siendo el día anterior hasta la apertura):
     // no manda fechas y el backend usa la jornada en curso
@@ -354,7 +373,9 @@ export default function Ventas() {
                     onCerrar={() => setCargandoVenta(false)}
                     onRegistrada={v => {
                         setCargandoVenta(false);
-                        setMensaje(`Venta #${v.id} registrada: ${formatMonto(Number(v.total))} en ${etiquetaMedio(v.medio).toLowerCase()}.`);
+                        setMensaje(v.medio === "BONIFICACION"
+                            ? `Venta #${v.id} bonificada: ${formatMonto(Number(v.total))} que no se cobran.`
+                            : `Venta #${v.id} registrada: ${formatMonto(Number(v.total))} en ${etiquetaMedio(v.medio).toLowerCase()}.`);
                         setVersion(n => n + 1);
                     }}
                 />
@@ -416,8 +437,9 @@ export default function Ventas() {
                     </div>
                     {medios.map(m => (
                         <div key={m.medio} className="admin-kpi">
-                            <span className="admin-kpi__etiqueta">{m.etiqueta}</span>
+                            <span className="admin-kpi__etiqueta">{m.medio === "BONIFICACION" ? "Bonificado" : m.etiqueta}</span>
                             <span className="admin-kpi__valor">{formatMonto(Number(totales.porMedio[m.medio] ?? 0))}</span>
+                            {m.medio === "BONIFICACION" && <span className="admin-kpi__detalle">No es plata: no suma al total</span>}
                         </div>
                     ))}
                 </div>
@@ -475,10 +497,11 @@ export default function Ventas() {
                                                 )}
                                             </div>
                                         </td>
-                                        <td data-label="Estado"><span className={`admin-chip ${TONO_ESTADO_VENTA[v.estado]}`}>{ETIQUETA_ESTADO_VENTA[v.estado]}</span></td>
+                                        <td data-label="Estado"><span className={`admin-chip ${estadoVenta(v).tono}`}>{estadoVenta(v).etiqueta}</span></td>
                                         <td data-label="Total" className="admin-tabla__num">
                                             <div>
                                                 <strong className={v.estado === "ANULADA" || v.estado === "NO_COBRADA" ? "ventas-tachado" : undefined}>{formatMonto(Number(v.total))}</strong>
+                                                {v.medio === "BONIFICACION" && v.estado === "COBRADA" && <span className="admin-tabla__secundario">bonificada, no se cobró</span>}
                                                 {Number(v.montoDevuelto ?? 0) > 0 && <span className="admin-tabla__secundario">− {formatMonto(Number(v.montoDevuelto))} devuelto</span>}
                                             </div>
                                         </td>

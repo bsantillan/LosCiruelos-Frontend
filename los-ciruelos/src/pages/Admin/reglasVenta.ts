@@ -2,8 +2,16 @@ import type { EstadoVenta, MedioVenta, Venta } from "../../types/admin.types";
 
 export const ETIQUETA_MEDIO_VENTA: Record<MedioVenta, string> = {
     EFECTIVO: "Efectivo", MERCADO_PAGO: "Mercado Pago", TRANSFERENCIA_MP: "Transferencia MP", TARJETA_MP: "Tarjeta MP",
-    CUENTA_DNI: "Cuenta DNI", TARJETA: "Tarjeta",
+    CUENTA_DNI: "Cuenta DNI", TARJETA: "Tarjeta", BONIFICACION: "Bonificada",
 };
+
+/** El club no se la cobró: los productos se entregaron, pero no es plata */
+export const esBonificada = (v: Venta) => v.medio === "BONIFICACION";
+
+/** El estado como se muestra: una bonificada vigente dice "Bonificada", no "Cobrada" */
+export const estadoVenta = (v: Venta) => v.estado === "COBRADA" && esBonificada(v)
+    ? { etiqueta: "Bonificada", tono: "admin-chip--ok" }
+    : { etiqueta: ETIQUETA_ESTADO_VENTA[v.estado], tono: TONO_ESTADO_VENTA[v.estado] };
 
 export const ETIQUETA_ESTADO_VENTA: Record<EstadoVenta, string> = {
     COBRADA: "Cobrada", ANULADA: "Anulada", ESPERANDO_PAGO: "Esperando el pago", NO_COBRADA: "No cobrada",
@@ -13,8 +21,8 @@ export const TONO_ESTADO_VENTA: Record<EstadoVenta, string> = {
     COBRADA: "admin-chip--ok", ANULADA: "admin-chip--error", ESPERANDO_PAGO: "admin-chip--alerta", NO_COBRADA: "",
 };
 
-/** Lo que la venta deja en la caja: solo las cobradas, menos lo devuelto */
-export const netoVenta = (v: Venta) => v.estado === "COBRADA" ? Number(v.total) - Number(v.montoDevuelto ?? 0) : 0;
+/** Lo que la venta deja en la caja: solo las cobradas (no las bonificadas), menos lo devuelto */
+export const netoVenta = (v: Venta) => v.estado === "COBRADA" && !esBonificada(v) ? Number(v.total) - Number(v.montoDevuelto ?? 0) : 0;
 
 /** Unidades de un ítem que todavía se pueden devolver */
 export const quedanPorDevolver = (i: { cantidad: number; devueltas?: number | null }) => i.cantidad - (i.devueltas ?? 0);
@@ -32,9 +40,10 @@ export const quedanPorDevolver = (i: { cantidad: number; devueltas?: number | nu
 export const puedeAnular = (v: Venta, esAdmin: boolean) =>
     v.estado === "COBRADA" && (v.devoluciones ?? []).length === 0 && (esAdmin || v.verificada !== true);
 
-/** Devolver (solo ADMIN): una venta cobrada a la que le quedan unidades por devolver */
+/** Devolver (solo ADMIN): una venta cobrada a la que le quedan unidades por devolver. Una bonificada no
+ * tiene plata que devolver: se anula */
 export const puedeDevolver = (v: Venta, esAdmin: boolean) =>
-    esAdmin && v.estado === "COBRADA" && v.items.some(i => quedanPorDevolver(i) > 0);
+    esAdmin && v.estado === "COBRADA" && !esBonificada(v) && v.items.some(i => quedanPorDevolver(i) > 0);
 
 /** Cambiar el cliente: una venta cobrada (el EMPLEADO, las de su jornada) */
 export const puedeCambiarCliente = (v: Venta) => v.estado === "COBRADA";

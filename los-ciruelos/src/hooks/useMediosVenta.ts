@@ -13,6 +13,7 @@ const RESPALDO: MedioVentaInfo[] = [
     { medio: "TARJETA_MP", etiqueta: "Mercado Pago (tarjeta en el posnet)", grupo: "MERCADO_PAGO", opcion: "Tarjeta en el posnet", disponible: true, conQr: false, detalle: null },
     { medio: "CUENTA_DNI", etiqueta: "Cuenta DNI", grupo: "CUENTA_DNI", opcion: "Cuenta DNI", disponible: true, conQr: false, detalle: null },
     { medio: "TARJETA", etiqueta: "Tarjeta (otro posnet)", grupo: "TARJETA", opcion: "Tarjeta", disponible: true, conQr: false, detalle: null },
+    { medio: "BONIFICACION", etiqueta: "Bonificación del club", grupo: "BONIFICACION", opcion: "Bonificación", soloAdmin: true, disponible: true, conQr: false, detalle: null },
 ];
 
 let enCache: MedioVentaInfo[] | null = null;

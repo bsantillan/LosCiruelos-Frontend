@@ -213,16 +213,19 @@ export interface TurnoFijo {
 
 // ── Ventas sueltas (/admin/ventas, ADMIN y EMPLEADO) ──
 
-export type MedioVenta = "EFECTIVO" | "MERCADO_PAGO" | "TRANSFERENCIA_MP" | "TARJETA_MP" | "CUENTA_DNI" | "TARJETA";
+/** BONIFICACION: solo ADMIN, el club no se la cobra (el stock baja, pero no es plata) */
+export type MedioVenta = "EFECTIVO" | "MERCADO_PAGO" | "TRANSFERENCIA_MP" | "TARJETA_MP" | "CUENTA_DNI" | "TARJETA" | "BONIFICACION";
 
 /** GET /admin/ventas/medios: los medios con que se puede cobrar una venta suelta */
 export interface MedioVentaInfo {
     medio: MedioVenta;
     etiqueta: string;
-    /** EFECTIVO, MERCADO_PAGO (QR, transferencia y tarjeta en su posnet), CUENTA_DNI o TARJETA (otro posnet) */
+    /** EFECTIVO, MERCADO_PAGO (QR, transferencia y tarjeta en su posnet), CUENTA_DNI, TARJETA (otro posnet) o BONIFICACION */
     grupo: GrupoMedio;
     /** Cómo se llama dentro de su grupo ("Transferencia") */
     opcion: string;
+    /** Solo lo usa el ADMIN (la bonificación) */
+    soloAdmin?: boolean;
     /** false: no se puede usar ahora (por ejemplo, el QR de la caja sin configurar) */
     disponible: boolean;
     /** Se cobra con el QR de la caja: la venta queda esperando el pago */
@@ -316,10 +319,14 @@ export interface Venta {
     devoluciones: DevolucionVenta[];
     /** Con Mercado Pago: la order del QR de la caja y hasta cuándo se puede pagar */
     qr: { orderId: string; venceAt: string } | null;
+    /** Bonificada: por qué no se le cobró (null si no se escribió) */
+    motivoBonificacion?: string | null;
 }
 
 export interface VentaRequest {
     medio: MedioVenta;
+    /** Solo con BONIFICACION (opcional, hasta 200) */
+    motivo?: string | null;
     clienteId?: number | null;
     /** De 1 a 20: del catálogo o escrito a mano */
     items: ProductoAgregado[];
