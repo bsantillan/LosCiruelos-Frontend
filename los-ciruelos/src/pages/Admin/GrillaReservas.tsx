@@ -112,7 +112,7 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
 }) {
     const hoy = hoyISO();
 
-    // Todas, también las dadas de baja: su columna aparece los días en que tienen reservas (las pasadas)
+    // Todas, también las dadas de baja: su columna se ve siempre, marcada como desactivada y sin horarios libres
     const { canchas: todas, error: errorCanchas } = useCanchas(true);
     // Memorizadas: son dependencia de la carga de datos (un filter nuevo en cada render la repetiría sin fin)
     const canchas = useMemo(() => todas.filter(c => c.activa !== false), [todas]);
@@ -170,9 +170,9 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
     const cierre = fines.length ? Math.ceil(Math.max(...fines) / BLOQUE) * BLOQUE : 0;
     const filas = Math.max(0, (cierre - apertura) / BLOQUE);
 
-    // Las activas y las dadas de baja con alguna reserva ese día (para ver lo que se jugó)
-    const delDiaPorCancha = new Set(delDia.map(r => r.canchaId));
-    const visibles = todas.filter(c => c.activa !== false || delDiaPorCancha.has(c.id));
+    // Todas las canchas: las dadas de baja también (marcadas), con lo que se jugó en ellas
+    const visibles = todas;
+    const hayDesactivadas = todas.some(c => c.activa === false);
     const columnas = unaCancha ? visibles.filter(c => c.id === (canchaMovil ?? visibles[0]?.id)) : visibles;
     const fila = (min: number) => Math.round((min - apertura) / BLOQUE) + 2; // la fila 1 es la cabecera
 
@@ -201,6 +201,7 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
                 ))}
                 {conLibres && !cierreDia && <li><span className="grilla-leyenda__color grilla-leyenda__color--libre" aria-hidden="true" />Libre: tocalo para reservar</li>}
                 {(reservasFuera.length > 0 || !horarioDia) && <li><span className="grilla-leyenda__color grilla-leyenda__color--fuera" aria-hidden="true" />Fuera del horario actual</li>}
+                {hayDesactivadas && <li><span className="grilla-leyenda__color grilla-leyenda__color--inactiva" aria-hidden="true" />Cancha desactivada: no se puede reservar</li>}
                 {mostrarCanceladas && <li><span className="grilla-leyenda__color grilla-leyenda__color--fuera" aria-hidden="true" />Cancelada o vencida (tachada)</li>}
                 {(tipoFiltro === "todas" || tipoFiltro === "partido") && <li><Swords size={13} aria-hidden="true" /> Partido</li>}
                 {(tipoFiltro === "todas" || tipoFiltro === "turnos-fijos") && <li><Repeat size={13} aria-hidden="true" /> Turno fijo</li>}
@@ -236,7 +237,7 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
                         {columnas.map((c, i) => (
                             <div key={c.id} className={`grilla__cancha${c.activa === false ? " grilla__cancha--inactiva" : ""}`} role="columnheader" style={{ gridRow: 1, gridColumn: i + 2 }}
                                 title={c.activa === false ? "Cancha dada de baja: se ven sus reservas, no se puede reservar" : undefined}>
-                                Cancha {c.numero}{c.activa === false && <small> · desactivada</small>}
+                                Cancha {c.numero}{c.activa === false && <span className="grilla__cancha-chip">Desactivada</span>}
                             </div>
                         ))}
 
@@ -257,8 +258,10 @@ export default function GrillaReservas({ fecha, coincide, estadoFiltro = "todas"
                                             <span>+ {minToTime(inicio)}</span>
                                         </button>
                                     ) : (
-                                        <div key={`${c.id}-${f}`} className={`grilla__celda${fueraDeHorario(inicio) ? " grilla__celda--fuera" : ""}`} style={estilo}
-                                            title={fueraDeHorario(inicio) ? "Fuera del horario actual del club" : undefined} />
+                                        <div key={`${c.id}-${f}`} style={estilo}
+                                            className={`grilla__celda${c.activa === false ? " grilla__celda--inactiva" : fueraDeHorario(inicio) ? " grilla__celda--fuera" : ""}`}
+                                            title={c.activa === false ? `La cancha ${c.numero} está desactivada: no se puede reservar`
+                                                : fueraDeHorario(inicio) ? "Fuera del horario actual del club" : undefined} />
                                     );
                                 }),
                             ];

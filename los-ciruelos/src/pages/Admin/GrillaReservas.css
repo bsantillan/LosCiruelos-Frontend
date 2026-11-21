@@ -327,13 +327,32 @@
     justify-content: center;
 }
 
-/* Cancha dada de baja (solo aparece los días en que tiene reservas) */
+/* Cancha dada de baja: la columna se ve siempre, rayada en rojo y con el chip en la cabecera */
 .grilla__cancha--inactiva {
+    flex-direction: column;
+    gap: 2px;
     color: var(--texto-suave);
-    gap: 4px;
+    line-height: 1.1;
 }
 
-.grilla__cancha--inactiva small {
-    font-size: 0.7rem;
-    font-weight: 500;
+.grilla__cancha-chip {
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--error);
+    background: var(--error-fondo);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.grilla__celda--inactiva,
+.grilla-leyenda__color--inactiva {
+    background: repeating-linear-gradient(135deg, rgba(255, 107, 107, 0.09) 0 6px, transparent 6px 12px);
+    cursor: not-allowed;
+}
+
+.grilla-leyenda__color--inactiva {
+    border: 1px solid rgba(255, 107, 107, 0.3);
 }
