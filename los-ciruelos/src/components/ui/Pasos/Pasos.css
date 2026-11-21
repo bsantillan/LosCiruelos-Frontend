@@ -1,5 +1,9 @@
 /* ── Pasos de un asistente ── */
 .pasos {
+    /* Se adapta a su propio ancho: dentro de un popup angosto la pantalla puede ser ancha */
+    container-type: inline-size;
+    container-name: pasos;
+    flex-shrink: 0;
     list-style: none;
     display: flex;
     align-items: center;
@@ -106,8 +110,8 @@
     white-space: nowrap;
 }
 
-/* En el celular solo se ve el nombre del paso actual */
-@media (max-width: 760px) {
+/* Angosta (el celular o un popup chico): solo se ve el nombre del paso actual, entero */
+@container pasos (max-width: 720px) {
     .pasos__paso {
         flex: 0 0 auto;
     }
@@ -121,8 +125,8 @@
     }
 
     /* Sin las líneas entre pasos, para que entre el nombre del actual */
-    .pasos {
-        gap: 2px;
+    .pasos__paso + .pasos__paso {
+        margin-left: -4px;
     }
 
     .pasos__paso + .pasos__paso::before {

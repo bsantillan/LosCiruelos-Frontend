@@ -119,10 +119,17 @@
     background: var(--superficie-2);
     border-radius: var(--radio-md);
     overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.nr-canchas::-webkit-scrollbar {
+    display: none;
 }
 
 .nr-cancha {
-    padding: 8px 12px;
+    /* Todas del mismo ancho, ocupando la fila (con 4 canchas entran en un celular) */
+    flex: 1 0 auto;
+    padding: 8px 10px;
     border: none;
     border-radius: 8px;
     background: transparent;
@@ -428,4 +435,23 @@
 
 .elegir-turno__otro {
     align-self: flex-start;
+}
+
+/* Elegir el turno en un lugar angosto (el asistente en un celular): las canchas en una grilla de a dos,
+   según el ancho del bloque y no de la pantalla */
+.nr-turno-controles {
+    container-type: inline-size;
+    container-name: turno;
+}
+
+@container turno (max-width: 340px) {
+    .nr-canchas {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        flex: 1 1 100%;
+    }
+
+    .nr-cancha {
+        text-align: center;
+    }
 }
