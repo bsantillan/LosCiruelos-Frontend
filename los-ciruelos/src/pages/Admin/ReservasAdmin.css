@@ -628,6 +628,38 @@
     max-width: 920px;
 }
 
+/* Celular: el cobro ocupa toda la pantalla y deja el lugar para lo que se cobra y el medio. El ícono
+   es decorativo y los botones van en una fila (Volver chico, Cobrar ancho) en vez de apilados. */
+@media (max-width: 560px) {
+    .modal.modal-cobro {
+        max-height: 100dvh;
+        height: 100dvh;
+        border-radius: 0;
+        border: none;
+        padding-top: 16px;
+        gap: 12px;
+    }
+
+    .modal-cobro .modal__icono {
+        display: none;
+    }
+
+    .modal-cobro .modal__acciones {
+        flex-direction: row;
+        margin-top: 0;
+        padding-top: 12px;
+        border-top: 1px solid var(--borde);
+    }
+
+    .modal-cobro .modal__acciones > * {
+        width: auto;
+    }
+
+    .modal-cobro .modal__acciones > :last-child {
+        flex: 1;
+    }
+}
+
 .cobro__columnas {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
