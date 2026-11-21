@@ -37,7 +37,7 @@ function faltantes(perfil: PerfilResponse, esCliente: boolean): string[] {
     const f: string[] = [];
     if (!perfil.nombre || !perfil.apellido) f.push("nombre y apellido");
     if (!perfil.telefono) f.push("tu celular");
-    else if (!perfil.telefonoVerificado) f.push("verificar tu celular");
+    else if (!perfil.telefonoVerificado && perfil.verificacionDeCelular) f.push("verificar tu celular");
     if (esCliente && !perfil.categoria) f.push("categoría");
     if (esCliente && !perfil.posicion) f.push("posición");
     return f;
@@ -229,7 +229,7 @@ export default function Perfil({ enPanel = false }: { enPanel?: boolean }) {
                             Tu perfil está incompleto: falta {enLista(faltantes(perfil, esCliente)) || "completar tus datos"}.
                             {esCliente && " Lo necesitás para reservar canchas."}
                         </span>
-                        {!perfil.telefonoVerificado && tab !== "celular" && (
+                        {(!perfil.telefono || (!perfil.telefonoVerificado && perfil.verificacionDeCelular)) && tab !== "celular" && (
                             <button type="button" className="accion accion--chica"
                                 onClick={() => enPanel ? navigate("/admin/avisos") : elegirTab("celular")}>
                                 {perfil.telefono ? "Verificar celular" : "Cargar celular"}
