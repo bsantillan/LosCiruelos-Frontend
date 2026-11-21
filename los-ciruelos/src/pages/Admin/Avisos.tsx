@@ -1,21 +1,23 @@
 import { useEffect, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Megaphone, Smartphone } from "lucide-react";
+import { Megaphone, MessageCircle, Smartphone } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { usePerfil } from "../../hooks/usePerfil";
 import CelularYNotificaciones from "../../components/Notificaciones/CelularYNotificaciones";
 import AvisosAdmin from "../../components/Notificaciones/AvisosAdmin";
+import WhatsAppClub from "../../components/Notificaciones/WhatsAppClub";
 import { Cargando, Encabezado, Mensaje } from "./comunes";
 // Las tabs y las tarjetas usan los estilos del perfil
 import "../Perfil/Perfil.css";
 
-type TabAvisos = "celular" | "recibis";
+type TabAvisos = "celular" | "recibis" | "whatsapp";
 
 /**
  * Avisos del personal, en tabs (la elegida queda en la URL: ?tab=recibis):
  *  - Celular: el celular (único lugar del panel donde se carga, cambia y verifica) y el medio
  *    por el que le llegan los avisos. ADMIN y EMPLEADO.
  *  - Avisos que recibís: qué avisos de reservas le llegan. Solo ADMIN.
+ *  - WhatsApp: cuántos WhatsApp mandó el club (el envío a los clientes se elige en Configuración). Solo ADMIN.
  * El recordatorio que reciben los clientes es configuración del club: está en Configuración.
  */
 export default function Avisos() {
@@ -33,6 +35,7 @@ export default function Avisos() {
         { id: "celular", etiqueta: "Celular", icono: <Smartphone size={15} /> },
         ...(esAdmin ? [
             { id: "recibis" as const, etiqueta: "Avisos que recibís", icono: <Megaphone size={15} /> },
+            { id: "whatsapp" as const, etiqueta: "WhatsApp enviados", icono: <MessageCircle size={15} /> },
         ] : []),
     ];
     const [searchParams, setSearchParams] = useSearchParams();
@@ -44,7 +47,7 @@ export default function Avisos() {
             <Encabezado
                 titulo="Avisos"
                 descripcion={esAdmin
-                    ? "Tu celular, por dónde te avisamos y qué avisos de reservas recibís."
+                    ? "Tu celular, por dónde te avisamos, qué avisos de reservas recibís y cuántos WhatsApp mandó el club."
                     : "Tu celular y por dónde te avisamos."}
             />
 
@@ -78,6 +81,7 @@ export default function Avisos() {
                     )}
                 </div>
                 {tab === "recibis" && esAdmin && <AvisosAdmin />}
+                {tab === "whatsapp" && esAdmin && <WhatsAppClub />}
             </div>
         </div>
     );

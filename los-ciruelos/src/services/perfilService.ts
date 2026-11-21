@@ -1,6 +1,6 @@
 import api from "../api/axiosInstance";
 import type {
-    AvisosAdmin, NotificacionesRequest, NotificacionesResponse, PerfilRequest, PerfilResponse,
+    AvisosAdmin, MensajesWhatsApp, NotificacionesRequest, NotificacionesResponse, PerfilRequest, PerfilResponse,
     PruebaAvisoResponse, SuscripcionesRequest, SuscripcionesResponse,
 } from "../types/perfil.types";
 
@@ -74,5 +74,11 @@ export const perfilService = {
     probarAviso: async (): Promise<PruebaAvisoResponse> => {
         const response = await api.post<PruebaAvisoResponse>("/perfil/avisos/prueba");
         return response.data;
+    },
+
+    /** Cuántos WhatsApp mandó el club en el período (sin fechas: el mes en curso). Solo ADMIN. */
+    getMensajesWhatsApp: async (desde?: string, hasta?: string): Promise<MensajesWhatsApp> => {
+        const res = await api.get<MensajesWhatsApp>("/perfil/avisos/whatsapp", { params: { desde, hasta } });
+        return res.data;
     },
 };

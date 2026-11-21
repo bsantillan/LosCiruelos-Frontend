@@ -26,7 +26,8 @@ interface Props {
  * Celular y notificaciones. Es el único lugar donde se carga y cambia el celular:
  *  1. Cargar o cambiar el celular (PUT /perfil/notificaciones con el canal actual) y verificarlo
  *     con un código por WhatsApp. Sin el celular verificado el perfil no está completo y el
- *     cliente no puede reservar.
+ *     cliente no puede reservar. Si el club no manda WhatsApp a los clientes
+ *     (perfil.verificacionDeCelular en false), el celular no se verifica: alcanza con cargarlo.
  *  2. Elegir el medio de los avisos: mail o WhatsApp (WhatsApp necesita el celular verificado).
  *  3. CLIENTE: qué avisos recibe (las cancelaciones, siempre).
  */
@@ -193,10 +194,12 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
     };
 
     const whatsappDisponible = notif?.whatsappDisponible ?? false;
+    // false: el club no manda WhatsApp a los clientes (no hay código ni WhatsApp para elegir)
+    const seVerifica = perfil.verificacionDeCelular;
     const tieneTelefono = Boolean(telefono);
     // Sin celular cargado se muestra directamente el campo para cargarlo
     const mostrarFormulario = editando || (!tieneTelefono && notif !== null);
-    const puedeVerificar = tieneTelefono && !telefonoVerificado && whatsappDisponible && !mostrarFormulario;
+    const puedeVerificar = seVerifica && tieneTelefono && !telefonoVerificado && whatsappDisponible && !mostrarFormulario;
     const codigoEnviado = codigoEnviadoA !== null && codigoEnviadoA === telefono;
 
     return (
@@ -215,9 +218,11 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
                         <Smartphone size={18} aria-hidden="true" />
                         <div className="notif-celular__datos">
                             <span className="notif-celular__numero">{formatTelefono(telefono)}</span>
-                            <span className={`notif-chip${telefonoVerificado ? " notif-chip--ok" : " notif-chip--pendiente"}`}>
-                                {telefonoVerificado ? <><CheckCircle2 size={12} /> Verificado</> : "Sin verificar"}
-                            </span>
+                            {seVerifica && (
+                                <span className={`notif-chip${telefonoVerificado ? " notif-chip--ok" : " notif-chip--pendiente"}`}>
+                                    {telefonoVerificado ? <><CheckCircle2 size={12} /> Verificado</> : "Sin verificar"}
+                                </span>
+                            )}
                         </div>
                         <button type="button" className="accion accion--chica" onClick={empezarEdicion}>
                             Cambiar
@@ -235,9 +240,11 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
                             required error={errorTelefono ?? undefined}
                         />
                         <p className="notif-ayuda">
-                            {tieneTelefono && telefonoVerificado
-                                ? "Si lo cambiás, vas a tener que verificar el número nuevo."
-                                : "Con código de área, sin 0 ni 15. Después lo verificás con un código por WhatsApp."}
+                            {!seVerifica
+                                ? "Con código de área, sin 0 ni 15."
+                                : tieneTelefono && telefonoVerificado
+                                    ? "Si lo cambiás, vas a tener que verificar el número nuevo."
+                                    : "Con código de área, sin 0 ni 15. Después lo verificás con un código por WhatsApp."}
                         </p>
                         <div className="notif-codigo__acciones">
                             {tieneTelefono && (
@@ -258,7 +265,7 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
                     <AvisoTransitorio tipo="ok">Listo, tu celular quedó verificado.</AvisoTransitorio>
                 )}
 
-                {tieneTelefono && !telefonoVerificado && !mostrarFormulario && (
+                {seVerifica && tieneTelefono && !telefonoVerificado && !mostrarFormulario && (
                     <>
                         <p className="notif-ayuda">
                             {!whatsappDisponible
@@ -322,7 +329,7 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
                             <MessageCircle size={18} />
                             <span className="notif-canal__nombre">WhatsApp</span>
                             <span className="notif-canal__desc">
-                                {!whatsappDisponible ? "No disponible por ahora" : tieneTelefono ? formatTelefono(telefono) : "Cargá tu celular arriba"}
+                                {!seVerifica ? "El club avisa por mail" : !whatsappDisponible ? "No disponible por ahora" : tieneTelefono ? formatTelefono(telefono) : "Cargá tu celular arriba"}
                             </span>
                         </label>
                     </div>
@@ -342,7 +349,9 @@ export default function CelularYNotificaciones({ perfil, esCliente, onPerfilCamb
                 <div className="notif-bloque">
                     <h3 className="notif-subtitulo">¿Qué avisos querés recibir?</h3>
                     {!susc.editable && (
-                        <p className="notif-ayuda">Completá tu perfil (con el celular verificado) para elegir tus avisos.</p>
+                        <p className="notif-ayuda">
+                            Completá tu perfil{seVerifica ? " (con el celular verificado)" : ""} para elegir tus avisos.
+                        </p>
                     )}
                     <div className="notif-fijo">
                         <div>

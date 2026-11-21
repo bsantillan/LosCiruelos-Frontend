@@ -337,6 +337,11 @@ export interface ConfiguracionClub {
     recordatorioActivo: boolean;
     /** 15 a 1440 */
     minutosRecordatorio: number;
+    /**
+     * Si el club manda WhatsApp a los clientes (avisos y el código del celular). Apagado: todo por
+     * mail y el celular del cliente no se verifica. Opcional en el PUT (sin él, queda como estaba).
+     */
+    whatsappClientes?: boolean;
     /** 1 a 365 */
     diasAnticipacion: number;
     /** De lunes a domingo */
