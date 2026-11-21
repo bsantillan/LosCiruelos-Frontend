@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-    Clock, AlertCircle, CalendarDays, CheckCircle2, UserCog, LogIn, UserPlus,
+    Clock, AlertCircle, CalendarDays, CheckCircle2, CirclePause, UserCog, LogIn, UserPlus,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
@@ -11,6 +11,7 @@ import { useCierresClub } from "../../hooks/useCierresClub";
 import { useProductosDisponibles } from "../../hooks/useProductosDisponibles";
 import { useReserva } from "../../hooks/useReserva";
 import { useMisReservas } from "../../hooks/useMisReservas";
+import { useReservasOnline } from "../../hooks/useReservasOnline";
 import type {
     CanchaResponse, DisponibilidadResponse, ReservaResponse, SlotLibre,
 } from "../../types/reserva.types";
@@ -362,6 +363,9 @@ export default function Reservas() {
     const navigate = useNavigate();
     const { usuario } = useAuth();
     const esVisitante = usuario === null;
+    // El ADMIN puede pausar las reservas online: se ve el aviso en lugar de los turnos
+    const reservasOnline = useReservasOnline();
+    const pausadas = !reservasOnline.habilitadas;
     // Todas las canchas, también las dadas de baja (se ven como "No disponible por el momento")
     const { canchas, cargando: cargandoCanchas, error: errorCanchas } = useCanchas(true);
     // Las reservas propias necesitan sesión (sin ella el backend responde 401)
@@ -530,11 +534,21 @@ export default function Reservas() {
                         <p className="etiqueta-pagina">Reservas</p>
                         <h1 className="titulo-pagina">ELEGÍ TU <em>TURNO</em></h1>
                     </div>
-                    <SelectorFecha valor={fecha} onChange={elegirFecha} max={reservableHasta} cerrados={cierres} />
+                    {!pausadas && <SelectorFecha valor={fecha} onChange={elegirFecha} max={reservableHasta} cerrados={cierres} />}
                 </div>
 
+                {/* El ADMIN pausó las reservas online: lo que ya está reservado sigue igual */}
+                {pausadas && (
+                    <div className="reservas-pausadas" role="status">
+                        <CirclePause size={28} />
+                        <h2>Por el momento no se toman reservas online</h2>
+                        {reservasOnline.mensaje && <p className="reservas-pausadas__mensaje">{reservasOnline.mensaje}</p>}
+                        <p>Para reservar, comunicate con el club. Tus reservas hechas siguen en pie{esVisitante ? "" : <> y las ves en <Link to="/mis-reservas">Mis reservas</Link></>}.</p>
+                    </div>
+                )}
+
                 {/* Visitante: puede mirar todo; para reservar, cuenta */}
-                {esVisitante && (
+                {esVisitante && !pausadas && (
                     <div className="reservas-aviso reservas-aviso--fila">
                         <LogIn size={18} />
                         <p>Mirá los turnos libres y los precios. Para reservar, iniciá sesión o creá tu cuenta.</p>
@@ -546,7 +560,7 @@ export default function Reservas() {
                 )}
 
                 {/* Perfil incompleto: el backend rechaza la reserva */}
-                {usuario && !usuario.perfilCompleto && (
+                {usuario && !usuario.perfilCompleto && !pausadas && (
                     <div className="reservas-aviso reservas-aviso--fila">
                         <UserCog size={18} />
                         <p>Para reservar necesitás completar tu perfil: celular, categoría y posición.</p>
@@ -572,9 +586,9 @@ export default function Reservas() {
                 {(errorCanchas || (error && !modalPendiente)) && <AvisoTransitorio tipo="error">{errorCanchas ?? error}</AvisoTransitorio>}
 
                 {/* Tabs canchas */}
-                <TabsCanchas canchas={canchas} activa={canchaActiva} onSeleccionar={elegirCancha} />
+                {!pausadas && <TabsCanchas canchas={canchas} activa={canchaActiva} onSeleccionar={elegirCancha} />}
 
-                {cierreDia && (
+                {!pausadas && cierreDia && (
                     <div className="reservas-aviso reservas-aviso--fila">
                         <CalendarDays size={18} />
                         <p>
@@ -583,7 +597,7 @@ export default function Reservas() {
                     </div>
                 )}
 
-                {!cierreDia && fueraDeAnticipacion && reservableHasta && (
+                {!pausadas && !cierreDia && fueraDeAnticipacion && reservableHasta && (
                     <div className="reservas-aviso reservas-aviso--fila">
                         <CalendarDays size={18} />
                         <p>
@@ -596,7 +610,7 @@ export default function Reservas() {
                     </div>
                 )}
 
-                {!fueraDeAnticipacion && !cierreDia && <div className="reservas-grid">
+                {!pausadas && !fueraDeAnticipacion && !cierreDia && <div className="reservas-grid">
                     {/* Línea de tiempo */}
                     <div className="reservas-timeline-contenedor">
                         {/* Sin la duración cuando el club ya cerró por hoy: no hay nada que ajustar */}
@@ -646,7 +660,7 @@ export default function Reservas() {
                 {/* En el celular el resumen sube desde abajo al tocar un horario,
                     en vez de quedar al final de la lista */}
                 <AnimatePresence>
-                    {esMovil && slotSeleccionado && cancha && (
+                    {esMovil && !pausadas && slotSeleccionado && cancha && (
                         <HojaInferior
                             titulo="Resumen de la reserva"
                             onCerrar={() => setSlotSeleccionado(null)}

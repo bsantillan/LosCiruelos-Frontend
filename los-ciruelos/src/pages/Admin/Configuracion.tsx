@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { isAxiosError } from "axios";
-import { AlarmClock, CalendarRange, Clock, Coins, Copy, DoorClosed, DoorOpen, MessageCircle, Save, Undo2, XCircle } from "lucide-react";
+import { AlarmClock, CalendarRange, CirclePause, Clock, Coins, Copy, DoorClosed, DoorOpen, Globe, MessageCircle, Save, Undo2, XCircle } from "lucide-react";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
+import CampoTexto from "../../components/ui/CampoTexto/CampoTexto";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";
 import SelectorFecha from "../../components/ui/SelectorFecha/SelectorFecha";
 import SelectorHora from "../../components/ui/SelectorHora/SelectorHora";
@@ -22,12 +23,13 @@ const DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "
 /** El cierre puede ser hasta las 23:59 (el club cierra a medianoche) */
 const CIERRES = [...HORAS_MEDIA_HORA.slice(1), "23:59"];
 
-type Seccion = "precio" | "duracion" | "cancelacion" | "avisos" | "horarios" | "cierres";
+type Seccion = "precio" | "duracion" | "cancelacion" | "avisos" | "online" | "horarios" | "cierres";
 const SECCIONES: { id: Seccion; etiqueta: string }[] = [
     { id: "precio", etiqueta: "Precio y seña" },
     { id: "duracion", etiqueta: "Duración" },
     { id: "cancelacion", etiqueta: "Cancelación" },
     { id: "avisos", etiqueta: "Avisos y anticipación" },
+    { id: "online", etiqueta: "Reservas online" },
     { id: "horarios", etiqueta: "Horarios" },
     { id: "cierres", etiqueta: "Días cerrados" },
 ];
@@ -38,6 +40,7 @@ function seccionDe(campo: string): Seccion {
     if (campo.startsWith("duracion")) return "duracion";
     if (campo.startsWith("reembolso")) return "cancelacion";
     if (campo === "diasAnticipacion" || campo === "minutosRecordatorio") return "avisos";
+    if (campo === "mensajeReservasPausadas") return "online";
     return "horarios";
 }
 
@@ -77,6 +80,8 @@ interface Formulario {
     /** En minutos */
     minutosRecordatorio: string;
     whatsappClientes: boolean;
+    reservasOnline: boolean;
+    mensajeReservasPausadas: string;
     diasAnticipacion: string;
     horarios: { dia: string; abre: boolean; apertura: string; cierre: string }[];
 }
@@ -93,6 +98,8 @@ function aFormulario(c: ConfiguracionClub): Formulario {
         recordatorioActivo: c.recordatorioActivo,
         minutosRecordatorio: String(c.minutosRecordatorio),
         whatsappClientes: c.whatsappClientes ?? true,
+        reservasOnline: c.reservasOnline ?? true,
+        mensajeReservasPausadas: c.mensajeReservasPausadas ?? "",
         diasAnticipacion: String(c.diasAnticipacion),
         horarios: DIAS.map(dia => {
             const h = c.horarios.find(x => x.dia === dia);
@@ -130,6 +137,8 @@ function aConfiguracion(f: Formulario): { config?: ConfiguracionClub; errores?: 
             minutosReembolsoTotal: valores.reembolsoTotal, minutosReembolsoSenia: valores.reembolsoSenia,
             recordatorioActivo: f.recordatorioActivo, minutosRecordatorio: valores.minutosRecordatorio,
             whatsappClientes: f.whatsappClientes,
+            reservasOnline: f.reservasOnline,
+            mensajeReservasPausadas: f.mensajeReservasPausadas.trim() || null,
             diasAnticipacion: valores.diasAnticipacion,
             horarios: abiertos.map((h): HorarioDia => ({ dia: h.dia, apertura: h.apertura, cierre: h.cierre })),
         },
@@ -397,11 +406,20 @@ export default function Configuracion() {
 
             <Encabezado
                 titulo="Configuración"
-                descripcion="Reglas del club: precio del turno y seña, duración, cancelación, recordatorio, hasta cuándo se puede reservar y los horarios. Rige para lo que se reserve desde ahora."
+                descripcion="Reglas del club: precio del turno y seña, duración, cancelación, recordatorio, hasta cuándo se puede reservar, las reservas online y los horarios. Rige para lo que se reserve desde ahora."
                 acciones={<BotonActualizar onClick={() => { setCargando(true); setVersion(v => v + 1); }} cargando={cargando} />}
             />
 
             {errorCarga && <Mensaje tipo="error">{errorCarga}</Mensaje>}
+            {guardada && guardada.reservasOnline === false && (
+                <div className="config-pausadas" role="status">
+                    <CirclePause size={18} />
+                    <span>Las reservas online están <strong>pausadas</strong>: los clientes no pueden reservar desde la web. El personal sigue cargando reservas desde el panel.</span>
+                    {seccion !== "online" && (
+                        <button type="button" className="accion accion--chica" onClick={() => elegirSeccion("online")}>Ver</button>
+                    )}
+                </div>
+            )}
             {mensaje && <Mensaje tipo="ok">{mensaje}</Mensaje>}
             <SinCancelar resultado={resultado} />
 
@@ -501,6 +519,30 @@ export default function Configuracion() {
                             <CampoInput id="cf-dias" name="diasAnticipacion" label="El cliente reserva hasta" type="number" entero sufijo="días adelante" min={0} max={365}
                                 value={form.diasAnticipacion} onChange={e => cambiar("diasAnticipacion", e.target.value)} error={errores.diasAnticipacion} />
                             <p className="modal__descripcion">También es el tope de los partidos que se crean solos para los turnos fijos. El personal puede reservar más adelante.</p>
+                        </section>
+                    )}
+
+                    {/* ── Reservas online: el ADMIN las pausa (por ejemplo, mientras cambia los precios) ── */}
+                    {seccion === "online" && (
+                        <section className="admin-tarjeta config-seccion">
+                            <h2 className="admin-tarjeta__titulo config-seccion__titulo"><Globe size={16} /> Reservas online</h2>
+                            <CampoToggle id="cf-reservas-online" name="reservasOnline" label="Los clientes pueden reservar desde la web"
+                                descripcion="Apagalo mientras evaluás cambios (precios, horarios u otra cosa). Las reservas que ya existen, los pagos de seña pendientes, las cancelaciones y los turnos fijos siguen igual, y vos y el personal siguen cargando reservas desde el panel."
+                                checked={form.reservasOnline} onChange={e => cambiar("reservasOnline", e.target.checked)} />
+                            {!form.reservasOnline && (
+                                <CampoTexto id="cf-mensaje-pausadas" label="Mensaje para los clientes (opcional)" maximo={200} filas={3}
+                                    placeholder="Ej: Estamos actualizando los precios. Volvemos a tomar reservas el lunes."
+                                    value={form.mensajeReservasPausadas} onChange={v => cambiar("mensajeReservasPausadas", v)}
+                                    error={errores.mensajeReservasPausadas} />
+                            )}
+                            {guardada && form.reservasOnline !== (guardada.reservasOnline ?? true) && (
+                                <p className="config-equivale">
+                                    <CirclePause size={13} />{" "}
+                                    {form.reservasOnline
+                                        ? "Al guardar, los clientes vuelven a reservar desde la web."
+                                        : "Al guardar, los clientes ven el aviso en lugar de los turnos y no pueden reservar hasta que lo vuelvas a prender."}
+                                </p>
+                            )}
                         </section>
                     )}
 

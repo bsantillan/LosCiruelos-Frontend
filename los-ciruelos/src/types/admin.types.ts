@@ -361,6 +361,10 @@ export interface ConfiguracionClub {
      * mail y el celular del cliente no se verifica. Opcional en el PUT (sin él, queda como estaba).
      */
     whatsappClientes?: boolean;
+    /** Si los clientes reservan desde la web (el ADMIN las pausa). Opcional en el PUT */
+    reservasOnline?: boolean;
+    /** Lo que ven los clientes mientras están pausadas (hasta 200; null: sin mensaje) */
+    mensajeReservasPausadas?: string | null;
     /** 1 a 365 */
     diasAnticipacion: number;
     /** De lunes a domingo */

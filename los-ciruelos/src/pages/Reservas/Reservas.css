@@ -640,3 +640,42 @@
     font-style: italic;
     color: var(--verde-lima) !important;
 }
+
+/* Reservas online pausadas por el ADMIN: reemplaza a los turnos */
+.reservas-pausadas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-lg);
+    color: var(--texto-suave);
+}
+
+.reservas-pausadas svg {
+    color: var(--verde);
+}
+
+.reservas-pausadas h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--texto);
+}
+
+.reservas-pausadas p {
+    margin: 0;
+    max-width: 52ch;
+    font-size: 0.9rem;
+}
+
+.reservas-pausadas__mensaje {
+    color: var(--texto);
+    font-weight: 600;
+}
+
+.reservas-pausadas a {
+    color: var(--verde);
+}
