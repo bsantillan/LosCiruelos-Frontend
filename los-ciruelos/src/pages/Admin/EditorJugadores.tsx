@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { UserRound } from "lucide-react";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
+import CampoTelefono from "../../components/ui/CampoTelefono/CampoTelefono";
+import { aInternacional } from "../../utils/telefono";
 import BuscadorCliente from "./BuscadorCliente";
 import ModalAltaCliente from "./ModalAltaCliente";
 import type { Jugador } from "./jugadores";
@@ -56,8 +58,8 @@ export default function EditorJugadores({ jugadores, onChange }: { jugadores: Ju
                         <div className="admin-form__fila">
                             <CampoInput id={`invitado-${i + 1}`} name="nombre" label="Nombre" value={j.nombre}
                                 onChange={e => cambiar(i, { ...j, nombre: e.target.value })} />
-                            <CampoInput id={`invitado-tel-${i + 1}`} name="telefono" label="Celular (opcional)" type="tel" value={j.telefono}
-                                onChange={e => cambiar(i, { ...j, telefono: e.target.value })} placeholder="11 1234-5678" />
+                            <CampoTelefono id={`invitado-tel-${i + 1}`} name="telefono" label="Celular (opcional)"
+                                value={aInternacional(j.telefono)} onChange={telefono => cambiar(i, { ...j, telefono })} />
                         </div>
                     )}
                 </div>

@@ -2,10 +2,11 @@ import { useState } from "react";
 import { UserPlus } from "lucide-react";
 import ModalConfirmacion from "../../components/ui/ModalConfirmacion/ModalConfirmacion";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
+import CampoTelefono from "../../components/ui/CampoTelefono/CampoTelefono";
 import { adminService } from "../../services/adminService";
 import type { ClienteBusqueda } from "../../types/admin.types";
 import { extraerErrores, type ErroresApi } from "../../utils/apiErrors";
-import { telefonoValido } from "../../utils/telefono";
+import { celularValido } from "../../utils/telefono";
 
 /**
  * Alta rápida de un cliente con lo mínimo (solo ADMIN: POST /admin/usuarios). `texto` es lo que se
@@ -32,7 +33,7 @@ export default function ModalAltaCliente({ texto, onCerrar, onCreado }: {
         if (datos.nombre.trim().length < 2) e.nombre = "Mínimo 2 caracteres.";
         if (datos.apellido.trim().length < 2) e.apellido = "Mínimo 2 caracteres.";
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) e.email = "Ingresá un email válido.";
-        if (!telefonoValido(datos.telefono)) e.telefono = "Ingresá un celular válido. Ej: 11 1234-5678";
+        if (!celularValido(datos.telefono)) e.telefono = "Ingresá un celular válido, con el código de área.";
         setErrores(e);
         if (Object.keys(e).length) return;
         setGuardando(true);
@@ -74,8 +75,9 @@ export default function ModalAltaCliente({ texto, onCerrar, onCreado }: {
                     <CampoInput id="ac-apellido" name="apellido" label="Apellido" value={datos.apellido} onChange={cambiar("apellido")} error={errores.apellido} />
                 </div>
                 <CampoInput id="ac-email" name="email" label="Email" type="email" value={datos.email} onChange={cambiar("email")} error={errores.email} />
-                <CampoInput id="ac-telefono" name="telefono" label="Celular" type="tel" value={datos.telefono} onChange={cambiar("telefono")}
-                    placeholder="11 1234-5678" error={errores.telefono} />
+                <CampoTelefono id="ac-telefono" name="telefono" label="Celular" value={datos.telefono}
+                    onChange={telefono => { setDatos(d => ({ ...d, telefono })); setErrores(er => ({ ...er, telefono: undefined, general: undefined })); }}
+                    error={errores.telefono} />
             </div>
         </ModalConfirmacion>
     );

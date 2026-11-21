@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { Mail, Pencil, Phone, Power, User, UserPlus, Users, X } from "lucide-react";
+import { Mail, Pencil, Power, User, UserPlus, Users, X } from "lucide-react";
 import CampoBusqueda from "../../components/ui/CampoBusqueda/CampoBusqueda";
 import { useBusqueda } from "../../hooks/useBusqueda";
 import ModalConfirmacion from "../../components/ui/ModalConfirmacion/ModalConfirmacion";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
+import CampoTelefono from "../../components/ui/CampoTelefono/CampoTelefono";
 import CampoSelect from "../../components/ui/CampoSelect/CampoSelect";
 import { adminService } from "../../services/adminService";
 import type { FiltrosUsuarios, RolGestionable, UsuarioAdmin, UsuarioAdminRequest } from "../../types/admin.types";
 import { CATEGORIAS, POSICIONES, etiquetaDe } from "../../config/opcionesJugador";
 import { extraerErrores, primerError, type ErroresApi } from "../../utils/apiErrors";
-import { formatTelefono, telefonoValido } from "../../utils/telefono";
+import { aInternacional, celularValido, formatTelefono } from "../../utils/telefono";
 import { BotonActualizar, Cargando, Encabezado, Mensaje, Vacio } from "./comunes";
 
 const ROLES: { valor: RolGestionable; etiqueta: string }[] = [
@@ -34,7 +35,7 @@ function ModalUsuario({ usuario, soloCliente = false, onCerrar, onGuardado }: {
         email: usuario?.email ?? "",
         nombre: usuario?.nombre ?? "",
         apellido: usuario?.apellido ?? "",
-        telefono: formatTelefono(usuario?.telefono),
+        telefono: aInternacional(usuario?.telefono),
         rol: (usuario?.rol ?? "CLIENTE") as RolGestionable,
         categoria: usuario?.categoria ?? "",
         posicion: usuario?.posicion ?? "",
@@ -53,7 +54,7 @@ function ModalUsuario({ usuario, soloCliente = false, onCerrar, onGuardado }: {
         if (nuevo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) e.email = "Ingresá un email válido.";
         if (datos.nombre.trim().length < 2) e.nombre = "Mínimo 2 caracteres.";
         if (datos.apellido.trim().length < 2) e.apellido = "Mínimo 2 caracteres.";
-        if (!telefonoValido(datos.telefono)) e.telefono = "Ingresá un celular válido. Ej: 11 1234-5678";
+        if (!celularValido(datos.telefono)) e.telefono = "Ingresá un celular válido, con el código de área.";
         // Al crear un cliente son opcionales (las completa él); al editarlo, obligatorias
         if (esCliente && !nuevo && !datos.categoria) e.categoria = "Elegí la categoría.";
         if (esCliente && !nuevo && !datos.posicion) e.posicion = "Elegí la posición.";
@@ -115,8 +116,8 @@ function ModalUsuario({ usuario, soloCliente = false, onCerrar, onGuardado }: {
                     <CampoInput id="u-apellido" name="apellido" label="Apellido" value={datos.apellido}
                         onChange={cambiar("apellido")} icono={<User size={16} />} required error={errores.apellido} />
                 </div>
-                <CampoInput id="u-telefono" name="telefono" label="Celular" type="tel" value={datos.telefono}
-                    onChange={cambiar("telefono")} placeholder="11 1234-5678" icono={<Phone size={16} />} required error={errores.telefono} />
+                <CampoTelefono id="u-telefono" name="telefono" label="Celular" value={datos.telefono}
+                    onChange={telefono => cambiar("telefono")({ target: { value: telefono } })} required error={errores.telefono} />
                 {!soloCliente && <CampoSelect id="u-rol" name="rol" label="Rol" value={datos.rol} onChange={cambiar("rol")} opciones={ROLES} />}
                 {esCliente && (
                     <div className="admin-form__fila">

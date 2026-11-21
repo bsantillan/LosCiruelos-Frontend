@@ -1,3 +1,5 @@
+import { isPossiblePhoneNumber } from "react-phone-number-input";
+
 /**
  * Teléfonos. El backend acepta el número con espacios, guiones o paréntesis, con o sin
  * 0, 15 o +54 9 ("011 15-1234-5678"), y lo guarda normalizado al formato de WhatsApp
@@ -27,3 +29,22 @@ export function formatTelefono(valor: string | null | undefined): string {
     const corte = local.length - 4;
     return `+54 9 ${area} ${local.slice(0, corte)}-${local.slice(corte)}`;
 }
+
+/**
+ * Para el selector de país (CampoTelefono): el número guardado ("5491112345678") en formato
+ * internacional ("+5491112345678"); "" si no hay.
+ */
+export function aInternacional(valor: string | null | undefined): string {
+    if (!valor) return "";
+    const digitos = valor.replace(/\D/g, "");
+    return digitos ? `+${digitos}` : "";
+}
+
+/** Lo que devuelve el selector de país ("+5491112345678"): un número posible para ese país */
+export function celularValido(valor: string): boolean {
+    return Boolean(valor) && isPossiblePhoneNumber(valor);
+}
+
+/** Si dos números son el mismo, sin importar el formato ("+54 9 11…" y "54911…") */
+export const mismoTelefono = (a: string | null | undefined, b: string | null | undefined) =>
+    (a ?? "").replace(/\D/g, "") === (b ?? "").replace(/\D/g, "");
