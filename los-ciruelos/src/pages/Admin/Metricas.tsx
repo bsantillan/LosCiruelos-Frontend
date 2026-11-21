@@ -298,7 +298,7 @@ export function MetricasIngresos({ m }: { m: MetricasClub }) {
                 <Seccion titulo="Cómo se cobró" descripcion="Lo cobrado de las reservas, sin bonificaciones.">
                     <Kpis items={[
                         { etiqueta: "Online", c: i.online, formato: formatMonto, detalle: "Mercado Pago desde la web" },
-                        { etiqueta: "En el club", c: i.enElClub, formato: formatMonto, detalle: "Efectivo, QR, transferencia, Cuenta DNI" },
+                        { etiqueta: "En el club", c: i.enElClub, formato: formatMonto, detalle: "Efectivo, QR, transferencia, tarjeta, Cuenta DNI" },
                     ]} />
                 </Seccion>
             </div>

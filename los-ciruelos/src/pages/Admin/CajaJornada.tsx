@@ -10,7 +10,9 @@ import { Ayuda, BotonActualizar, Cargando, Encabezado, Mensaje, Vacio } from "./
 import "./ReservasAdmin.css";
 import "./Resumen.css";
 
-const ETIQUETA_MEDIO: Record<string, string> = { EFECTIVO: "Efectivo", MERCADO_PAGO: "Mercado Pago", CUENTA_DNI: "Cuenta DNI" };
+const ETIQUETA_MEDIO: Record<string, string> = {
+    EFECTIVO: "Efectivo", MERCADO_PAGO: "Mercado Pago", CUENTA_DNI: "Cuenta DNI", TARJETA: "Tarjeta",
+};
 const ETIQUETA_TIPO: Record<TipoMovimientoCaja, string> = { COBRO: "Cobro", VENTA: "Venta", DEVOLUCION: "Devolución", ANULACION: "Anulación" };
 
 /**
@@ -67,12 +69,18 @@ export default function CajaJornada() {
                                 {AYUDA_KPI["Mercado Pago"] && <Ayuda>{AYUDA_KPI["Mercado Pago"]}</Ayuda>}
                                 <span className="admin-kpi__etiqueta">Mercado Pago</span>
                                 <span className="admin-kpi__valor">{formatMonto(c.cobrado.mercadoPago)}</span>
-                                <span className="admin-kpi__detalle">Online, cargado a mano y con el QR</span>
+                                <span className="admin-kpi__detalle">Online, QR, transferencia y tarjeta en su posnet</span>
                             </div>
                             <div className="admin-kpi">
                                 {AYUDA_KPI["Cuenta DNI"] && <Ayuda>{AYUDA_KPI["Cuenta DNI"]}</Ayuda>}
                                 <span className="admin-kpi__etiqueta">Cuenta DNI</span>
                                 <span className="admin-kpi__valor">{formatMonto(c.cobrado.cuentaDni)}</span>
+                            </div>
+                            <div className="admin-kpi">
+                                {AYUDA_KPI["Tarjeta"] && <Ayuda>{AYUDA_KPI["Tarjeta"]}</Ayuda>}
+                                <span className="admin-kpi__etiqueta">Tarjeta</span>
+                                <span className="admin-kpi__valor">{formatMonto(c.cobrado.tarjeta ?? 0)}</span>
+                                <span className="admin-kpi__detalle">Otro posnet (Clover…)</span>
                             </div>
                             <div className={`admin-kpi${c.devuelto.total > 0 ? " admin-kpi--error" : ""}`}>
                                 {AYUDA_KPI["Devuelto"] && <Ayuda>{AYUDA_KPI["Devuelto"]}</Ayuda>}

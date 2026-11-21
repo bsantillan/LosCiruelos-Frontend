@@ -7,9 +7,12 @@ import type { MedioVentaInfo } from "../types/admin.types";
  * Cuando el endpoint exista, se usan los que devuelve y este respaldo queda sin uso.
  */
 const RESPALDO: MedioVentaInfo[] = [
-    { medio: "EFECTIVO", etiqueta: "Efectivo", disponible: true, conQr: false, detalle: null },
-    { medio: "MERCADO_PAGO", etiqueta: "Mercado Pago", disponible: true, conQr: true, detalle: "Con el QR de la caja" },
-    { medio: "CUENTA_DNI", etiqueta: "Cuenta DNI", disponible: true, conQr: false, detalle: null },
+    { medio: "EFECTIVO", etiqueta: "Efectivo", grupo: "EFECTIVO", opcion: "Efectivo", disponible: true, conQr: false, detalle: null },
+    { medio: "MERCADO_PAGO", etiqueta: "Mercado Pago (QR de la caja)", grupo: "MERCADO_PAGO", opcion: "QR de la caja", disponible: true, conQr: true, detalle: null },
+    { medio: "TRANSFERENCIA_MP", etiqueta: "Mercado Pago (transferencia)", grupo: "MERCADO_PAGO", opcion: "Transferencia", disponible: true, conQr: false, detalle: null },
+    { medio: "TARJETA_MP", etiqueta: "Mercado Pago (tarjeta en el posnet)", grupo: "MERCADO_PAGO", opcion: "Tarjeta en el posnet", disponible: true, conQr: false, detalle: null },
+    { medio: "CUENTA_DNI", etiqueta: "Cuenta DNI", grupo: "CUENTA_DNI", opcion: "Cuenta DNI", disponible: true, conQr: false, detalle: null },
+    { medio: "TARJETA", etiqueta: "Tarjeta (otro posnet)", grupo: "TARJETA", opcion: "Tarjeta", disponible: true, conQr: false, detalle: null },
 ];
 
 let enCache: MedioVentaInfo[] | null = null;

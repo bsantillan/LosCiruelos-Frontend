@@ -84,7 +84,8 @@ export function vigenteDePago(p: PagoResponse): number {
 
 /** Cargado a mano por el personal en el club (no un pago online de Mercado Pago ni el QR) */
 export function cobradoEnClub(p: PagoResponse): boolean {
-    if (p.canal) return p.canal === "EFECTIVO" || p.canal === "TRANSFERENCIA_MP" || p.canal === "CUENTA_DNI";
+    if (p.canal) return p.canal === "EFECTIVO" || p.canal === "TRANSFERENCIA_MP" || p.canal === "TARJETA_MP"
+        || p.canal === "CUENTA_DNI" || p.canal === "TARJETA";
     if (p.provider === "MERCADO_PAGO") return !p.externalPaymentId;
     return p.provider !== "BONIFICACION";
 }

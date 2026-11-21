@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Banknote, Gift, Landmark, Minus, Plus, QrCode, Smartphone, Wallet } from "lucide-react";
+import { Minus, Plus, QrCode, Wallet } from "lucide-react";
 import MontoLinea from "./MontoLinea";
 import ModalConfirmacion from "../../components/ui/ModalConfirmacion/ModalConfirmacion";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
@@ -13,25 +13,36 @@ import { formatFecha, formatHora, formatMonto, horaCorta } from "../../utils/fec
 import { faltaParaSenia } from "../../utils/reservas";
 import { Mensaje } from "./comunes";
 import { conImputacion, imputacionDe, lineasCuenta, parteDe } from "./cuentaReserva";
+import SelectorMedio, { type OpcionMedio } from "./SelectorMedio";
 
 type Medio = MedioCobro | "qr" | "bonificacion";
 
-const MEDIOS: { valor: Medio; etiqueta: string; icono: typeof Banknote; ayuda: string; soloAdmin?: boolean }[] = [
-    { valor: "efectivo", etiqueta: "Efectivo", icono: Banknote, ayuda: "" },
+/** Los medios, agrupados como en el panel: Mercado Pago abre en QR, transferencia y tarjeta en su posnet */
+const MEDIOS: (OpcionMedio<Medio> & { ayuda: string; soloAdmin?: boolean })[] = [
+    { valor: "efectivo", grupo: "EFECTIVO", opcion: "Efectivo", disponible: true, ayuda: "" },
     {
-        valor: "transferencia", etiqueta: "Transferencia MP", icono: Smartphone,
-        ayuda: "Una transferencia que ya entró a la cuenta de Mercado Pago del club.",
-    },
-    {
-        valor: "cuenta-dni", etiqueta: "Cuenta DNI", icono: Landmark,
-        ayuda: "Cobralo desde la app del banco y registralo acá. Queda sin verificar hasta que el ADMIN lo controle en la cuenta.",
-    },
-    {
-        valor: "qr", etiqueta: "QR de la caja", icono: QrCode,
+        valor: "qr", grupo: "MERCADO_PAGO", opcion: "QR de la caja", disponible: COBRO_QR_HABILITADO,
+        detalle: COBRO_QR_HABILITADO ? null : "El cobro con el QR de la caja todavía no está habilitado",
         ayuda: "Se le asigna el monto al QR del mostrador: el cliente lo escanea con Mercado Pago y el cobro se registra solo.",
     },
     {
-        valor: "bonificacion", etiqueta: "Bonificación", icono: Gift, soloAdmin: true,
+        valor: "transferencia", grupo: "MERCADO_PAGO", opcion: "Transferencia", disponible: true,
+        ayuda: "Una transferencia que ya entró a la cuenta de Mercado Pago del club. Queda sin verificar hasta que el ADMIN la controle.",
+    },
+    {
+        valor: "tarjeta-mp", grupo: "MERCADO_PAGO", opcion: "Tarjeta en el posnet", disponible: true,
+        ayuda: "Débito o crédito en el posnet de Mercado Pago, ya aprobada. La plata entra a la cuenta de Mercado Pago.",
+    },
+    {
+        valor: "cuenta-dni", grupo: "CUENTA_DNI", opcion: "Cuenta DNI", disponible: true,
+        ayuda: "Cobralo desde la app del banco y registralo acá. Queda sin verificar hasta que el ADMIN lo controle en la cuenta.",
+    },
+    {
+        valor: "tarjeta", grupo: "TARJETA", opcion: "Tarjeta", disponible: true,
+        ayuda: "Débito o crédito en otro posnet (Clover u otro), ya aprobada.",
+    },
+    {
+        valor: "bonificacion", grupo: "BONIFICACION", opcion: "Bonificación", disponible: true, soloAdmin: true,
         ayuda: "No se le cobra al cliente: cubre lo elegido, pero no es plata cobrada y no se devuelve si se cancela.",
     },
 ];
@@ -41,8 +52,8 @@ const CONSULTA_QR_MS = 3000;
 const MAX_PARTES = 12;
 
 /**
- * Cobrar en el club: efectivo, Mercado Pago cargado a mano, Cuenta DNI, el QR de la caja o (solo
- * ADMIN) bonificación. El monto no se escribe: sale de lo que se tilda (la cancha, cada producto)
+ * Cobrar en el club: efectivo, Mercado Pago (el QR de la caja, una transferencia o la tarjeta en su
+ * posnet), Cuenta DNI, tarjeta en otro posnet o (solo ADMIN) bonificación. El monto no se escribe: sale de lo que se tilda (la cancha, cada producto)
  * y, si la cuenta se divide, de en cuántas partes y qué líneas entran en la división. Para un
  * pago parcial se ajusta el monto de una línea, así el cobro siempre dice qué cubre. Dividiendo,
  * se cobra una parte tras otra sin cerrar.
@@ -312,21 +323,7 @@ export default function ModalCobro({ reserva: inicial, titulo = "Cobrar", onCerr
                     <strong>{formatMonto(valor)}</strong>
                 </div>
 
-                <div className="admin-opciones admin-opciones--dos" role="radiogroup" aria-label="Medio de pago">
-                    {medios.map(m => {
-                        const deshabilitado = m.valor === "qr" && !COBRO_QR_HABILITADO;
-                        return (
-                            <label key={m.valor} title={deshabilitado ? "El cobro con QR todavía no está habilitado" : undefined}
-                                className={`admin-opcion${medio === m.valor ? " admin-opcion--activa" : ""}${deshabilitado ? " admin-opcion--deshabilitada" : ""}`}>
-                                <input type="radio" name="medio" checked={medio === m.valor} disabled={deshabilitado}
-                                    onChange={() => { setMedio(m.valor); setError(null); }} />
-                                <m.icono size={18} />
-                                {m.etiqueta}
-                            </label>
-                        );
-                    })}
-                </div>
-                {!COBRO_QR_HABILITADO && <p className="modal__descripcion">El cobro con el QR de la caja todavía no está habilitado.</p>}
+                <SelectorMedio nombre="medio" medios={medios} valor={medio} onChange={m => { setMedio(m); setError(null); }} />
                 {ayuda && <p className="modal__descripcion">{ayuda}</p>}
                 {medio === "bonificacion" && (
                     <CampoInput id="motivo-bonificacion" name="motivo" label="Motivo (opcional)" value={motivo}

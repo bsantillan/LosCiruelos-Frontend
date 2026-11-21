@@ -256,6 +256,7 @@ export default function ReservasAdmin() {
                         <small>
                             Efectivo {formatMonto(Number(t.cobradoEfectivo ?? 0))} · Mercado Pago {formatMonto(Number(t.cobradoMercadoPago ?? 0))}
                             {Number(t.cobradoCuentaDni ?? 0) > 0 && ` · Cuenta DNI ${formatMonto(Number(t.cobradoCuentaDni))}`}
+                            {Number(t.cobradoTarjeta ?? 0) > 0 && ` · Tarjeta ${formatMonto(Number(t.cobradoTarjeta))}`}
                         </small>
                     </div>
                     <div>

@@ -178,8 +178,9 @@ function ResumenClub() {
                                         detalle: `Cobrado ${formatMonto(r.caja.total)} menos devoluciones`,
                                     },
                                     { etiqueta: "Efectivo", valor: formatMonto(r.caja.efectivo) },
-                                    { etiqueta: "Mercado Pago", valor: formatMonto(r.caja.mercadoPago), detalle: "Online, en el club y con el QR" },
+                                    { etiqueta: "Mercado Pago", valor: formatMonto(r.caja.mercadoPago), detalle: "Online, QR, transferencia y tarjeta en su posnet" },
                                     { etiqueta: "Cuenta DNI", valor: formatMonto(r.caja.cuentaDni) },
+                                    { etiqueta: "Tarjeta", valor: formatMonto(r.caja.tarjeta ?? 0), detalle: "Otro posnet (Clover…)" },
                                     {
                                         etiqueta: "Devoluciones", valor: menos(r.caja.devoluciones), tono: r.caja.devoluciones > 0 ? "error" : undefined,
                                         detalle: Number(r.ventas.devoluciones ?? 0) > 0

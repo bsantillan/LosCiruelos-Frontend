@@ -145,9 +145,10 @@ export type EstadoPago =
 /**
  * MANUAL: efectivo. MERCADO_PAGO: online, o cargado a mano en el club (QR de la caja, transferencia).
  * CUENTA_DNI: Banco Provincia, cargado a mano; el ADMIN lo verifica contra la cuenta del club.
+ * TARJETA_MP: tarjeta en el posnet de Mercado Pago; TARJETA: en otro posnet. Cargadas a mano, no se verifican.
  * BONIFICACION: el ADMIN no le cobró al cliente; cubre el monto pero no es plata.
  */
-export type PaymentProvider = "MANUAL" | "MERCADO_PAGO" | "TRANSFERENCIA_MP" | "CUENTA_DNI" | "BONIFICACION";
+export type PaymentProvider = "MANUAL" | "MERCADO_PAGO" | "TRANSFERENCIA_MP" | "TARJETA_MP" | "CUENTA_DNI" | "TARJETA" | "BONIFICACION";
 
 /** Qué parte de la cuenta cubre un pago: la cancha o una línea de producto */
 export type ConceptoCuenta = "CANCHA" | "PRODUCTO";
@@ -165,7 +166,7 @@ export interface Imputacion {
 export type EstadoDevolucion = "A_REEMBOLSAR" | "REEMBOLSO_PENDIENTE" | "DEVUELTO";
 
 /** Por dónde entró la plata (lo calcula el backend a partir del provider) */
-export type CanalDePago = "EFECTIVO" | "MERCADO_PAGO_ONLINE" | "MERCADO_PAGO_QR" | "TRANSFERENCIA_MP" | "CUENTA_DNI" | "BONIFICACION";
+export type CanalDePago = "EFECTIVO" | "MERCADO_PAGO_ONLINE" | "MERCADO_PAGO_QR" | "TRANSFERENCIA_MP" | "TARJETA_MP" | "CUENTA_DNI" | "TARJETA" | "BONIFICACION";
 
 /** GET /admin/reservas/devoluciones-a-entregar: plata que hay que darle al cliente a mano */
 export interface DevolucionAEntregar {
