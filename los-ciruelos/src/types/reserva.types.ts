@@ -5,7 +5,10 @@ export type TipoCancha = "TECHADA" | "AIRE_LIBRE";
 /** Una foto de una cancha: url pública (GET /archivos/{nombre}) y su lugar en el orden */
 export interface FotoCancha {
     id: number;
+    /** Hasta 1600 px de lado: para verla grande */
     url: string;
+    /** La misma de hasta 480 px: para tarjetas y listados */
+    miniaturaUrl: string;
     orden: number;
 }
 

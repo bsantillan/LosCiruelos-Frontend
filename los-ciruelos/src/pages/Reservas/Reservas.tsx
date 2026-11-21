@@ -325,7 +325,7 @@ function PanelResumen({
                 <>
                     <p className="reservas-resumen__bloqueo">
                         <UserCog size={15} />
-                        Para reservar tenés que completar tu perfil: celular verificado, categoría y posición.
+                        Para reservar tenés que completar tu perfil: celular, categoría y posición.
                     </p>
                     <button className="reservas-resumen__confirmar" disabled>
                         Continuar al pago
@@ -540,7 +540,7 @@ export default function Reservas() {
                 {usuario && !usuario.perfilCompleto && (
                     <div className="reservas-aviso reservas-aviso--fila">
                         <UserCog size={18} />
-                        <p>Para reservar necesitás completar tu perfil: celular verificado, categoría y posición.</p>
+                        <p>Para reservar necesitás completar tu perfil: celular, categoría y posición.</p>
                         <Link to="/perfil" className="accion accion--primaria accion--chica">Completar perfil</Link>
                     </div>
                 )}

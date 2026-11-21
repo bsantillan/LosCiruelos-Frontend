@@ -10,6 +10,11 @@ export interface PerfilResponse {
     canalNotificaciones: CanalNotificacion;
     /** CLIENTE: nombre, apellido, celular verificado, categoría y posición. ADMIN: sin categoría ni posición. */
     perfilCompleto: boolean;
+    /**
+     * Si el celular se verifica con un código por WhatsApp. false: el club no manda WhatsApp a los
+     * clientes (alcanza con cargar el celular y los avisos van por mail)
+     */
+    verificacionDeCelular: boolean;
     categoria: string | null;
     posicion: string | null;
     cantDiasMiembro: number;
@@ -48,7 +53,7 @@ export interface NotificacionesResponse {
     canalEnUso: CanalNotificacion;
     telefono: string | null;
     telefonoVerificado: boolean;
-    /** Si el club tiene WhatsApp configurado */
+    /** Si le puede llegar WhatsApp: el club lo tiene configurado y, a un cliente, el club se lo manda */
     whatsappDisponible: boolean;
 }
 
@@ -88,9 +93,27 @@ export interface PruebaAvisoResponse {
     destino: string | null;
 }
 
-// ── Recordatorio del turno (/admin/configuracion/avisos) ──
+// ── Avisos a los clientes (/admin/configuracion/avisos) ──
 export interface ConfigAvisos {
     recordatorioActivo: boolean;
     /** Entre 15 y 1440 */
     minutosRecordatorio: number;
+    /** Si el club manda WhatsApp a los clientes (apagado: todo por mail y el celular no se verifica) */
+    whatsappClientes: boolean;
+}
+
+// ── WhatsApp mandados (/perfil/avisos/whatsapp, ADMIN) ──
+export interface MensajesWhatsApp {
+    /** "YYYY-MM-DD", inclusive */
+    desde: string;
+    hasta: string;
+    total: number;
+    /** Códigos para verificar el celular (Meta los cobra como autenticación) */
+    codigos: number;
+    /** Avisos de reservas (Meta los cobra como utilidad) */
+    avisos: number;
+    aClientes: number;
+    alPersonal: number;
+    /** Del más mandado al menos */
+    porAviso: { aviso: string; nombre: string; cantidad: number }[];
 }

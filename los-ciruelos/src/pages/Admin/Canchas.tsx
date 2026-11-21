@@ -9,7 +9,7 @@ import { adminService } from "../../services/adminService";
 import type { CanchaRequest, FueraDeHorario } from "../../types/admin.types";
 import type { CanchaResponse, TipoCancha } from "../../types/reserva.types";
 import { extraerErrores, primerError, type ErroresApi } from "../../utils/apiErrors";
-import { errorDeImagen, MAXIMO_IMAGEN_MB, TIPOS_IMAGEN, urlArchivo } from "../../utils/archivos";
+import { errorDeImagen, MAXIMO_ORIGINAL_MB, TIPOS_IMAGEN, urlArchivo } from "../../utils/archivos";
 import { BotonActualizar, Cargando, Encabezado, Mensaje, Vacio } from "./comunes";
 import { ModalFueraDeHorario, SinCancelar } from "./ConflictoReservas";
 import { textoCanceladas } from "./conflictoReservas.texto";
@@ -62,12 +62,12 @@ function FotosCancha({ cancha, onCambio }: { cancha: CanchaResponse; onCambio: (
         <section className="cancha-fotos">
             <div className="cancha-fotos__cabecera">
                 <h4 className="detalle-reserva__subtitulo">Fotos ({fotos.length} de {MAXIMO_FOTOS})</h4>
-                <span className="admin-tabla__secundario">La primera es la que se ve en la página. JPG, PNG o WEBP, hasta {MAXIMO_IMAGEN_MB} MB.</span>
+                <span className="admin-tabla__secundario">La primera es la que se ve en la página. JPG, PNG o WEBP, hasta {MAXIMO_ORIGINAL_MB} MB: se achica sola antes de subirla.</span>
             </div>
             <ul className="cancha-fotos__grilla">
                 {fotos.map((f, i) => (
                     <li key={f.id} className="cancha-fotos__foto">
-                        <img src={urlArchivo(f.url)} alt={`Foto ${i + 1} de la cancha ${cancha.numero}`} loading="lazy" />
+                        <img src={urlArchivo(f.miniaturaUrl)} alt={`Foto ${i + 1} de la cancha ${cancha.numero}`} loading="lazy" />
                         {i === 0 && <span className="cancha-fotos__portada">Portada</span>}
                         <div className="cancha-fotos__acciones">
                             <button type="button" disabled={ocupado || i === 0} onClick={() => mover(i, -1)} aria-label="Mover antes" title="Mover antes"><ArrowLeft size={14} /></button>
@@ -107,7 +107,7 @@ function FotosNuevas({ fotos, onAgregar, onSacar, error }: {
         <section className="cancha-fotos">
             <div className="cancha-fotos__cabecera">
                 <h4 className="detalle-reserva__subtitulo">Fotos ({fotos.length} de {MAXIMO_FOTOS})</h4>
-                <span className="admin-tabla__secundario">Se suben al crear la cancha. La primera es la que se ve en la página. JPG, PNG o WEBP, hasta {MAXIMO_IMAGEN_MB} MB.</span>
+                <span className="admin-tabla__secundario">Se suben al crear la cancha. La primera es la que se ve en la página. JPG, PNG o WEBP, hasta {MAXIMO_ORIGINAL_MB} MB.</span>
             </div>
             <ul className="cancha-fotos__grilla">
                 {fotos.map((f, i) => (
@@ -437,7 +437,7 @@ export default function Canchas() {
                             <article key={c.id} className={`cancha-admin${c.activa ? "" : " cancha-admin--inactiva"}`}>
                                 <div className="cancha-admin__foto">
                                     {portada
-                                        ? <img src={urlArchivo(portada.url)} alt={`Cancha ${c.numero}`} loading="lazy" />
+                                        ? <img src={urlArchivo(portada.miniaturaUrl)} alt={`Cancha ${c.numero}`} loading="lazy" />
                                         : <span className="cancha-admin__sin-foto">Sin fotos</span>}
                                     <span className={`admin-chip ${c.activa ? "admin-chip--ok" : ""} cancha-admin__estado`}>{c.activa ? "Activa" : "Desactivada"}</span>
                                 </div>

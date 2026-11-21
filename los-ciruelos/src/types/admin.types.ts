@@ -337,6 +337,11 @@ export interface ConfiguracionClub {
     recordatorioActivo: boolean;
     /** 15 a 1440 */
     minutosRecordatorio: number;
+    /**
+     * Si el club manda WhatsApp a los clientes (avisos y el código del celular). Apagado: todo por
+     * mail y el celular del cliente no se verifica. Opcional en el PUT (sin él, queda como estaba).
+     */
+    whatsappClientes?: boolean;
     /** 1 a 365 */
     diasAnticipacion: number;
     /** De lunes a domingo */
@@ -625,8 +630,10 @@ export interface Novedad {
     titulo: string;
     descripcion: string;
     etiqueta: string | null;
-    /** Url pública de la imagen (GET /archivos/{nombre}), o null */
+    /** Url pública de la imagen (GET /archivos/{nombre}, hasta 1600 px), o null */
     imagenUrl: string | null;
+    /** La misma de hasta 480 px, para tarjetas y listados (null sin imagen) */
+    imagenMiniaturaUrl: string | null;
     /** Después de esa fecha deja de mostrarse sola (null: hasta que se oculte) */
     visibleHasta: string | null;
     publicada: boolean;

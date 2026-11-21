@@ -8,7 +8,7 @@ import SelectorFecha from "../../components/ui/SelectorFecha/SelectorFecha";
 import { adminService } from "../../services/adminService";
 import type { EstadoNovedad, Novedad, NovedadRequest } from "../../types/admin.types";
 import { extraerErrores, primerError, type ErroresApi } from "../../utils/apiErrors";
-import { errorDeImagen, MAXIMO_IMAGEN_MB, TIPOS_IMAGEN, urlArchivo } from "../../utils/archivos";
+import { errorDeImagen, MAXIMO_ORIGINAL_MB, TIPOS_IMAGEN, urlArchivo } from "../../utils/archivos";
 import { formatFecha, formatFechaHora, hoyISO } from "../../utils/fechas";
 import { PIE_NOVEDAD } from "../../config/novedades";
 import { BotonActualizar, Cargando, Encabezado, Mensaje, Vacio } from "./comunes";
@@ -174,7 +174,7 @@ function ModalNovedad({ novedad, onCerrar, onGuardada }: {
                                 </button>
                             )}
                         </div>
-                        <span className="admin-tabla__secundario">JPG, PNG o WEBP, hasta {MAXIMO_IMAGEN_MB} MB.</span>
+                        <span className="admin-tabla__secundario">JPG, PNG o WEBP, hasta {MAXIMO_ORIGINAL_MB} MB.</span>
                         <input ref={entrada} type="file" accept={TIPOS_IMAGEN.join(",")} hidden onChange={e => elegirImagen(e.target.files)} />
                     </div>
 
@@ -299,7 +299,7 @@ export default function Novedades() {
                             <article key={n.id} className={`cancha-admin${estado === "PUBLICADA" ? "" : " cancha-admin--inactiva"}`}>
                                 <div className="cancha-admin__foto">
                                     {n.imagenUrl
-                                        ? <img src={urlArchivo(n.imagenUrl)} alt="" loading="lazy" />
+                                        ? <img src={urlArchivo(n.imagenMiniaturaUrl ?? n.imagenUrl)} alt="" loading="lazy" />
                                         : <span className="cancha-admin__sin-foto">Sin imagen</span>}
                                     <span className={`admin-chip ${ESTADO[estado].tono} cancha-admin__estado`}>{ESTADO[estado].etiqueta}</span>
                                 </div>
