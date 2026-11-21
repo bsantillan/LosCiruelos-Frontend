@@ -293,7 +293,8 @@ interface CanchaVitrina {
     iluminacion: boolean;
     descripcion: string | null;
     activa: boolean;
-    fotos: string[];
+    /** grande: la foto en foco (1600 px); mini: miniaturas y la lista (480 px) */
+    fotos: { grande: string; mini: string }[];
 }
 
 /**
@@ -313,7 +314,9 @@ function Canchas() {
             iluminacion: c.iluminacion,
             descripcion: c.descripcion,
             activa: c.activa !== false,
-            fotos: [...c.fotos].sort((x, y) => x.orden - y.orden).map(f => urlArchivo(f.url)).filter((u): u is string => Boolean(u)),
+            fotos: [...c.fotos].sort((x, y) => x.orden - y.orden)
+                .map(f => ({ grande: urlArchivo(f.url) ?? "", mini: urlArchivo(f.miniaturaUrl ?? f.url) ?? "" }))
+                .filter(f => f.grande),
         }))
         : CANCHAS_RESPALDO.map(c => ({ ...c, clave: c.nombre, descripcion: null, activa: true, fotos: [] }));
     const [elegida, setElegida] = useState(0);
@@ -346,16 +349,16 @@ function Canchas() {
                         <article className={`vitrina__foco${actual.activa ? "" : " vitrina__foco--inactiva"}`} aria-live="polite">
                             <div className="vitrina__foto">
                                 {fotoActual
-                                    ? <img key={fotoActual} src={fotoActual} alt={`${actual.nombre}, foto ${foto + 1} de ${actual.fotos.length}`} />
+                                    ? <img key={fotoActual.grande} src={fotoActual.grande} alt={`${actual.nombre}, foto ${foto + 1} de ${actual.fotos.length}`} />
                                     : <span className="vitrina__sin-foto" aria-hidden="true">{actual.nombre}</span>}
                                 {!actual.activa && <span className="vitrina__estado">No disponible por el momento</span>}
                             </div>
                             {actual.fotos.length > 1 && (
                                 <div className="vitrina__miniaturas" role="group" aria-label={`Fotos de ${actual.nombre}`}>
                                     {actual.fotos.map((f, i) => (
-                                        <button key={f} type="button" aria-pressed={i === foto} aria-label={`Ver la foto ${i + 1}`}
+                                        <button key={f.grande} type="button" aria-pressed={i === foto} aria-label={`Ver la foto ${i + 1}`}
                                             className={`vitrina__miniatura${i === foto ? " vitrina__miniatura--activa" : ""}`} onClick={() => setFoto(i)}>
-                                            <img src={f} alt="" />
+                                            <img src={f.mini} alt="" loading="lazy" />
                                         </button>
                                     ))}
                                 </div>
@@ -377,7 +380,7 @@ function Canchas() {
                                 <button key={c.clave} type="button" aria-pressed={i === elegida} onClick={() => elegir(i)}
                                     className={`vitrina__opcion${i === elegida ? " vitrina__opcion--activa" : ""}${c.activa ? "" : " vitrina__opcion--inactiva"}`}>
                                     <span className="vitrina__opcion-foto">
-                                        {c.fotos[0] ? <img src={c.fotos[0]} alt="" loading="lazy" /> : <Layers size={18} aria-hidden="true" />}
+                                        {c.fotos[0] ? <img src={c.fotos[0].mini} alt="" loading="lazy" /> : <Layers size={18} aria-hidden="true" />}
                                     </span>
                                     <span className="vitrina__opcion-texto">
                                         <span className="vitrina__opcion-nombre">{c.nombre}</span>
@@ -437,7 +440,7 @@ function Noticias() {
                             whileHover={{ y: -4, transition: { duration: 0.2 } }}
                         >
                             <div className="noticia-card__imagen" aria-hidden="true">
-                                {noticia.imagenUrl && <img src={urlArchivo(noticia.imagenUrl)} alt="" loading="lazy" />}
+                                {noticia.imagenUrl && <img src={urlArchivo(noticia.imagenMiniaturaUrl ?? noticia.imagenUrl)} alt="" loading="lazy" />}
                             </div>
                             <div className="noticia-card__contenido">
                                 <div className="noticia-card__header">
