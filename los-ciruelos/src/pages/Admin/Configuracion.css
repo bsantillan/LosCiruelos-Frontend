@@ -370,3 +370,25 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Aviso arriba de todo mientras las reservas online están pausadas */
+.config-pausadas {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid rgba(245, 196, 81, 0.35);
+    background: rgba(245, 196, 81, 0.1);
+    border-radius: var(--radio-md);
+    color: var(--texto);
+    font-size: 0.875rem;
+}
+
+.config-pausadas > svg {
+    flex-shrink: 0;
+    color: #f5c451;
+}
+
+.config-pausadas > span {
+    flex: 1;
+}
