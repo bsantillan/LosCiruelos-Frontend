@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { MessageCircle } from "lucide-react";
-import CampoToggle from "../ui/CampoToggle/CampoToggle";
 import SelectorPeriodo, { type Periodo } from "../ui/SelectorPeriodo/SelectorPeriodo";
-import { adminService } from "../../services/adminService";
 import { perfilService } from "../../services/perfilService";
-import type { ConfigAvisos, MensajesWhatsApp } from "../../types/perfil.types";
+import type { MensajesWhatsApp } from "../../types/perfil.types";
 import { extraerErrores, primerError } from "../../utils/apiErrors";
 import { hoyISO } from "../../utils/fechas";
 import { AvisoTransitorio } from "../ui/Avisos/Avisos";
@@ -19,28 +18,14 @@ function mesEnCurso(): Periodo {
 const numero = (n: number) => n.toLocaleString("es-AR");
 
 /**
- * WhatsApp del club (solo ADMIN):
- *  - Si el club manda WhatsApp a los clientes. Apagado, a los clientes les llega todo por mail y no
- *    verifican el celular (alcanza con cargarlo). Al personal no le cambia nada.
- *  - Cuántos WhatsApp se mandaron en un período (cada uno lo cobra Meta).
+ * WhatsApp del club (solo ADMIN): cuántos WhatsApp se mandaron en un período (cada uno lo cobra Meta).
+ * Si se le manda WhatsApp a los clientes se elige en Configuración > Avisos y anticipación.
  */
 export default function WhatsAppClub() {
-    const [config, setConfig] = useState<ConfigAvisos | null>(null);
-    const [errorConfig, setErrorConfig] = useState<string | null>(null);
-    const [guardado, setGuardado] = useState<string | null>(null);
-
     const [periodo, setPeriodo] = useState<Periodo>(mesEnCurso);
     const [mensajes, setMensajes] = useState<MensajesWhatsApp | null>(null);
     const [cargando, setCargando] = useState(true);
     const [errorMensajes, setErrorMensajes] = useState<string | null>(null);
-
-    useEffect(() => {
-        let activo = true;
-        adminService.getConfigAvisos()
-            .then(c => { if (activo) setConfig(c); })
-            .catch(e => { if (activo) setErrorConfig(primerError(extraerErrores(e, "No se pudo cargar la configuración de WhatsApp.")) ?? null); });
-        return () => { activo = false; };
-    }, []);
 
     useEffect(() => {
         let activo = true;
@@ -51,26 +36,6 @@ export default function WhatsAppClub() {
         return () => { activo = false; };
     }, [periodo.desde, periodo.hasta]);
 
-    // Se guarda en el acto; si falla se vuelve atrás. El PUT lleva el recordatorio tal como está.
-    const cambiarWhatsapp = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!config) return;
-        const anterior = config;
-        const nuevo = { ...config, whatsappClientes: e.target.checked };
-        setConfig(nuevo);
-        setErrorConfig(null);
-        setGuardado(null);
-        try {
-            const c = await adminService.updateConfigAvisos(nuevo);
-            setConfig(c);
-            setGuardado(c.whatsappClientes
-                ? "Listo: los clientes que elijan WhatsApp lo vuelven a recibir. Los que no verificaron el celular lo van a tener que verificar."
-                : "Listo: a los clientes les llega todo por mail y no tienen que verificar el celular.");
-        } catch (err) {
-            setConfig(anterior);
-            setErrorConfig(primerError(extraerErrores(err, "No se pudo guardar el cambio.")) ?? null);
-        }
-    };
-
     return (
         <section className="perfil-seccion">
             <div className="perfil-seccion__header">
@@ -78,19 +43,10 @@ export default function WhatsAppClub() {
                 <h2 className="perfil-seccion__titulo">WhatsApp del club</h2>
             </div>
 
-            {config && (
-                <div className="notif-bloque">
-                    <CampoToggle
-                        id="whatsapp-clientes" name="whatsappClientes"
-                        label="Mandar WhatsApp a los clientes"
-                        descripcion="Los avisos de sus reservas y el código para verificar el celular. Apagado, a los clientes les llega todo por mail y no tienen que verificar el celular para reservar. A vos y al personal no les cambia nada."
-                        checked={config.whatsappClientes}
-                        onChange={e => void cambiarWhatsapp(e)}
-                    />
-                    {guardado && <AvisoTransitorio tipo="ok">{guardado}</AvisoTransitorio>}
-                </div>
-            )}
-            {errorConfig && <AvisoTransitorio tipo="error">{errorConfig}</AvisoTransitorio>}
+            <p className="notif-ayuda notif-ayuda--intro">
+                Si el club le manda WhatsApp a los clientes se elige en{" "}
+                <Link to="/admin/configuracion?tab=avisos">Configuración → Avisos y anticipación</Link>.
+            </p>
 
             <div className="notif-bloque">
                 <div className="notif-mensajes__cabecera">

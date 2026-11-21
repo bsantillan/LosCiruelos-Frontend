@@ -17,7 +17,7 @@ type TabAvisos = "celular" | "recibis" | "whatsapp";
  *  - Celular: el celular (único lugar del panel donde se carga, cambia y verifica) y el medio
  *    por el que le llegan los avisos. ADMIN y EMPLEADO.
  *  - Avisos que recibís: qué avisos de reservas le llegan. Solo ADMIN.
- *  - WhatsApp: si el club manda WhatsApp a los clientes y cuántos WhatsApp se mandaron. Solo ADMIN.
+ *  - WhatsApp: cuántos WhatsApp mandó el club (el envío a los clientes se elige en Configuración). Solo ADMIN.
  * El recordatorio que reciben los clientes es configuración del club: está en Configuración.
  */
 export default function Avisos() {
@@ -35,7 +35,7 @@ export default function Avisos() {
         { id: "celular", etiqueta: "Celular", icono: <Smartphone size={15} /> },
         ...(esAdmin ? [
             { id: "recibis" as const, etiqueta: "Avisos que recibís", icono: <Megaphone size={15} /> },
-            { id: "whatsapp" as const, etiqueta: "WhatsApp", icono: <MessageCircle size={15} /> },
+            { id: "whatsapp" as const, etiqueta: "WhatsApp enviados", icono: <MessageCircle size={15} /> },
         ] : []),
     ];
     const [searchParams, setSearchParams] = useSearchParams();
@@ -47,7 +47,7 @@ export default function Avisos() {
             <Encabezado
                 titulo="Avisos"
                 descripcion={esAdmin
-                    ? "Tu celular, por dónde te avisamos, qué avisos de reservas recibís y el WhatsApp del club."
+                    ? "Tu celular, por dónde te avisamos, qué avisos de reservas recibís y cuántos WhatsApp mandó el club."
                     : "Tu celular y por dónde te avisamos."}
             />
 

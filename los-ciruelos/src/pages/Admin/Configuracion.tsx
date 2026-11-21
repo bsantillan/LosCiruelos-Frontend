@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { isAxiosError } from "axios";
-import { AlarmClock, CalendarRange, Clock, Coins, Copy, DoorClosed, DoorOpen, Save, Undo2, XCircle } from "lucide-react";
+import { AlarmClock, CalendarRange, Clock, Coins, Copy, DoorClosed, DoorOpen, MessageCircle, Save, Undo2, XCircle } from "lucide-react";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";
 import SelectorFecha from "../../components/ui/SelectorFecha/SelectorFecha";
@@ -27,7 +27,7 @@ const SECCIONES: { id: Seccion; etiqueta: string }[] = [
     { id: "precio", etiqueta: "Precio y seña" },
     { id: "duracion", etiqueta: "Duración" },
     { id: "cancelacion", etiqueta: "Cancelación" },
-    { id: "avisos", etiqueta: "Recordatorio y anticipación" },
+    { id: "avisos", etiqueta: "Avisos y anticipación" },
     { id: "horarios", etiqueta: "Horarios" },
     { id: "cierres", etiqueta: "Días cerrados" },
 ];
@@ -47,7 +47,7 @@ function seccionDelMensaje(mensaje: string): Seccion | null {
     if (/(abre|apertura|cierre|repetido|día inválido|lunes|martes|miércoles|jueves|viernes|sábado|domingo)/.test(m)) return "horarios";
     if (/duración|turno mínimo|turno máximo/.test(m)) return "duracion";
     if (/devolver|reembolso|seña/.test(m)) return "cancelacion";
-    if (/recordatorio|anticipación/.test(m)) return "avisos";
+    if (/recordatorio|anticipación|whatsapp/.test(m)) return "avisos";
     if (/precio|monto|porcentaje/.test(m)) return "precio";
     return null;
 }
@@ -76,6 +76,7 @@ interface Formulario {
     recordatorioActivo: boolean;
     /** En minutos */
     minutosRecordatorio: string;
+    whatsappClientes: boolean;
     diasAnticipacion: string;
     horarios: { dia: string; abre: boolean; apertura: string; cierre: string }[];
 }
@@ -91,6 +92,7 @@ function aFormulario(c: ConfiguracionClub): Formulario {
         horasReembolsoSenia: String(c.minutosReembolsoSenia / 60),
         recordatorioActivo: c.recordatorioActivo,
         minutosRecordatorio: String(c.minutosRecordatorio),
+        whatsappClientes: c.whatsappClientes ?? true,
         diasAnticipacion: String(c.diasAnticipacion),
         horarios: DIAS.map(dia => {
             const h = c.horarios.find(x => x.dia === dia);
@@ -127,6 +129,7 @@ function aConfiguracion(f: Formulario): { config?: ConfiguracionClub; errores?: 
             duracionMinimaTurno: valores.duracionMinimaTurno, duracionMaximaTurno: valores.duracionMaximaTurno,
             minutosReembolsoTotal: valores.reembolsoTotal, minutosReembolsoSenia: valores.reembolsoSenia,
             recordatorioActivo: f.recordatorioActivo, minutosRecordatorio: valores.minutosRecordatorio,
+            whatsappClientes: f.whatsappClientes,
             diasAnticipacion: valores.diasAnticipacion,
             horarios: abiertos.map((h): HorarioDia => ({ dia: h.dia, apertura: h.apertura, cierre: h.cierre })),
         },
@@ -468,10 +471,10 @@ export default function Configuracion() {
                         </section>
                     )}
 
-                    {/* ── Recordatorio y anticipación ── */}
+                    {/* ── Avisos a los clientes (recordatorio y WhatsApp) y anticipación ── */}
                     {seccion === "avisos" && (
                         <section className="admin-tarjeta config-seccion">
-                            <h2 className="admin-tarjeta__titulo config-seccion__titulo"><AlarmClock size={16} /> Recordatorio y anticipación</h2>
+                            <h2 className="admin-tarjeta__titulo config-seccion__titulo"><AlarmClock size={16} /> Avisos a los clientes y anticipación</h2>
                             <CampoToggle id="cf-recordatorio" name="recordatorioActivo" label="Recordatorio del turno"
                                 descripcion="Le llega al cliente (y a los jugadores con cuenta) antes de jugar, por su medio de avisos."
                                 checked={form.recordatorioActivo} onChange={e => cambiar("recordatorioActivo", e.target.checked)} />
@@ -483,6 +486,17 @@ export default function Configuracion() {
                                         = <strong>{duracionTexto(Number(form.minutosRecordatorio))}</strong> antes del turno (entre 15 minutos y 24 horas)
                                     </p>
                                 </>
+                            )}
+                            <CampoToggle id="cf-whatsapp" name="whatsappClientes" label="Mandar WhatsApp a los clientes"
+                                descripcion="Los avisos de sus reservas y el código para verificar el celular. Apagado, a los clientes les llega todo por mail y no tienen que verificar el celular para reservar. A vos y al personal no les cambia nada."
+                                checked={form.whatsappClientes} onChange={e => cambiar("whatsappClientes", e.target.checked)} />
+                            {guardada && form.whatsappClientes !== (guardada.whatsappClientes ?? true) && (
+                                <p className="config-equivale">
+                                    <MessageCircle size={13} />{" "}
+                                    {form.whatsappClientes
+                                        ? "Al guardar, los clientes que eligieron WhatsApp lo vuelven a recibir. Los que no verificaron el celular lo van a tener que verificar para reservar."
+                                        : "Al guardar, a los clientes les llega todo por mail y pueden reservar sin verificar el celular."}
+                                </p>
                             )}
                             <CampoInput id="cf-dias" name="diasAnticipacion" label="El cliente reserva hasta" type="number" entero sufijo="días adelante" min={0} max={365}
                                 value={form.diasAnticipacion} onChange={e => cambiar("diasAnticipacion", e.target.value)} error={errores.diasAnticipacion} />
