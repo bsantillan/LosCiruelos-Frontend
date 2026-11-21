@@ -389,12 +389,6 @@
     padding: 80px 0;
 }
 
-.noticia-card__imagen img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
 
 .cancha-item__tipo {
     font-size: 0.625rem;
@@ -646,6 +640,33 @@
     color: #f5c451;
 }
 
+/* Una sola (una novedad): a todo el ancho */
+.vitrina--sola {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+/* Novedades: el texto respeta los saltos de línea y abajo, cómo pedir más información */
+.vitrina__descripcion--texto {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.vitrina__dato--fecha {
+    text-transform: capitalize;
+}
+
+.vitrina__pie {
+    align-self: flex-start;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--verde-lima);
+    text-decoration: none;
+}
+
+.vitrina__pie:hover {
+    text-decoration: underline;
+}
+
 /* Celular: la elegida arriba y las demás en una fila que se desliza */
 @media (max-width: 860px) {
     .vitrina {
@@ -677,89 +698,17 @@
     padding: 80px 0;
 }
 
-.noticias-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
 
-.noticia-card {
-    background: var(--fondo);
-    border: 1px solid var(--borde);
-    border-radius: var(--radio-lg);
-    overflow: hidden;
-    transition: border-color var(--transicion), transform var(--transicion);
-}
 
-.noticia-card:hover {
-    border-color: var(--verde-borde);
-    transform: translateY(-3px);
-}
 
-.noticia-card__imagen {
-    height: 160px;
-    overflow: hidden;
-    background: linear-gradient(135deg, var(--superficie-2), var(--superficie-3));
-}
 
-.noticia-card__contenido {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
 
-.noticia-card__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
 
-.noticia-card__etiqueta {
-    font-size: 0.625rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--verde-lima);
-    background: var(--verde-fondo);
-    border: 1px solid var(--verde-borde);
-    border-radius: var(--radio-pill);
-    padding: 2px 8px;
-}
 
-.noticia-card__fecha {
-    font-size: 0.75rem;
-    color: var(--texto-suave);
-}
 
-.noticia-card__titulo {
-    font-family: var(--fuente-titulo);
-    font-size: 1.1rem;
-    font-weight: 700;
-    font-style: italic;
-    color: var(--texto);
-    line-height: 1.2;
-}
 
-.noticia-card__descripcion {
-    font-size: 0.8125rem;
-    color: var(--texto-suave);
-    line-height: 1.6;
-    overflow-wrap: anywhere;
-}
 
-/* "Para más información, comunicate con el club": lleva a Contacto */
-.noticia-card__pie {
-    margin-top: 4px;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--verde-lima);
-    text-decoration: none;
-}
 
-.noticia-card__pie:hover {
-    text-decoration: underline;
-}
 
 .noticias-vacio {
     margin-bottom: 8px;
@@ -933,17 +882,12 @@
     transition: border-color var(--transicion);
 }
 
-.noticia-card {
-    transition: border-color var(--transicion);
-}
 
 .testimonio-card {
     transition: border-color var(--transicion);
 }
 
 /* ── Responsive ── */
-@media (max-width: 1024px) {
-    }
 
 @media (max-width: 860px) {
     .home-hero {
@@ -989,9 +933,6 @@
         grid-template-columns: 1fr;
     }
 
-    .noticias-grid {
-        grid-template-columns: 1fr;
-    }
 
     .testimonios-grid {
         grid-template-columns: 1fr;

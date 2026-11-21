@@ -75,28 +75,33 @@
 
 .novedad-previa__cabecera {
     display: flex;
-    justify-content: space-between;
-    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
     font-size: 0.75rem;
 }
 
+/* Como en la vitrina de la página de inicio */
 .novedad-previa__etiqueta {
-    padding: 2px 10px;
+    padding: 2px 8px;
     border-radius: var(--radio-pill);
+    border: 1px solid var(--verde-borde);
     background: var(--verde-fondo);
     color: var(--verde-lima);
+    font-size: 0.625rem;
     font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .novedad-previa__fecha {
-    margin-left: auto;
     color: var(--texto-suave);
     text-transform: capitalize;
 }
 
 .novedad-previa__titulo {
     font-family: var(--fuente-titulo);
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: 800;
     font-style: italic;
     text-transform: uppercase;

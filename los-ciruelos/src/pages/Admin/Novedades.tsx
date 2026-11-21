@@ -35,11 +35,11 @@ function VistaPrevia({ titulo, descripcion, etiqueta, imagen }: { titulo: string
             <article className="novedad-previa__tarjeta">
                 <div className="novedad-previa__imagen">{imagen ? <img src={imagen} alt="" /> : null}</div>
                 <div className="novedad-previa__contenido">
+                    <h3 className="novedad-previa__titulo">{titulo.trim() || "Título de la novedad"}</h3>
                     <div className="novedad-previa__cabecera">
                         {etiqueta.trim() && <span className="novedad-previa__etiqueta">{etiqueta.trim()}</span>}
                         <span className="novedad-previa__fecha">{formatFecha(hoyISO())}</span>
                     </div>
-                    <h3 className="novedad-previa__titulo">{titulo.trim() || "Título de la novedad"}</h3>
                     <p className="novedad-previa__descripcion">{descripcion.trim() || "La descripción va acá."}</p>
                     <p className="novedad-previa__pie">{PIE_NOVEDAD}</p>
                 </div>
