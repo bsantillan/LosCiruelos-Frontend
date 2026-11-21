@@ -44,17 +44,161 @@
     overflow: hidden;
 }
 
-/* La lista de países es el <select> nativo (cómodo en el celular): con los colores del sitio */
-.campo-telefono .PhoneInputCountrySelect {
-    color-scheme: dark;
-    cursor: pointer;
+/* ── Selector de país (SelectorPais): la lista se abre debajo de todo el campo ── */
+.campo-telefono {
+    position: relative;
 }
 
-.campo-telefono .PhoneInputCountrySelect option {
-    background: var(--superficie-2);
+.selector-pais__boton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 8px 0 6px;
+    margin-left: -6px;
+    border: none;
+    border-radius: var(--radio-sm, 8px);
+    background: transparent;
+    color: var(--texto-suave);
+    cursor: pointer;
+    transition: background var(--transicion), color var(--transicion);
+}
+
+.selector-pais__boton:hover,
+.selector-pais__boton--abierto {
+    background: var(--superficie-3);
     color: var(--texto);
 }
 
-.campo-telefono .PhoneInputCountrySelect:focus + .PhoneInputCountryIcon--border {
-    box-shadow: 0 0 0 1px var(--verde-lima);
+.selector-pais__boton:focus-visible {
+    outline: 2px solid var(--verde-lima);
+    outline-offset: 1px;
+}
+
+.selector-pais__boton:disabled {
+    cursor: default;
+}
+
+.selector-pais__flecha {
+    transition: transform var(--transicion);
+}
+
+.selector-pais__boton--abierto .selector-pais__flecha {
+    transform: rotate(180deg);
+}
+
+.selector-pais__bandera {
+    display: inline-flex;
+    width: 24px;
+    height: 16px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--superficie-3);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.selector-pais__bandera svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.selector-pais__panel {
+    position: fixed;
+    z-index: 1100; /* por encima de los modales */
+    max-height: 320px;
+    display: flex;
+    flex-direction: column;
+    background: var(--superficie);
+    border: 1px solid var(--verde-borde);
+    border-radius: var(--radio-lg);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    animation: subirAparecer 0.15s both;
+}
+
+.selector-pais__buscar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--borde);
+    color: var(--texto-suave);
+}
+
+.selector-pais__buscar input {
+    flex: 1;
+    height: 44px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 0.9rem;
+}
+
+.selector-pais__buscar input::placeholder {
+    color: var(--texto-tenue);
+}
+
+.selector-pais__lista {
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.selector-pais__opcion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: var(--radio-md);
+    font-size: 0.875rem;
+    color: var(--texto);
+    cursor: pointer;
+}
+
+.selector-pais__opcion--activa {
+    background: var(--superficie-2);
+}
+
+.selector-pais__opcion--elegida .selector-pais__nombre {
+    color: var(--verde-lima);
+    font-weight: 600;
+}
+
+.selector-pais__opcion--separador {
+    margin-bottom: 7px;
+    position: relative;
+}
+
+.selector-pais__opcion--separador::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -4px;
+    border-bottom: 1px solid var(--borde);
+}
+
+.selector-pais__nombre {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.selector-pais__codigo {
+    color: var(--texto-suave);
+    font-variant-numeric: tabular-nums;
+}
+
+.selector-pais__vacio {
+    padding: 14px 10px;
+    font-size: 0.85rem;
+    color: var(--texto-suave);
 }

@@ -1,16 +1,11 @@
 import { AlertCircle } from "lucide-react";
-import PhoneInput, { getCountries, getCountryCallingCode, type Country, type Labels } from "react-phone-number-input";
+import PhoneInput, { type Country } from "react-phone-number-input";
 import flags from "react-phone-number-input/flags";
 import es from "react-phone-number-input/locale/es";
 import "react-phone-number-input/style.css";
 import "../CampoInput/CampoInput.css";
+import SelectorPais from "./SelectorPais";
 import "./CampoTelefono.css";
-
-/** Los países en castellano con su código: "Argentina (+54)" (es lo que se ve al desplegar la lista) */
-const ETIQUETAS: Labels = {
-    ...es,
-    ...Object.fromEntries(getCountries().map(c => [c, `${es[c] ?? c} (+${getCountryCallingCode(c)})`])),
-};
 
 /** Argentina y los países cercanos primero; después, todos en orden alfabético */
 const PRIMEROS: (Country | "|" | "...")[] = ["AR", "UY", "CL", "PY", "BR", "BO", "|", "..."];
@@ -29,7 +24,8 @@ interface CampoTelefonoProps {
 
 /**
  * Un celular con el selector de país: la bandera y el código (+54) quedan fijos a la izquierda y el
- * número se escribe con el formato de ese país. Devuelve el número en formato internacional
+ * número se escribe con el formato de ese país. La lista de países (SelectorPais) tiene buscador y la
+ * estética del sitio. Devuelve el número en formato internacional
  * ("+5491123456789"), que el backend normaliza al de WhatsApp. Por defecto, Argentina.
  */
 export default function CampoTelefono({ id, name, label, value, onChange, required, error, disabled }: CampoTelefonoProps) {
@@ -48,7 +44,8 @@ export default function CampoTelefono({ id, name, label, value, onChange, requir
                 countryOptionsOrder={PRIMEROS}
                 addInternationalOption={false}
                 flags={flags}
-                labels={ETIQUETAS}
+                labels={es}
+                countrySelectComponent={SelectorPais}
                 focusInputOnCountrySelection
                 autoComplete="tel"
                 required={required}
