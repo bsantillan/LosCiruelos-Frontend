@@ -397,9 +397,18 @@ function Canchas() {
 }
 
 /* ─── NOTICIAS ───────────────────────────────────── */
+/** "13 de octubre" de una novedad publicada (null si no tiene fecha) */
+const fechaNovedad = (n: Novedad) => (n.publicadaAt ? formatFecha(n.publicadaAt.slice(0, 10)) : null);
+
+/**
+ * Novedades del club como vitrina, igual que las canchas: la elegida se ve grande (imagen, etiqueta,
+ * fecha, descripción y cómo pedir más información) y al costado las demás para elegir. Con una sola,
+ * va sola a todo el ancho.
+ */
 function Noticias() {
     // null: cargando; [] también si el backend no responde (se muestra un aviso, no noticias viejas)
     const [novedades, setNovedades] = useState<Novedad[] | null>(null);
+    const [elegida, setElegida] = useState(0);
     useEffect(() => {
         let activo = true;
         canchaService.novedades(NOVEDADES_EN_INICIO)
@@ -407,6 +416,11 @@ function Noticias() {
             .catch(() => { if (activo) setNovedades([]); });
         return () => { activo = false; };
     }, []);
+
+    const lista = novedades ?? [];
+    const actual = lista[Math.min(elegida, lista.length - 1)];
+    const fechaActual = actual ? fechaNovedad(actual) : null;
+
     return (
         <section className="home-noticias" id="noticias">
             <div className="home-container">
@@ -424,36 +438,59 @@ function Noticias() {
                         ÚLTIMAS <em data-text="NOTICIAS">NOTICIAS</em>
                     </h2>
                 </motion.div>
+
                 {novedades && novedades.length === 0 && (
                     <p className="noticias-vacio">Muy pronto vas a ver acá las novedades del club: torneos, clases y más.</p>
                 )}
-                <div className="noticias-grid">
-                    {(novedades ?? []).map((noticia, i) => (
-                        <motion.article
-                            key={noticia.id}
-                            className="noticia-card"
-                            custom={i}
-                            variants={variantesHijos}
-                            initial="oculto"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                        >
-                            <div className="noticia-card__imagen" aria-hidden="true">
-                                {noticia.imagenUrl && <img src={urlArchivo(noticia.imagenMiniaturaUrl ?? noticia.imagenUrl)} alt="" loading="lazy" />}
+
+                {actual && (
+                    <div className={`vitrina${lista.length === 1 ? " vitrina--sola" : ""}`}>
+                        {/* La novedad elegida, en foco */}
+                        <article className="vitrina__foco" aria-live="polite">
+                            <div className="vitrina__foto">
+                                {actual.imagenUrl
+                                    ? <img key={actual.id} src={urlArchivo(actual.imagenUrl)} alt="" />
+                                    : <span className="vitrina__sin-foto" aria-hidden="true"><Newspaper size={44} /></span>}
                             </div>
-                            <div className="noticia-card__contenido">
-                                <div className="noticia-card__header">
-                                    {noticia.etiqueta && <span className="noticia-card__etiqueta">{noticia.etiqueta}</span>}
-                                    {noticia.publicadaAt && <span className="noticia-card__fecha">{formatFecha(noticia.publicadaAt.slice(0, 10))}</span>}
-                                </div>
-                                <h3 className="noticia-card__titulo">{noticia.titulo}</h3>
-                                <p className="noticia-card__descripcion">{noticia.descripcion}</p>
-                                <a className="noticia-card__pie" href="#contacto">{PIE_NOVEDAD}</a>
+                            <div className="vitrina__info">
+                                <h3 className="vitrina__nombre">{actual.titulo}</h3>
+                                {(actual.etiqueta || fechaActual) && (
+                                    <div className="vitrina__datos">
+                                        {actual.etiqueta && <span className="cancha-item__tipo">{actual.etiqueta}</span>}
+                                        {fechaActual && <span className="vitrina__dato vitrina__dato--fecha"><CalendarDays size={12} /> {fechaActual}</span>}
+                                    </div>
+                                )}
+                                <p className="vitrina__descripcion vitrina__descripcion--texto">{actual.descripcion}</p>
+                                <a className="vitrina__pie" href="#contacto">{PIE_NOVEDAD}</a>
                             </div>
-                        </motion.article>
-                    ))}
-                </div>
+                        </article>
+
+                        {/* Las demás, para elegir */}
+                        {lista.length > 1 && (
+                            <div className="vitrina__lista" role="group" aria-label="Elegí una novedad">
+                                {lista.map((n, i) => {
+                                    const fecha = fechaNovedad(n);
+                                    return (
+                                        <button key={n.id} type="button" aria-pressed={n.id === actual.id} onClick={() => setElegida(i)}
+                                            className={`vitrina__opcion${n.id === actual.id ? " vitrina__opcion--activa" : ""}`}>
+                                            <span className="vitrina__opcion-foto">
+                                                {n.imagenUrl
+                                                    ? <img src={urlArchivo(n.imagenMiniaturaUrl ?? n.imagenUrl)} alt="" loading="lazy" />
+                                                    : <Newspaper size={18} aria-hidden="true" />}
+                                            </span>
+                                            <span className="vitrina__opcion-texto">
+                                                <span className="vitrina__opcion-nombre">{n.titulo}</span>
+                                                <span className="vitrina__opcion-detalle">
+                                                    {[n.etiqueta, fecha].filter(Boolean).join(" · ") || "Novedad del club"}
+                                                </span>
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </section>
     );
