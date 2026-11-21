@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Ban, Receipt, RotateCcw, UserRound, X } from "lucide-react";
+import { Ban, Gift, Receipt, RotateCcw, UserRound, X } from "lucide-react";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import CampoToggle from "../../components/ui/CampoToggle/CampoToggle";
 import { useAuth } from "../../context/AuthContext";
@@ -11,7 +11,7 @@ import { formatFechaHora, formatMonto } from "../../utils/fechas";
 import BuscadorCliente from "./BuscadorCliente";
 import { Mensaje, VerificacionCuentaDni } from "./comunes";
 import {
-    ETIQUETA_ESTADO_VENTA, TONO_ESTADO_VENTA, netoVenta, puedeAnular, puedeCambiarCliente,
+    estadoVenta, netoVenta, puedeAnular, puedeCambiarCliente,
     puedeDevolver, quedanPorDevolver,
 } from "./reglasVenta";
 import "./ReservasAdmin.css";
@@ -120,7 +120,7 @@ export function ModalDetalleVenta({ venta, onCerrar, onCambio }: {
                 <div className="detalle-reserva__cabecera">
                     <div>
                         <h3 className="modal__titulo" id="venta-titulo">Venta #{v.id}</h3>
-                        <span className={`admin-chip ${TONO_ESTADO_VENTA[v.estado]}`}>{ETIQUETA_ESTADO_VENTA[v.estado]}</span>
+                        <span className={`admin-chip ${estadoVenta(v).tono}`}>{estadoVenta(v).etiqueta}</span>
                     </div>
                     <button type="button" className="detalle-reserva__cerrar" onClick={onCerrar} aria-label="Cerrar"><X size={18} /></button>
                 </div>
@@ -147,11 +147,22 @@ export function ModalDetalleVenta({ venta, onCerrar, onCambio }: {
                                 <dd>{formatMonto(Number(i.subtotal))}</dd>
                             </div>
                         ))}
-                        <div className="detalle-reserva__total"><dt>Total</dt><dd className={v.estado === "ANULADA" ? "ventas-tachado" : undefined}>{formatMonto(Number(v.total))}</dd></div>
+                        <div className="detalle-reserva__total"><dt>{v.medio === "BONIFICACION" ? "Total bonificado" : "Total"}</dt><dd className={v.estado === "ANULADA" ? "ventas-tachado" : undefined}>{formatMonto(Number(v.total))}</dd></div>
                         {devuelto > 0 && <div><dt>Devuelto</dt><dd>− {formatMonto(devuelto)}</dd></div>}
                         {v.estado === "COBRADA" && devuelto > 0 && <div className="detalle-reserva__total"><dt>Queda en la caja</dt><dd>{formatMonto(netoVenta(v))}</dd></div>}
                     </dl>
                 </div>
+
+                {v.medio === "BONIFICACION" && (
+                    <div className="detalle-reserva__bloque">
+                        <h4 className="detalle-reserva__subtitulo"><Gift size={13} /> Bonificada por el club</h4>
+                        <p className="modal__descripcion">
+                            No se le cobró: los productos se entregaron, pero no entró plata a la caja.
+                            {v.motivoBonificacion && <> Motivo: {v.motivoBonificacion}.</>}
+                            {v.estado === "COBRADA" && " Si se cargó por error, anulala y el stock vuelve."}
+                        </p>
+                    </div>
+                )}
 
                 {v.estado === "ANULADA" && (
                     <div className="detalle-reserva__bloque">
