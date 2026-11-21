@@ -1052,3 +1052,19 @@
     color: #f5c451;
     font-size: 0.875rem;
 }
+
+/* ── Medio de cobro en dos niveles (SelectorMedio) ── */
+.selector-medio {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.selector-medio__opciones {
+    padding-left: 2px;
+}
+
+.selector-medio__opciones .ra-chip:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}

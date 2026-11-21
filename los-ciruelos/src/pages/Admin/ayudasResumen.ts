@@ -12,8 +12,9 @@ export const AYUDA_KPI: Record<string, string> = {
     "Reservas": "Cuántos turnos hubo en el período: los que ya se jugaron, los que faltan y los que se cancelaron.",
     "Ventas": "Cuántas ventas sueltas se hicieron: bebidas, pelotas y otros productos vendidos en el mostrador, sin una reserva.",
     "Efectivo": "Lo que se cobró en billetes en el período.",
-    "Mercado Pago": "Lo que se cobró por Mercado Pago (desde la web, con el QR de la caja o por transferencia). No pasa por la caja: entra a la cuenta del club.",
+    "Mercado Pago": "Lo que se cobró por Mercado Pago (desde la web, con el QR de la caja, por transferencia o con tarjeta en su posnet). No pasa por la caja: entra a la cuenta del club.",
     "Cuenta DNI": "Lo que se cobró con Cuenta DNI. No pasa por la caja: entra a la cuenta del club.",
+    "Tarjeta": "Lo que se cobró con tarjeta en otro posnet (Clover u otro). No pasa por la caja: entra al banco del posnet. La tarjeta en el posnet de Mercado Pago va en Mercado Pago.",
     "Devoluciones": "La plata que se les devolvió a los clientes en el período (por cancelaciones o productos devueltos).",
     "Deuda": "Lo que quedó debiendo la gente de los turnos que ya se jugaron. Se cobra desde Reservas.",
     "Turnos": "Cuántos turnos hay en este grupo.",
@@ -43,7 +44,7 @@ export const AYUDA_KPI: Record<string, string> = {
     "Productos en reservas": "Lo que se facturó por productos sumados a las reservas: pelotas, alquiler de paletas, bebidas.",
     "Ventas sueltas": "Lo vendido en el mostrador sin una reserva, descontando lo que se devolvió.",
     "Online": "Lo que los clientes pagaron solos desde la web, con Mercado Pago.",
-    "En el club": "Lo que se cobró en el club: efectivo, QR de la caja, transferencia o Cuenta DNI.",
+    "En el club": "Lo que se cobró en el club: efectivo, QR de la caja, transferencia, tarjeta o Cuenta DNI.",
     "Por hora ocupada": "Cuánto deja, en promedio, cada hora de cancha reservada. Si sube, estás sacando más por cada hora.",
 
     // Clientes

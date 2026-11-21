@@ -31,8 +31,8 @@ const ETIQUETA_PAGO: Record<EstadoPago, string> = {
 };
 
 /**
- * Por dónde se pagó: MANUAL es efectivo en el club; CUENTA_DNI y TRANSFERENCIA_MP, cargados a mano
- * en el club; un pago de Mercado Pago con id externo es online (o el QR de la caja); sin id
+ * Por dónde se pagó: MANUAL es efectivo en el club; CUENTA_DNI, TRANSFERENCIA_MP y las tarjetas
+ * (TARJETA_MP, TARJETA), cargados a mano en el club; un pago de Mercado Pago con id externo es online (o el QR de la caja); sin id
  * externo, si se cobró es Mercado Pago cargado en el club, y si no, un pago online que se inició y
  * nunca se completó.
  */
@@ -41,7 +41,9 @@ const ETIQUETA_CANAL: Record<CanalDePago, string> = {
     MERCADO_PAGO_ONLINE: "Mercado Pago online",
     MERCADO_PAGO_QR: "QR de la caja",
     TRANSFERENCIA_MP: "Transferencia a Mercado Pago (club)",
+    TARJETA_MP: "Tarjeta en el posnet de Mercado Pago (club)",
     CUENTA_DNI: "Cuenta DNI (club)",
+    TARJETA: "Tarjeta en otro posnet (club)",
     BONIFICACION: "Bonificación del club",
 };
 
@@ -51,6 +53,8 @@ function medio(provider: PaymentProvider, externo: string | null, estado: Estado
     if (provider === "MANUAL") return "Efectivo (club)";
     if (provider === "CUENTA_DNI") return "Cuenta DNI (club)";
     if (provider === "TRANSFERENCIA_MP") return "Transferencia a Mercado Pago (club)";
+    if (provider === "TARJETA_MP") return "Tarjeta en el posnet de Mercado Pago (club)";
+    if (provider === "TARJETA") return "Tarjeta en otro posnet (club)";
     if (externo) return "Mercado Pago online";
     return estado === "APROBADO" || estado === "DEVUELTO" || estado === "A_REEMBOLSAR" || estado === "ANULADO"
         ? "Mercado Pago (club)" : "Mercado Pago online";

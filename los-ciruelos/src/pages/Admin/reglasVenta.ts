@@ -1,7 +1,8 @@
 import type { EstadoVenta, MedioVenta, Venta } from "../../types/admin.types";
 
 export const ETIQUETA_MEDIO_VENTA: Record<MedioVenta, string> = {
-    EFECTIVO: "Efectivo", MERCADO_PAGO: "Mercado Pago", TRANSFERENCIA_MP: "Transferencia MP", CUENTA_DNI: "Cuenta DNI",
+    EFECTIVO: "Efectivo", MERCADO_PAGO: "Mercado Pago", TRANSFERENCIA_MP: "Transferencia MP", TARJETA_MP: "Tarjeta MP",
+    CUENTA_DNI: "Cuenta DNI", TARJETA: "Tarjeta",
 };
 
 export const ETIQUETA_ESTADO_VENTA: Record<EstadoVenta, string> = {

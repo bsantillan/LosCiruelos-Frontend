@@ -44,6 +44,8 @@ export interface TotalesReservas {
     cobradoMercadoPago: number;
     /** De montoCobrado, con Cuenta DNI */
     cobradoCuentaDni: number;
+    /** Con tarjeta en otro posnet (la del posnet de Mercado Pago va en cobradoMercadoPago) */
+    cobradoTarjeta?: number;
     /** Lo que el ADMIN bonificó (no es plata y no está en montoCobrado) */
     montoBonificado: number;
     /** Lo que deben las SEÑADA y PARCIALMENTE_PAGADA */
@@ -124,8 +126,14 @@ export interface CrearReservaAdminRequest extends CrearReservaRequest {
 }
 
 /** Medios para cobrar en el club (POST /admin/reservas/{id}/cobros/{medio}) */
-/** "transferencia": Mercado Pago que ya entró a la cuenta del club (reemplaza a "presencial") */
-export type MedioCobro = "efectivo" | "transferencia" | "cuenta-dni";
+/**
+ * Cobro cargado a mano en el club. "transferencia": a la cuenta de Mercado Pago del club (reemplaza a
+ * "presencial"); "tarjeta-mp": tarjeta en el posnet de Mercado Pago; "tarjeta": en otro posnet (Clover…)
+ */
+export type MedioCobro = "efectivo" | "transferencia" | "tarjeta-mp" | "cuenta-dni" | "tarjeta";
+
+/** Cómo se agrupan los medios en el panel (MedioDeCaja del backend, más la bonificación del ADMIN) */
+export type GrupoMedio = "EFECTIVO" | "MERCADO_PAGO" | "CUENTA_DNI" | "TARJETA" | "BONIFICACION";
 
 /** Producto que el personal suma a una reserva: del catálogo o escrito a mano */
 export type ProductoAgregado =
@@ -205,12 +213,16 @@ export interface TurnoFijo {
 
 // ── Ventas sueltas (/admin/ventas, ADMIN y EMPLEADO) ──
 
-export type MedioVenta = "EFECTIVO" | "MERCADO_PAGO" | "TRANSFERENCIA_MP" | "CUENTA_DNI";
+export type MedioVenta = "EFECTIVO" | "MERCADO_PAGO" | "TRANSFERENCIA_MP" | "TARJETA_MP" | "CUENTA_DNI" | "TARJETA";
 
 /** GET /admin/ventas/medios: los medios con que se puede cobrar una venta suelta */
 export interface MedioVentaInfo {
     medio: MedioVenta;
     etiqueta: string;
+    /** EFECTIVO, MERCADO_PAGO (QR, transferencia y tarjeta en su posnet), CUENTA_DNI o TARJETA (otro posnet) */
+    grupo: GrupoMedio;
+    /** Cómo se llama dentro de su grupo ("Transferencia") */
+    opcion: string;
     /** false: no se puede usar ahora (por ejemplo, el QR de la caja sin configurar) */
     disponible: boolean;
     /** Se cobra con el QR de la caja: la venta queda esperando el pago */
@@ -440,12 +452,14 @@ export interface ResumenAdmin {
         aCobrar: number;
     };
     caja: {
-        /** efectivo + mercadoPago + cuentaDni (incluye las ventas sueltas) */
+        /** efectivo + mercadoPago + cuentaDni + tarjeta (incluye las ventas sueltas) */
         total: number;
         efectivo: number;
-        /** Online y en el club */
+        /** Online y en el club (con la tarjeta en el posnet de Mercado Pago) */
         mercadoPago: number;
         cuentaDni: number;
+        /** Tarjeta en otro posnet (Clover…) */
+        tarjeta?: number;
         /** Lo devuelto en el período (lo que queda "a devolver a mano" no está acá) */
         devoluciones: number;
         /** total − devoluciones (puede ser negativo) */
@@ -468,8 +482,11 @@ export interface ResumenAdmin {
 /** Lo de un medio de pago en la jornada */
 export interface MontosPorMedio {
     efectivo: number;
+    /** Con la tarjeta en el posnet de Mercado Pago */
     mercadoPago: number;
     cuentaDni: number;
+    /** Tarjeta en otro posnet */
+    tarjeta?: number;
     total: number;
 }
 
@@ -479,7 +496,7 @@ export type TipoMovimientoCaja = "COBRO" | "VENTA" | "DEVOLUCION" | "ANULACION";
 export interface MovimientoCaja {
     fecha: string;
     tipo: TipoMovimientoCaja;
-    /** EFECTIVO, MERCADO_PAGO, CUENTA_DNI */
+    /** EFECTIVO, MERCADO_PAGO, CUENTA_DNI o TARJETA */
     medio: string;
     /** Positivo si entra, negativo si sale */
     monto: number;

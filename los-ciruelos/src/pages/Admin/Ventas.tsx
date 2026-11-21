@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Banknote, ChevronLeft, ChevronRight, Eye, Landmark, Plus, QrCode, ShoppingBag, Smartphone, Trash2, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Plus, QrCode, ShoppingBag, Trash2, X } from "lucide-react";
 import CampoBusqueda from "../../components/ui/CampoBusqueda/CampoBusqueda";
 import { useBusqueda } from "../../hooks/useBusqueda";
 import CampoAutocompletar from "../../components/ui/CampoAutocompletar/CampoAutocompletar";
@@ -10,6 +10,7 @@ import { useJornada } from "../../hooks/useJornada";
 import { COBRO_QR_HABILITADO } from "../../config/adminSecciones";
 import { useCatalogo } from "../../hooks/useCatalogo";
 import { useMediosVenta } from "../../hooks/useMediosVenta";
+import SelectorMedio from "./SelectorMedio";
 import { adminService } from "../../services/adminService";
 import type { ClienteBusqueda, EstadoVenta, FiltrosVentasApi, ListadoVentas, MedioVenta, ProductoAgregado, Venta } from "../../types/admin.types";
 import { extraerErrores, primerError } from "../../utils/apiErrors";
@@ -23,8 +24,6 @@ import "./ReservasAdmin.css";
 import "./Ventas.css";
 
 /** Ícono de cada medio (los medios y sus nombres los da el backend) */
-const ICONO_MEDIO: Record<string, typeof Banknote> = { EFECTIVO: Banknote, MERCADO_PAGO: Smartphone, TRANSFERENCIA_MP: Smartphone, CUENTA_DNI: Landmark };
-
 /** Cada cuánto se consulta la venta mientras el QR de la caja espera el pago */
 const CONSULTA_QR_MS = 3000;
 
@@ -163,27 +162,25 @@ function NuevaVenta({ onRegistrada, onEsperando }: {
                 </ul>
             )}
 
-            <div className="admin-opciones" role="radiogroup" aria-label="Medio de pago">
-                {medios.map(m => {
+            <SelectorMedio nombre="medio-venta" valor={medio} onChange={m => { setMedio(m); setError(null); }}
+                medios={medios.map(m => ({
+                    valor: m.medio, grupo: m.grupo, opcion: m.opcion, detalle: m.detalle,
                     // Un medio con QR se apaga si el front tiene el QR apagado o el backend lo marca no disponible
-                    const deshabilitado = !m.disponible || (m.conQr && !COBRO_QR_HABILITADO);
-                    const Icono = m.conQr ? QrCode : ICONO_MEDIO[m.medio] ?? Banknote;
-                    return (
-                        <label key={m.medio} title={deshabilitado ? m.detalle ?? "No disponible" : m.detalle ?? undefined}
-                            className={`admin-opcion${medio === m.medio ? " admin-opcion--activa" : ""}${deshabilitado ? " admin-opcion--deshabilitada" : ""}`}>
-                            <input type="radio" name="medio-venta" checked={medio === m.medio} disabled={deshabilitado}
-                                onChange={() => { setMedio(m.medio); setError(null); }} />
-                            <Icono size={18} />
-                            {m.etiqueta}
-                        </label>
-                    );
-                })}
-            </div>
+                    disponible: m.disponible && !(m.conQr && !COBRO_QR_HABILITADO),
+                }))} />
             {medios.find(m => m.medio === medio)?.conQr && (
                 <p className="modal__descripcion">Se le asigna el total al QR de la caja: el cliente lo escanea con Mercado Pago y la venta se registra sola.</p>
             )}
             {medio === "CUENTA_DNI" && (
                 <p className="modal__descripcion">Cobralo desde la app del banco. Queda sin verificar hasta que el ADMIN lo controle en la cuenta.</p>
+            )}
+            {medio === "TRANSFERENCIA_MP" && (
+                <p className="modal__descripcion">Una transferencia que ya entró a la cuenta de Mercado Pago del club. Queda sin verificar hasta que el ADMIN la controle.</p>
+            )}
+            {(medio === "TARJETA_MP" || medio === "TARJETA") && (
+                <p className="modal__descripcion">
+                    Débito o crédito {medio === "TARJETA_MP" ? "en el posnet de Mercado Pago" : "en otro posnet (Clover u otro)"}, ya aprobada.
+                </p>
             )}
 
             <BuscadorCliente id="venta-cliente" label="Cliente (opcional)" cliente={cliente} onElegir={setCliente} avisarPerfilIncompleto={false} />
