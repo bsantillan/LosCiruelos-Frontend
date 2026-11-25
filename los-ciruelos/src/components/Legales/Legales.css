@@ -1,0 +1,131 @@
+/* Términos y Política de privacidad: texto largo, cómodo de leer (en su página y en el modal) */
+.legales-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    color: var(--texto-suave);
+    font-size: 0.95rem;
+    line-height: 1.65;
+}
+
+.legales-texto section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.legales-texto h2 {
+    font-family: var(--fuente-titulo);
+    font-style: italic;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 0.02em;
+    color: var(--texto);
+}
+
+.legales-texto strong {
+    color: var(--texto);
+}
+
+.legales-texto ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 20px;
+}
+
+.legales-texto li::marker {
+    color: var(--verde-lima);
+}
+
+.legales-recuadro {
+    padding: 14px 16px;
+    border: 1px solid var(--verde-borde);
+    background: var(--verde-fondo);
+    border-radius: var(--radio-md);
+    font-size: 0.85rem;
+}
+
+.legales-vigencia {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--texto-suave);
+}
+
+/* Página pública (/terminos y /privacidad: la URL que piden Google y Meta) */
+.legales-pagina {
+    min-height: calc(100dvh - 60px);
+    background: var(--fondo);
+    padding: 40px 32px 64px;
+}
+
+.legales-pagina__contenedor {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* Modal */
+.modal.modal-legal {
+    max-width: 720px;
+}
+
+.modal-legal .legales-texto {
+    gap: 22px;
+    font-size: 0.9rem;
+}
+
+.modal-legal .legales-texto h2 {
+    font-size: 1.05rem;
+}
+
+.modal-legal__cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.modal-legal__cerrar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--borde);
+    background: transparent;
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+
+.modal-legal__cerrar:hover {
+    color: var(--texto);
+    border-color: var(--texto-suave);
+}
+
+/* Link que abre el modal (es un botón con aspecto de link) */
+.enlace-legal {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.enlace-legal:hover {
+    color: var(--verde-lima);
+}
+
+@media (max-width: 600px) {
+    .legales-pagina {
+        padding: 28px 16px 48px;
+    }
+}

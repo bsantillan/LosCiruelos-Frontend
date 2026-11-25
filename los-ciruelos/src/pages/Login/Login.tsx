@@ -12,6 +12,7 @@ import BotonGoogle from "../../components/ui/Boton/BotonGoogle";
 import type { CredentialResponse } from "@react-oauth/google";
 import { destinoDespuesDelLogin, leerSeleccion } from "../../utils/seleccionReserva";
 import { AvisoTransitorio } from "../../components/ui/Avisos/Avisos";
+import ModalLegal, { type DocumentoLegal } from "../../components/Legales/ModalLegal";
 
 const MENSAJES_EXITO: Record<string, string> = {
     passwordReseteado: "Tu contraseña se actualizó. Ya podés ingresar.",
@@ -32,6 +33,7 @@ export default function Login() {
     };
     const [datos, setDatos] = useState<LoginRequest>({ email: "", password: "" });
     const [recordar, setRecordar] = useState(false);
+    const [legal, setLegal] = useState<DocumentoLegal | null>(null);
     const [errores, setErrores] = useState<ErroresLogin>({});
     const { login, cargando, erroresApi, setErroresApi } = useLogin();
     const { loginConGoogle, handleGoogleError, erroresApi: erroresGoogle, setErroresApi: setErroresGoogle } = useGoogleAuth();
@@ -142,7 +144,13 @@ export default function Login() {
                 <p className="pie">
                     ¿No tenés cuenta?&nbsp;<Link to="/register">Registrate gratis</Link>
                 </p>
+                <p className="pie pie--legales">
+                    Al continuar con Google aceptás los{" "}
+                    <button type="button" className="enlace-legal" onClick={() => setLegal("terminos")}>Términos</button> y la{" "}
+                    <button type="button" className="enlace-legal" onClick={() => setLegal("privacidad")}>Política de privacidad</button>.
+                </p>
             </div>
+            {legal && <ModalLegal documento={legal} onCerrar={() => setLegal(null)} />}
         </AuthPanelLayout>
     );
 }

@@ -15,6 +15,8 @@ import Home from './pages/Home/Home';
 // El resto de las páginas se descarga recién cuando se visita
 // (por ejemplo, el SDK de Mercado Pago solo se carga al entrar al pago).
 const Login = lazy(() => import('./pages/Login/Login'));
+const Terminos = lazy(() => import('./pages/Legales/Terminos'));
+const Privacidad = lazy(() => import('./pages/Legales/Privacidad'));
 const Register = lazy(() => import('./pages/Register/Register'));
 const VerificarCodigo = lazy(() => import('./pages/VerificarCodigo/VerificarCodigo'));
 const OlvideContrasena = lazy(() => import('./pages/OlvideContrasena/OlvideContrasena'));
@@ -56,6 +58,8 @@ createRoot(document.getElementById('root')!).render(
   
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/terminos" element={<Terminos />} />
+                <Route path="/privacidad" element={<Privacidad />} />
               </Route>
   
               {/* Perfil del sitio: el personal tiene el suyo en el panel (/admin/cuenta) */}

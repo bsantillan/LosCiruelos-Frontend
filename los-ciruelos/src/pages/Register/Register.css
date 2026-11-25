@@ -123,48 +123,67 @@
 }
 
 /* Términos */
-.terminos-box {
-    background: var(--superficie-2);
-    border: 1.5px solid var(--borde);
-    border-radius: var(--radio-md);
-    padding: 20px 24px;
-    /* alto suficiente para leer casi todo sin scrollear (antes 220px) */
-    max-height: clamp(280px, 50vh, 520px);
-    overflow-y: auto;
-}
-
-.terminos-contenido {
+/* Paso 3: cada texto legal en su tarjeta, con "Leer" (abre el modal) y su aceptación */
+.registro-legal {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding: 16px 18px;
+    background: var(--superficie-2);
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-md);
 }
 
-.terminos-contenido p {
+.registro-legal__cabecera {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.registro-legal__icono {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--verde-fondo);
+    border: 1px solid var(--verde-borde);
+    color: var(--verde-lima);
+}
+
+.registro-legal__textos {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.registro-legal__titulo {
+    font-weight: 600;
+    color: var(--texto);
+}
+
+.registro-legal__resumen {
     font-size: 0.8125rem;
     color: var(--texto-suave);
-    line-height: 1.6;
+    line-height: 1.5;
 }
-
-.terminos-contenido h4 {
-    font-family: var(--fuente-titulo);
-    font-size: 0.875rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--verde-lima);
-    margin-top: 4px;
-}
-
-.terminos-contenido strong {
-    color: var(--texto);
-    font-weight: 600;
-}
-
-.terminos-box::-webkit-scrollbar { width: 4px; }
-.terminos-box::-webkit-scrollbar-track { background: var(--superficie-2); }
-.terminos-box::-webkit-scrollbar-thumb { background: var(--superficie-3); border-radius: 2px; }
 
 /* Responsive */
+/* Celular: sin el ícono, para que el título y el resumen tengan lugar */
+@media (max-width: 560px) {
+    .registro-legal {
+        padding: 14px;
+    }
+
+    .registro-legal__icono {
+        display: none;
+    }
+}
+
 @media (max-width: 860px) {
     .register-campos-fila {
         grid-template-columns: 1fr;

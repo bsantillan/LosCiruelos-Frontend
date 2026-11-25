@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { SECTIONS_FOOTER } from "../../config/sections";
 import { useAuth } from "../../context/AuthContext";
 import { useHorariosClub } from "../../hooks/useHorariosClub";
 import "./Footer.css";
 import { FaInstagram } from "react-icons/fa";
+import ModalLegal, { type DocumentoLegal } from "../Legales/ModalLegal";
 
 export function Footer() {
     const { usuario } = useAuth();
     // El horario sale del backend; si no responde, Lun–Sáb · 08:00 a 23:00
     const horario = useHorariosClub(true);
+    const [legal, setLegal] = useState<DocumentoLegal | null>(null);
     return (
         <footer className="home-footer">
             <div className="home-container">
@@ -57,6 +60,10 @@ export function Footer() {
                 </div>
                 <div className="footer-bottom">
                     <span>© {new Date().getFullYear()} Los Ciruelos Pádel. Todos los derechos reservados.</span>
+                    <span className="footer-legales">
+                        <button type="button" className="enlace-legal" onClick={() => setLegal("terminos")}>Términos y condiciones</button>
+                        <button type="button" className="enlace-legal" onClick={() => setLegal("privacidad")}>Política de privacidad</button>
+                    </span>
                     <span className="footer-credito">
                         Sitio hecho por{" "}
                         <a href="https://www.instagram.com/diagonal.software.group/" target="_blank" rel="noopener noreferrer">
@@ -65,6 +72,7 @@ export function Footer() {
                     </span>
                 </div>
             </div>
+            {legal && <ModalLegal documento={legal} onCerrar={() => setLegal(null)} />}
         </footer>
     );
 }

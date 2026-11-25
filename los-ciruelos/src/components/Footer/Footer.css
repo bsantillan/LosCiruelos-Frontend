@@ -122,3 +122,8 @@
         padding: 48px 0 24px;
     }
 }
+.footer-legales {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+}
