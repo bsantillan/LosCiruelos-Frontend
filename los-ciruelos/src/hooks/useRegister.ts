@@ -13,6 +13,8 @@ export interface ErroresRegister {
     categoria?: string;
     posicion?: string;
     termsAccepted?: string;
+    /** Solo del formulario: el backend recibe una sola aceptación (termsAccepted) */
+    privacidadAceptada?: string;
     aceptarNotificacion?: string;
     general?: string;
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Mail, Lock, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, ArrowLeft, Check, FileText } from "lucide-react";
 import CampoInput from "../../components/ui/CampoInput/CampoInput";
 import CampoTelefono from "../../components/ui/CampoTelefono/CampoTelefono";
 import CampoSelect from "../../components/ui/CampoSelect/CampoSelect";
@@ -16,6 +16,7 @@ import { celularValido } from "../../utils/telefono";
 import { destinoDespuesDelLogin } from "../../utils/seleccionReserva";
 import { CATEGORIAS, POSICIONES } from "../../config/opcionesJugador";
 import "./Register.css";
+import ModalLegal, { type DocumentoLegal } from "../../components/Legales/ModalLegal";
 import { AvisoTransitorio } from "../../components/ui/Avisos/Avisos";
 
 const PASOS = [
@@ -36,25 +37,19 @@ const TITULAR_PASOS = [
     <>CASI<br />ESTÁS<br /><em>ADENTRO</em></>,
 ];
 
-function TerminosContenido() {
-    return (
-        <div className="terminos-contenido">
-            <p>Al registrarte en <strong>Los Ciruelos Pádel</strong>, aceptás los siguientes términos:</p>
-            <h4>1. Uso de la plataforma</h4>
-            <p>Este sistema es exclusivo para socios del club. Tu cuenta es personal e intransferible.</p>
-            <h4>2. Reservas</h4>
-            <p>Las reservas están sujetas a disponibilidad. Podés cancelar hasta que empiece el turno: con 24 horas o más de anticipación se devuelve todo lo pagado; con 12 horas o más, la seña; con menos, no hay devolución.</p>
-            <h4>3. Notificaciones</h4>
-            <p>Te avisamos sobre tus reservas por mail o, si verificás tu celular, por WhatsApp. Desde tu perfil elegís el medio y qué avisos recibir; las cancelaciones se avisan siempre.</p>
-            <h4>4. Datos personales</h4>
-            <p>Tus datos serán utilizados únicamente para la gestión del club y no serán compartidos con terceros sin tu consentimiento, conforme a la Ley 25.326 de Protección de Datos Personales.</p>
-            <h4>5. Conducta</h4>
-            <p>Los socios deben respetar las instalaciones y a los demás miembros. El incumplimiento puede resultar en la suspensión de la cuenta.</p>
-            <h4>6. Modificaciones</h4>
-            <p>El club se reserva el derecho de modificar estos términos con previo aviso.</p>
-        </div>
-    );
-}
+/** Los dos textos que hay que aceptar en el paso 3: cada uno se lee en un modal */
+const DOCUMENTOS_A_ACEPTAR: { documento: DocumentoLegal; titulo: string; resumen: string }[] = [
+    {
+        documento: "terminos",
+        titulo: "Términos y condiciones",
+        resumen: "Tu cuenta, cómo se reserva y se paga, las cancelaciones y devoluciones, y el uso del club.",
+    },
+    {
+        documento: "privacidad",
+        titulo: "Política de privacidad",
+        resumen: "Qué datos guardamos, para qué los usamos, con quién los compartimos y cómo pedir verlos o borrarlos.",
+    },
+];
 
 export default function Register() {
     const navigate = useNavigate();
@@ -66,6 +61,9 @@ export default function Register() {
     });
     const [confirmarPassword, setConfirmarPassword] = useState("");
     const [errores, setErrores] = useState<ErroresRegister>({});
+    // Hay que aceptar los dos por separado; al backend va termsAccepted solo si están los dos
+    const [aceptados, setAceptados] = useState<Record<DocumentoLegal, boolean>>({ terminos: false, privacidad: false });
+    const [legal, setLegal] = useState<{ documento: DocumentoLegal; paraAceptar: boolean } | null>(null);
     const { register, cargando, erroresApi, setErroresApi } = useRegister();
     const { loginConGoogle, handleGoogleError, erroresApi: erroresGoogle, setErroresApi: setErroresGoogle } = useGoogleAuth();
 
@@ -98,8 +96,14 @@ export default function Register() {
         setErroresApi({});
     };
 
-    const cambiarToggle = (campo: "termsAccepted" | "aceptarNotificacion") => (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDatos(p => ({ ...p, [campo]: e.target.checked }));
+    const cambiarNotificacion = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDatos(p => ({ ...p, aceptarNotificacion: e.target.checked }));
+        setErrores({});
+        setErroresApi({});
+    };
+
+    const cambiarAceptado = (documento: DocumentoLegal, valor: boolean) => {
+        setAceptados(p => ({ ...p, [documento]: valor }));
         setErrores({});
         setErroresApi({});
     };
@@ -141,7 +145,8 @@ export default function Register() {
 
     const validarPaso3 = (): boolean => {
         const e: ErroresRegister = {};
-        if (!datos.termsAccepted) e.termsAccepted = "Debés aceptar los términos para continuar.";
+        if (!aceptados.terminos) e.termsAccepted = "Debés aceptar los términos y condiciones para continuar.";
+        if (!aceptados.privacidad) e.privacidadAceptada = "Debés aceptar la política de privacidad para continuar.";
         if (!datos.aceptarNotificacion) e.aceptarNotificacion = "Necesitamos poder avisarte sobre tus reservas.";
         setErrores(e);
         return Object.keys(e).length === 0;
@@ -161,7 +166,7 @@ export default function Register() {
         e.preventDefault();
         if (!validarPaso3()) return;
         try {
-            await register(datos);
+            await register({ ...datos, termsAccepted: aceptados.terminos && aceptados.privacidad });
             // El backend ya envió el código de verificación al email
             navigate("/verificar-codigo", { state: { email: datos.email, tipo: "VERIFY_EMAIL" } });
         } catch (error) {
@@ -299,23 +304,35 @@ export default function Register() {
                     {/* Paso 3 */}
                     {paso === 3 && (
                         <div className="campos animar-subir demora-1">
-                            <div className="terminos-box">
-                                <TerminosContenido />
-                            </div>
-                            <CampoToggle
-                                id="terminos" name="terminos"
-                                label="Acepto los términos y condiciones"
-                                descripcion="Leí y acepto los términos de uso del club."
-                                checked={datos.termsAccepted}
-                                onChange={cambiarToggle("termsAccepted")}
-                                error={errores.termsAccepted || erroresApi.termsAccepted}
-                            />
+                            {DOCUMENTOS_A_ACEPTAR.map(({ documento, titulo, resumen }) => (
+                                <div key={documento} className="registro-legal">
+                                    <div className="registro-legal__cabecera">
+                                        <span className="registro-legal__icono"><FileText size={18} /></span>
+                                        <div className="registro-legal__textos">
+                                            <span className="registro-legal__titulo">{titulo}</span>
+                                            <span className="registro-legal__resumen">{resumen}</span>
+                                        </div>
+                                        <Boton variante="secundario" ancho="auto" onClick={() => setLegal({ documento, paraAceptar: true })}>
+                                            <span>Leer</span>
+                                        </Boton>
+                                    </div>
+                                    <CampoToggle
+                                        id={`acepto-${documento}`} name={`acepto-${documento}`}
+                                        label={documento === "terminos" ? "Acepto los términos y condiciones" : "Acepto la política de privacidad"}
+                                        checked={aceptados[documento]}
+                                        onChange={e => cambiarAceptado(documento, e.target.checked)}
+                                        error={documento === "terminos"
+                                            ? errores.termsAccepted || erroresApi.termsAccepted
+                                            : errores.privacidadAceptada}
+                                    />
+                                </div>
+                            ))}
                             <CampoToggle
                                 id="aceptarNotificacion" name="aceptarNotificacion"
                                 label="Acepto recibir notificaciones del club"
                                 descripcion="Te avisamos por mail sobre tus reservas. Desde tu perfil podés verificar tu celular y pasarte a WhatsApp."
                                 checked={datos.aceptarNotificacion}
-                                onChange={cambiarToggle("aceptarNotificacion")}
+                                onChange={cambiarNotificacion}
                                 error={errores.aceptarNotificacion || erroresApi.aceptarNotificacion}
                             />
                         </div>
@@ -353,6 +370,11 @@ export default function Register() {
                             onError={handleGoogleError}
                             texto="signup_with"
                         />
+                        <p className="pie pie--legales">
+                            Al registrarte con Google aceptás los{" "}
+                            <button type="button" className="enlace-legal" onClick={() => setLegal({ documento: "terminos", paraAceptar: false })}>Términos</button> y la{" "}
+                            <button type="button" className="enlace-legal" onClick={() => setLegal({ documento: "privacidad", paraAceptar: false })}>Política de privacidad</button>.
+                        </p>
                     </>
                 )}
 
@@ -361,6 +383,13 @@ export default function Register() {
                 </p>
 
             </div>
+            {legal && (
+                <ModalLegal
+                    documento={legal.documento}
+                    onCerrar={() => setLegal(null)}
+                    onAceptar={legal.paraAceptar ? () => cambiarAceptado(legal.documento, true) : undefined}
+                />
+            )}
         </AuthPanelLayout>
     );
 }
